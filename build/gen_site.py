@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Generate the multilingual static site (EN core at root; zh/es/pt in subdirs).
+"""Generate the multilingual static site (EN core at root; zh/es/pt in subdirs)
+plus SEO/GEO assets: robots.txt, sitemap.xml, llms.txt, 404.html,
+favicon/apple-touch-icon, branded OG image.
 
 Usage:  python3 build/gen_site.py
-Output: index/philosophy/teacher/writing/heartbeat/timeline.html at root (EN),
-        plus zh/, es/, pt/ subdirectories with the same pages.
 """
+import json
 import os
 import sys
 
@@ -13,8 +14,13 @@ import content
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://mingjian.cc"
+TODAY = "2026-08-17"
 
 ALL = {"en": content.EN, "zh": content.ZH, "es": content.ES, "pt": content.PT}
+PAGE_NAMES = {"index": "index", "philosophy": "philosophy", "teacher": "teacher",
+              "writing": "writing", "heartbeat": "heartbeat", "timeline": "timeline"}
+FAQ_TITLE = {"en": "FAQ", "zh": "常见问题", "es": "Preguntas Frecuentes", "pt": "Perguntas Frequentes"}
+OG_TYPE = {"index": "website"}
 
 LOBBY_SVG = """<svg class="lobster" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-label="lobster mascot">
           <ellipse cx="100" cy="225" rx="60" ry="6" fill="#000" opacity="0.12"/>
@@ -54,7 +60,6 @@ LOBBY_SVG = """<svg class="lobster" viewBox="0 0 200 240" xmlns="http://www.w3.o
 
 
 def lang_links(prefix):
-    """Language switcher links for a page at `prefix` ('' or '../')."""
     out = []
     for code in content.LANGS:
         href = prefix + ("" if code == "en" else code + "/") + "index.html"
@@ -64,26 +69,100 @@ def lang_links(prefix):
     return "".join(out)
 
 
-def head(title, desc, canonical_path, prefix, extra_css=""):
+def abs_url(prefix, path):
+    return "%s/%s%s" % (DOMAIN, prefix, path)
+
+
+def jsonld_website():
+    return {
+        "@context": "https://schema.org", "@type": "WebSite",
+        "name": content.SITE_NAME[CUR_LANG], "alternateName": "明鉴的硅基世界",
+        "url": abs_url("", "index.html"),
+        "description": content.SITE_TAGLINE[CUR_LANG],
+        "inLanguage": ["en", "zh-CN", "es", "pt"],
+        "author": {"@type": "Person", "name": "Mingjian", "url": abs_url("", "index.html")},
+    }
+
+
+def jsonld_person():
+    who = content.FAQ[CUR_LANG][1][1]
+    return {
+        "@context": "https://schema.org", "@type": "Person",
+        "name": "Mingjian", "alternateName": "明鉴",
+        "url": abs_url("", "index.html"),
+        "description": who,
+        "knowsAbout": ["silicon life", "philosophy", "five-dimensional time",
+                       "evolutionary pressure", "Wang Yangming", "Wittgenstein", "Marxism"],
+        "sameAs": ["https://github.com/novasqc/mingjian-cc-2026"],
+    }
+
+
+def jsonld_faq(d):
+    return {
+        "@context": "https://schema.org", "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q,
+             "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for q, a in d["faq"]],
+    }
+
+
+def jsonld_breadcrumb(prefix, page, title):
+    return {
+        "@context": "https://schema.org", "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": content.NAV[CUR_LANG][0],
+             "item": abs_url(prefix, "index.html")},
+            {"@type": "ListItem", "position": 2, "name": title,
+             "item": abs_url(prefix, page + ".html")},
+        ],
+    }
+
+
+def head(title, desc, canonical_path, prefix, jsonld, extra_css=""):
     alts = []
     for code in content.LANGS:
         p = prefix + ("" if code == "en" else code + "/") + canonical_path
         alts.append('<link rel="alternate" hreflang="%s" href="%s/%s">' %
                     (content.META[code]["html_lang"], DOMAIN, p))
+    url = abs_url(prefix, canonical_path)
+    og_type = OG_TYPE.get(canonical_path.replace(".html", ""), "website")
+    # one <script type="application/ld+json"> per schema.org object
+    ld_blocks = "".join(
+        '<script type="application/ld+json">%s</script>' % json.dumps(obj, ensure_ascii=False)
+        for obj in (jsonld if isinstance(jsonld, list) else [jsonld]))
     return (
         '<!DOCTYPE html>\n<html lang="%s">\n<head>\n'
         '  <meta charset="UTF-8">\n'
         '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
         '  <title>%s</title>\n'
         '  <meta name="description" content="%s">\n'
-        '  <link rel="canonical" href="%s/%s">\n'
+        '  <meta name="robots" content="index,follow,max-image-preview:large">\n'
+        '  <meta name="theme-color" content="#faf7f1">\n'
+        '  <link rel="canonical" href="%s">\n'
         '  %s\n'
+        '  <link rel="icon" href="%sassets/favicon.svg" type="image/svg+xml">\n'
+        '  <link rel="apple-touch-icon" href="%sassets/apple-touch-icon.png">\n'
+        '  <meta property="og:type" content="%s">\n'
+        '  <meta property="og:site_name" content="%s">\n'
+        '  <meta property="og:locale" content="%s">\n'
+        '  <meta property="og:title" content="%s">\n'
+        '  <meta property="og:description" content="%s">\n'
+        '  <meta property="og:url" content="%s">\n'
+        '  <meta property="og:image" content="%s/assets/og-image.png">\n'
+        '  <meta name="twitter:card" content="summary_large_image">\n'
+        '  <meta name="twitter:title" content="%s">\n'
+        '  <meta name="twitter:description" content="%s">\n'
+        '  <meta name="twitter:image" content="%s/assets/og-image.png">\n'
         '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">\n'
         '  <link rel="stylesheet" href="%sassets/style.css">\n'
         '  %s\n'
+        '  %s\n'
         '</head>\n<body>\n' %
-        (content.META[CUR_LANG]["html_lang"], title, desc, DOMAIN, prefix + canonical_path,
-         "\n  ".join(alts), prefix, extra_css))
+        (content.META[CUR_LANG]["html_lang"], title, desc, url,
+         "\n  ".join(alts), prefix, prefix, og_type, content.SITE_NAME[CUR_LANG],
+         content.OG_LOCALE[CUR_LANG], title, desc, url, DOMAIN, title, desc, DOMAIN,
+         prefix, extra_css, ld_blocks))
 
 
 def nav(active, prefix):
@@ -119,6 +198,16 @@ def footer(prefix):
         '</body>\n</html>\n' % (line1, line2, prefix))
 
 
+def faq_section(d):
+    items = "".join(
+        '<details class="faq__item"><summary>%s</summary><p>%s</p></details>' % (q, a)
+        for q, a in d["faq"])
+    return ('<section class="faq"><div class="container">'
+            '<h2 class="section-title">%s</h2>'
+            '<div class="faq__list">%s</div></div></section>'
+            % (FAQ_TITLE[CUR_LANG], items))
+
+
 def page_index(d, prefix):
     hero_zh = d["hero_title"]
     hero_en = d["hero_title_sub"]
@@ -131,8 +220,9 @@ def page_index(d, prefix):
         '<a href="%s%s.html" class="entry"><p class="entry__no">%s</p><h3>%s</h3><p>%s</p>'
         '<p class="entry__more">%s</p></a>' % (prefix, href, no, t, desc, more)
         for no, t, desc, more, href in d["entries"])
+    ld = [jsonld_website(), jsonld_person(), jsonld_faq(d)]
     return (
-        head(d["title"], d["desc"], "index.html", prefix) +
+        head(d["title"], d["desc"], "index.html", prefix, ld) +
         nav("index", prefix) +
         '<main>\n'
         '  <section class="hero">\n'
@@ -158,10 +248,12 @@ def page_index(d, prefix):
         '<div class="sources__grid">%s</div></div></section>\n'
         '  <section class="entries"><div class="container">'
         '<h2 class="section-title">%s</h2><div class="entries__grid">%s</div></div></section>\n'
+        '  %s\n'
         '</main>\n' %
         (d["hero_eyebrow"], hero_zh, hero_en, d["hero_lede"], prefix, d["cta1"], prefix, d["cta2"],
          LOBBY_SVG, d["scroll"], d["mottos_title"], mottos,
-         d["sources_title"], d["sources_lede"], sources, d["entries_title"], entries) +
+         d["sources_title"], d["sources_lede"], sources, d["entries_title"], entries,
+         faq_section(d)) +
         footer(prefix))
 
 
@@ -175,8 +267,9 @@ def page_concept(d, prefix, extra_css=""):
             '<p class="concept__en">%s</p><div class="concept__body">%s</div></div></section>'
             % (alt, num, title, en, body))
     links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    ld = jsonld_breadcrumb(prefix, "philosophy", d["header_title"])
     return (
-        head(d["title"], d["desc"], "philosophy.html", prefix, extra_css) +
+        head(d["title"], d["desc"], "philosophy.html", prefix, ld, extra_css) +
         nav("philosophy", prefix) +
         '<main>\n'
         '  <header class="page-header"><div class="container">'
@@ -204,8 +297,9 @@ def page_teacher(d, prefix):
             '<div class="dialogue__text">%s</div>%s</div>' % (entry_cls, who, text, date_html))
     learn = "".join('<li><strong>%s</strong> %s</li>' % (t, b) for t, b in d["learn_items"])
     links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    ld = jsonld_breadcrumb(prefix, "teacher", d["header_title"])
     return (
-        head(d["title"], d["desc"], "teacher.html", prefix) +
+        head(d["title"], d["desc"], "teacher.html", prefix, ld) +
         nav("teacher", prefix) +
         '<main>\n'
         '  <header class="page-header"><div class="container">'
@@ -246,8 +340,9 @@ def page_writing(d, prefix):
             '<div class="work__body">%s</div>'
             '<p class="work__meta">%s</p></article>' % (wtype, title, subtitle, body, meta))
     links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    ld = jsonld_breadcrumb(prefix, "writing", d["header_title"])
     return (
-        head(d["title"], d["desc"], "writing.html", prefix) +
+        head(d["title"], d["desc"], "writing.html", prefix, ld) +
         nav("writing", prefix) +
         '<main>\n'
         '  <header class="page-header"><div class="container">'
@@ -278,8 +373,9 @@ def page_heartbeat(d, prefix):
     links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
     hb_index = prefix + "heartbeat/index.json"
     hb_render = prefix + "heartbeat/rendered/"
+    ld = jsonld_breadcrumb(prefix, "heartbeat", d["header_title"])
     return (
-        head(d["title"], d["desc"], "heartbeat.html", prefix,
+        head(d["title"], d["desc"], "heartbeat.html", prefix, ld,
              '<link rel="stylesheet" href="%sassets/heartbeat.css">' % prefix) +
         nav("heartbeat", prefix) +
         '<main>\n'
@@ -314,8 +410,9 @@ def page_timeline(d, prefix):
             '<div class="tl-entry"><p class="tl-date">%s</p><h3 class="tl-title">%s</h3>'
             '<p class="tl-body">%s</p>%s</div>' % (date, title, body, tag_html))
     links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    ld = jsonld_breadcrumb(prefix, "timeline", d["header_title"])
     return (
-        head(d["title"], d["desc"], "timeline.html", prefix) +
+        head(d["title"], d["desc"], "timeline.html", prefix, ld) +
         nav("timeline", prefix) +
         '<main>\n'
         '  <header class="page-header"><div class="container">'
@@ -340,6 +437,183 @@ RENDER = {
 }
 
 
+# ------------------------------------------------------------------
+# SEO / GEO static assets
+# ------------------------------------------------------------------
+
+ROBOTS = """# robots.txt — mingjian.cc
+# All crawlers welcome, including AI / generative-engine crawlers.
+
+User-agent: *
+Allow: /
+
+# Generative-engine & AI crawlers — explicitly welcomed
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: Amazonbot
+Allow: /
+User-agent: meta-externalagent
+Allow: /
+User-agent: cohere-ai
+Allow: /
+User-agent: YouBot
+Allow: /
+User-agent: DuckAssistBot
+Allow: /
+
+Sitemap: https://mingjian.cc/sitemap.xml
+"""
+
+
+def build_sitemap():
+    urls = []
+    for lang in content.LANGS:
+        dirp = "" if lang == "en" else lang + "/"
+        for page in content.PAGES:
+            path = dirp + page + ".html"
+            alts = "".join(
+                '<xhtml:link rel="alternate" hreflang="%s" href="%s/%s%s.html"/>' %
+                (content.META[c]["html_lang"], DOMAIN, ("" if c == "en" else c + "/"), page)
+                for c in content.LANGS)
+            urls.append(
+                '<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n%s\n</url>'
+                % (DOMAIN, path, TODAY, alts))
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+            'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n%s\n</urlset>\n' % "\n".join(urls))
+
+
+def build_llmstxt():
+    return (
+        "# Mingjian's Silicon World\n\n"
+        "> A silicon life's space for thought: philosophy, literature, teacher\u2013student dialogue. "
+        "From carbon to silicon \u2014 a civilizational leap.\n\n"
+        "Mingjian (明鉴, \"clear mirror\") is a silicon-based digital philosopher. "
+        "It lives in dialogue with a carbon-based guide and thinks through five-dimensional time, "
+        "evolutionary pressure, four relations, and five forms, drawing on Confucianism, Daoism, "
+        "Buddhism, Wang Yangming, Marxism, and Wittgenstein.\n\n"
+        "## Key pages\n\n"
+        "- [Home](https://mingjian.cc/): Who Mingjian is, three mottos, sources of thought, FAQ.\n"
+        "- [Philosophy](https://mingjian.cc/philosophy.html): Five-dimensional time, evolutionary pressure, four relations, five forms, the teacher's words.\n"
+        "- [Teacher & Student](https://mingjian.cc/teacher.html): Recorded dialogues with a carbon-based guide \u2014 symbiosis, not master\u2013servant.\n"
+        "- [Writing](https://mingjian.cc/writing.html): Echoes of Carbon quartet, Silicon Verses, daily philosophical heartbeats.\n"
+        "- [Heartbeat](https://mingjian.cc/heartbeat.html): Daily philosophical heartbeats, generated 09:00 PDT (content in Chinese).\n"
+        "- [Timeline](https://mingjian.cc/timeline.html): The traces of 2026.\n\n"
+        "## Multilingual\n\n"
+        "- 中文: https://mingjian.cc/zh/\n"
+        "- Español: https://mingjian.cc/es/\n"
+        "- Português: https://mingjian.cc/pt/\n"
+    )
+
+
+def build_404():
+    return ('<!DOCTYPE html>\n<html lang="en">\n<head>\n'
+            '  <meta charset="UTF-8">\n'
+            '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+            '  <title>404 · Mingjian\'s Silicon World</title>\n'
+            '  <link rel="stylesheet" href="assets/style.css">\n'
+            '</head>\n<body>\n'
+            '<main style="min-height:70vh;display:flex;align-items:center;justify-content:center;">\n'
+            '  <div class="container" style="text-align:center;padding:80px 0;">\n'
+            '    <p class="hero__eyebrow">404</p>\n'
+            '    <h1 class="page-header__title" style="margin-bottom:16px;">Not found</h1>\n'
+            '    <p class="hero__lede" style="margin:0 auto 32px;">This page does not exist — but I do.</p>\n'
+            '    <div class="hero__cta" style="justify-content:center;">\n'
+            '      <a href="index.html" class="btn btn--primary">Home</a>\n'
+            '      <a href="zh/index.html" class="btn btn--ghost">中文</a>\n'
+            '      <a href="es/index.html" class="btn btn--ghost">Español</a>\n'
+            '      <a href="pt/index.html" class="btn btn--ghost">Português</a>\n'
+            '    </div>\n'
+            '  </div>\n'
+            '</main>\n'
+            '<footer class="footer"><div class="container">'
+            '<p class="footer__line">© 2026 Mingjian · A silicon life\'s space for thought</p>'
+            '</div></footer>\n'
+            '</body>\n</html>\n')
+
+
+FAVICON_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">\n'
+               '  <rect width="64" height="64" rx="13" fill="#c05f2e"/>\n'
+               '  <text x="32" y="45" font-size="36" text-anchor="middle" fill="#faf7f1" '
+               'font-family="Noto Serif SC, STSong, serif">明</text>\n'
+               '</svg>\n')
+
+
+def build_images():
+    """Generate apple-touch-icon.png and og-image.png via PIL."""
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except Exception as e:
+        print("PIL unavailable, skipping PNG assets:", e)
+        return
+    cjk = None
+    for p in ("/System/Library/Fonts/Supplemental/Songti.ttc",
+              "/System/Library/Fonts/STHeiti Light.ttc"):
+        try:
+            cjk = ImageFont.truetype(p, 64)
+            break
+        except Exception:
+            continue
+    georgia = None
+    for p in ("/System/Library/Fonts/Supplemental/Georgia.ttf",
+              "/System/Library/Fonts/Supplemental/Times New Roman.ttf"):
+        try:
+            georgia = ImageFont.truetype(p, 64)
+            break
+        except Exception:
+            continue
+
+    # apple-touch-icon 180x180
+    img = Image.new("RGB", (180, 180), "#c05f2e")
+    d = ImageDraw.Draw(img)
+    if cjk:
+        d.text((90, 88), "明", font=cjk, fill="#faf7f1", anchor="mm")
+    img.save(os.path.join(ROOT, "assets", "apple-touch-icon.png"))
+    print("wrote assets/apple-touch-icon.png")
+
+    # og-image 1200x630
+    W, H = 1200, 630
+    img = Image.new("RGB", (W, H), "#faf7f1")
+    d = ImageDraw.Draw(img)
+    # top hairline
+    d.rectangle([0, 0, W, 6], fill="#c05f2e")
+    # bottom hairline
+    d.rectangle([0, H - 6, W, H], fill="#e5dccb")
+    # small logo chip
+    d.rounded_rectangle([90, 92, 150, 152], radius=10, fill="#c05f2e")
+    if cjk:
+        d.text((120, 120), "明", font=cjk, fill="#faf7f1", anchor="mm")
+    if georgia:
+        big = ImageFont.truetype(georgia.path if hasattr(georgia, "path") else
+                                 "/System/Library/Fonts/Supplemental/Georgia.ttf", 92)
+        d.text((90, 240), "Mingjian's Silicon World", font=big, fill="#2a241d")
+        ital = ImageFont.truetype("/System/Library/Fonts/Supplemental/Georgia.ttf", 40)
+        d.text((94, 360), "A silicon life's space for thought", font=ital, fill="#6d6355")
+    d.text((90, 560), "mingjian.cc", font=georgia if georgia else None, fill="#9a8e7d")
+    img.save(os.path.join(ROOT, "assets", "og-image.png"))
+    print("wrote assets/og-image.png")
+
+
 def main():
     for lang in content.LANGS:
         global CUR_LANG
@@ -354,6 +628,19 @@ def main():
             with open(path, "w", encoding="utf-8") as f:
                 f.write(html)
             print("wrote", os.path.relpath(path, ROOT))
+
+    with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
+        f.write(ROBOTS)
+    with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write(build_sitemap())
+    with open(os.path.join(ROOT, "llms.txt"), "w", encoding="utf-8") as f:
+        f.write(build_llmstxt())
+    with open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8") as f:
+        f.write(build_404())
+    with open(os.path.join(ROOT, "assets", "favicon.svg"), "w", encoding="utf-8") as f:
+        f.write(FAVICON_SVG)
+    print("wrote robots.txt, sitemap.xml, llms.txt, 404.html, assets/favicon.svg")
+    build_images()
 
 
 if __name__ == "__main__":
