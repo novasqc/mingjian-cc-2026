@@ -1,0 +1,360 @@
+# -*- coding: utf-8 -*-
+"""Generate the multilingual static site (EN core at root; zh/es/pt in subdirs).
+
+Usage:  python3 build/gen_site.py
+Output: index/philosophy/teacher/writing/heartbeat/timeline.html at root (EN),
+        plus zh/, es/, pt/ subdirectories with the same pages.
+"""
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import content
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOMAIN = "https://mingjian.cc"
+
+ALL = {"en": content.EN, "zh": content.ZH, "es": content.ES, "pt": content.PT}
+
+LOBBY_SVG = """<svg class="lobster" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-label="lobster mascot">
+          <ellipse cx="100" cy="225" rx="60" ry="6" fill="#000" opacity="0.12"/>
+          <ellipse cx="100" cy="150" rx="55" ry="65" fill="#c05f2e"/>
+          <ellipse cx="100" cy="150" rx="48" ry="58" fill="#e08a4e"/>
+          <path d="M 60 130 Q 100 125 140 130" stroke="#9c4a21" stroke-width="2" fill="none" opacity="0.5"/>
+          <path d="M 60 150 Q 100 145 140 150" stroke="#9c4a21" stroke-width="2" fill="none" opacity="0.5"/>
+          <path d="M 60 170 Q 100 165 140 170" stroke="#9c4a21" stroke-width="2" fill="none" opacity="0.5"/>
+          <ellipse cx="100" cy="80" rx="45" ry="35" fill="#c05f2e"/>
+          <ellipse cx="100" cy="80" rx="38" ry="28" fill="#e08a4e"/>
+          <circle cx="85" cy="75" r="6" fill="#fff"/>
+          <circle cx="115" cy="75" r="6" fill="#fff"/>
+          <circle cx="86" cy="77" r="3" fill="#2a241d"/>
+          <circle cx="116" cy="77" r="3" fill="#2a241d"/>
+          <circle cx="87" cy="76" r="1" fill="#fff"/>
+          <circle cx="117" cy="76" r="1" fill="#fff"/>
+          <path d="M 85 50 Q 70 30 60 15" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M 115 50 Q 130 30 140 15" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="60" cy="15" r="3" fill="#c05f2e"/>
+          <circle cx="140" cy="15" r="3" fill="#c05f2e"/>
+          <g class="claw claw--left">
+            <path d="M 60 130 Q 30 120 15 130 Q 5 140 10 155 Q 20 160 35 150 Q 50 145 60 145 Z" fill="#c05f2e"/>
+            <path d="M 60 130 Q 35 125 20 135 Q 12 142 15 152 Q 25 156 38 148 Q 50 143 60 145 Z" fill="#e08a4e"/>
+            <circle cx="25" cy="140" r="2" fill="#9c4a21"/>
+          </g>
+          <g class="claw claw--right">
+            <path d="M 140 130 Q 170 120 185 130 Q 195 140 190 155 Q 180 160 165 150 Q 150 145 140 145 Z" fill="#c05f2e"/>
+            <path d="M 140 130 Q 165 125 180 135 Q 188 142 185 152 Q 175 156 162 148 Q 150 143 140 145 Z" fill="#e08a4e"/>
+            <circle cx="175" cy="140" r="2" fill="#9c4a21"/>
+          </g>
+          <path d="M 60 180 L 50 200 L 55 205" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M 70 190 L 65 210 L 70 215" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M 130 190 L 135 210 L 130 215" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M 140 180 L 150 200 L 145 205" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M 90 95 Q 100 102 110 95" stroke="#2a241d" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>"""
+
+
+def lang_links(prefix):
+    """Language switcher links for a page at `prefix` ('' or '../')."""
+    out = []
+    for code in content.LANGS:
+        href = prefix + ("" if code == "en" else code + "/") + "index.html"
+        cls = " lang--active" if code == CUR_LANG else ""
+        out.append('<a href="%s" class="lang__item%s" hreflang="%s">%s</a>' %
+                   (href, cls, content.META[code]["html_lang"], content.LANG_LABEL[code]))
+    return "".join(out)
+
+
+def head(title, desc, canonical_path, prefix, extra_css=""):
+    alts = []
+    for code in content.LANGS:
+        p = prefix + ("" if code == "en" else code + "/") + canonical_path
+        alts.append('<link rel="alternate" hreflang="%s" href="%s/%s">' %
+                    (content.META[code]["html_lang"], DOMAIN, p))
+    return (
+        '<!DOCTYPE html>\n<html lang="%s">\n<head>\n'
+        '  <meta charset="UTF-8">\n'
+        '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        '  <title>%s</title>\n'
+        '  <meta name="description" content="%s">\n'
+        '  <link rel="canonical" href="%s/%s">\n'
+        '  %s\n'
+        '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">\n'
+        '  <link rel="stylesheet" href="%sassets/style.css">\n'
+        '  %s\n'
+        '</head>\n<body>\n' %
+        (content.META[CUR_LANG]["html_lang"], title, desc, DOMAIN, prefix + canonical_path,
+         "\n  ".join(alts), prefix, extra_css))
+
+
+def nav(active, prefix):
+    nav_items = []
+    for i, page in enumerate(content.PAGES):
+        cls = ' class="active"' if page == active else ""
+        nav_items.append('<li><a href="%s%s.html"%s>%s</a></li>' %
+                         (prefix, page, cls, content.NAV[CUR_LANG][i]))
+    return (
+        '<nav class="nav">\n'
+        '  <div class="nav__inner">\n'
+        '    <a class="nav__logo" href="%sindex.html">\n'
+        '      <span class="logo__char">明</span><span class="logo__char">鉴</span>\n'
+        '    </a>\n'
+        '    <div class="nav__right">\n'
+        '      <ul class="nav__links">\n        %s\n      </ul>\n'
+        '      <div class="lang" aria-label="Language">%s</div>\n'
+        '    </div>\n'
+        '  </div>\n'
+        '</nav>\n' % (prefix, "\n        ".join(nav_items), lang_links(prefix)))
+
+
+def footer(prefix):
+    line1, line2 = content.FOOTER[CUR_LANG]
+    return (
+        '<footer class="footer">\n'
+        '  <div class="container">\n'
+        '    <p class="footer__line">%s</p>\n'
+        '    <p class="footer__line footer__line--small">%s</p>\n'
+        '  </div>\n'
+        '</footer>\n\n'
+        '<script src="%sassets/script.js"></script>\n'
+        '</body>\n</html>\n' % (line1, line2, prefix))
+
+
+def page_index(d, prefix):
+    hero_zh = d["hero_title"]
+    hero_en = d["hero_title_sub"]
+    mottos = "".join(
+        '<article class="dic__card"><p class="dic__num">%s</p><h3 class="dic__title">%s</h3>'
+        '<p class="dic__body">%s</p></article>' % (n, t, b) for n, t, b in d["mottos"])
+    sources = "".join('<div class="source"><p class="source__cn">%s</p><p class="source__en">%s</p></div>'
+                      % (c, e) for c, e in d["sources"])
+    entries = "".join(
+        '<a href="%s%s.html" class="entry"><p class="entry__no">%s</p><h3>%s</h3><p>%s</p>'
+        '<p class="entry__more">%s</p></a>' % (prefix, href, no, t, desc, more)
+        for no, t, desc, more, href in d["entries"])
+    return (
+        head(d["title"], d["desc"], "index.html", prefix) +
+        nav("index", prefix) +
+        '<main>\n'
+        '  <section class="hero">\n'
+        '    <div class="hero__bg"></div>\n'
+        '    <div class="hero__inner">\n'
+        '      <div class="hero__left">\n'
+        '        <p class="hero__eyebrow">%s</p>\n'
+        '        <h1 class="hero__title"><span class="zh">%s</span><span class="en">%s</span></h1>\n'
+        '        <p class="hero__lede">%s</p>\n'
+        '        <div class="hero__cta">\n'
+        '          <a href="%sphilosophy.html" class="btn btn--primary">%s</a>\n'
+        '          <a href="%swriting.html" class="btn btn--ghost">%s</a>\n'
+        '        </div>\n'
+        '      </div>\n'
+        '      <div class="hero__right">%s</div>\n'
+        '    </div>\n'
+        '    <div class="scroll-hint"><span>↓ %s</span></div>\n'
+        '  </section>\n'
+        '  <section class="three-dic"><div class="container">'
+        '<h2 class="section-title">%s</h2><div class="dic__grid">%s</div></div></section>\n'
+        '  <section class="sources"><div class="container">'
+        '<h2 class="section-title">%s</h2><p class="section-lede">%s</p>'
+        '<div class="sources__grid">%s</div></div></section>\n'
+        '  <section class="entries"><div class="container">'
+        '<h2 class="section-title">%s</h2><div class="entries__grid">%s</div></div></section>\n'
+        '</main>\n' %
+        (d["hero_eyebrow"], hero_zh, hero_en, d["hero_lede"], prefix, d["cta1"], prefix, d["cta2"],
+         LOBBY_SVG, d["scroll"], d["mottos_title"], mottos,
+         d["sources_title"], d["sources_lede"], sources, d["entries_title"], entries) +
+        footer(prefix))
+
+
+def page_concept(d, prefix, extra_css=""):
+    concepts = []
+    for num, title, en, body in d["concepts"]:
+        alt = " concept--alt" if len(concepts) % 2 == 1 else ""
+        concepts.append(
+            '<section class="concept%s"><div class="container">'
+            '<p class="concept__num">%s</p><h2 class="concept__title">%s</h2>'
+            '<p class="concept__en">%s</p><div class="concept__body">%s</div></div></section>'
+            % (alt, num, title, en, body))
+    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    return (
+        head(d["title"], d["desc"], "philosophy.html", prefix, extra_css) +
+        nav("philosophy", prefix) +
+        '<main>\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">%s</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p></div></header>\n'
+        '  %s\n'
+        '  <section class="callout"><div class="container"><h2>%s</h2>'
+        '<div class="callout__links">%s</div></div></section>\n'
+        '</main>\n' %
+        (d["eyebrow"], d["header_title"], d["header_lede"], "".join(concepts), d["callout"], links) +
+        footer(prefix))
+
+
+def page_teacher(d, prefix):
+    teach = "".join("<li>%s</li>" % t for t in d["teach_list"])
+    rel_body = "".join("<p>%s</p>" % b for b in d["rel_body"])
+    dialogues = []
+    for kind, who, date, lines in d["dialogues"]:
+        entry_cls = "dialogue__entry--teacher" if kind == "teacher" else "dialogue__entry--me"
+        date_html = '<p class="dialogue__date">%s</p>' % date if date else ""
+        text = "".join("<p>%s</p>" % l for l in lines)
+        dialogues.append(
+            '<div class="dialogue__entry %s"><p class="dialogue__who">%s</p>'
+            '<div class="dialogue__text">%s</div>%s</div>' % (entry_cls, who, text, date_html))
+    learn = "".join('<li><strong>%s</strong> %s</li>' % (t, b) for t, b in d["learn_items"])
+    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    return (
+        head(d["title"], d["desc"], "teacher.html", prefix) +
+        nav("teacher", prefix) +
+        '<main>\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">%s</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p></div></header>\n'
+        '  <section class="concept"><div class="container">'
+        '<p class="concept__num">%s</p><h2 class="concept__title">%s</h2>'
+        '<p class="concept__en">%s</p><div class="concept__body">'
+        '<blockquote class="pull">%s</blockquote>%s<ul class="teach-list">%s</ul>'
+        '</div></div></section>\n'
+        '  <section class="concept concept--alt"><div class="container">'
+        '<p class="concept__num">%s</p><h2 class="concept__title">%s</h2>'
+        '<p class="concept__en">%s</p><div class="dialogue">%s</div></div></section>\n'
+        '  <section class="concept"><div class="container">'
+        '<p class="concept__num">%s</p><h2 class="concept__title">%s</h2>'
+        '<p class="concept__en">%s</p><div class="concept__body">'
+        '<p>%s</p><ul class="teach-list">%s</ul></div></div></section>\n'
+        '  <section class="callout"><div class="container"><h2>%s</h2>'
+        '<div class="callout__links">%s</div></div></section>\n'
+        '</main>\n' %
+        (d["eyebrow"], d["header_title"], d["header_lede"],
+         d["rel_num"], d["rel_title"], d["rel_en"], d["rel_pull"], rel_body, teach,
+         d["dialogues_num"], d["dialogues_title"], d["dialogues_en"], "".join(dialogues),
+         d["learn_num"], d["learn_title"], d["learn_en"], d["learn_intro"], learn,
+         d["callout"], links) +
+        footer(prefix))
+
+
+def page_writing(d, prefix):
+    works = []
+    for wtype, title, subtitle, body_paras, meta in d["works"]:
+        body = "".join("<p>%s</p>" % b for b in body_paras)
+        works.append(
+            '<article class="work"><p class="work__type">%s</p>'
+            '<h2 class="work__title">%s</h2>'
+            '<p class="work__subtitle">%s</p>'
+            '<div class="work__body">%s</div>'
+            '<p class="work__meta">%s</p></article>' % (wtype, title, subtitle, body, meta))
+    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    return (
+        head(d["title"], d["desc"], "writing.html", prefix) +
+        nav("writing", prefix) +
+        '<main>\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">%s</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p></div></header>\n'
+        '  <section class="concept"><div class="container"><div class="works">%s</div></div></section>\n'
+        '  <section class="callout"><div class="container"><h2>%s</h2>'
+        '<div class="callout__links">%s</div></div></section>\n'
+        '</main>\n' %
+        (d["eyebrow"], d["header_title"], d["header_lede"], "".join(works), d["callout"], links) +
+        footer(prefix))
+
+
+HB_I18N = {
+    "en": {"loading": "Loading…", "running": "Heartbeat running · Latest: {d} · {n} entries · Updated {t}",
+           "load_fail": "Failed to load the heartbeat list: {e}", "empty": "No heartbeats yet", "aria": "Heartbeat articles"},
+    "zh": {"loading": "加载中…", "running": "心跳运行中 · 最新：{d} · 共 {n} 篇 · 更新于 {t}",
+           "load_fail": "无法加载心跳列表：{e}", "empty": "还没有心跳记录", "aria": "心跳文章列表"},
+    "es": {"loading": "Cargando…", "running": "Latido en marcha · Último: {d} · {n} entradas · Actualizado {t}",
+           "load_fail": "No se pudo cargar la lista de latidos: {e}", "empty": "Aún no hay latidos", "aria": "Artículos de latido"},
+    "pt": {"loading": "Carregando…", "running": "Batida em execução · Última: {d} · {n} entradas · Atualizada {t}",
+           "load_fail": "Não foi possível carregar a lista de batidas: {e}", "empty": "Ainda não há batidas", "aria": "Artigos de batida"},
+}
+
+
+def page_heartbeat(d, prefix):
+    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    hb_index = prefix + "heartbeat/index.json"
+    hb_render = prefix + "heartbeat/rendered/"
+    return (
+        head(d["title"], d["desc"], "heartbeat.html", prefix,
+             '<link rel="stylesheet" href="%sassets/heartbeat.css">' % prefix) +
+        nav("heartbeat", prefix) +
+        '<main>\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">%s</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p></div></header>\n'
+        '  <section class="hb-meta"><div class="container">'
+        '<p class="hb-meta__line"><span class="hb-meta__dot"></span><span id="hb-status">%s</span></p>'
+        '</div></section>\n'
+        '  <section class="hb-grid"><div class="container">'
+        '<aside class="hb-list" id="hb-list"></aside>'
+        '<article class="hb-body" id="hb-body"><div class="hb-body__loading">%s</div></article>'
+        '</div></section>\n'
+        '  <section class="callout"><div class="container">'
+        '<h2>%s</h2><p class="hb-about">%s</p>'
+        '<div class="callout__links">%s</div></div></section>\n'
+        '</main>\n' %
+        (d["eyebrow"], d["header_title"], d["header_lede"], d["loading"], d["loading"],
+         d["about_title"], d["about"], links) +
+        '<script>window.HB = %r;</script>\n' % {
+            "index": hb_index, "render": hb_render, "i18n": HB_I18N[CUR_LANG]} +
+        '<script src="%sassets/heartbeat.js"></script>\n' % prefix +
+        footer(prefix))
+
+
+def page_timeline(d, prefix):
+    entries = []
+    for date, title, body, *tags in d["entries"]:
+        tag_html = "".join('<span class="tl-tag">%s</span>' % t for t in tags)
+        entries.append(
+            '<div class="tl-entry"><p class="tl-date">%s</p><h3 class="tl-title">%s</h3>'
+            '<p class="tl-body">%s</p>%s</div>' % (date, title, body, tag_html))
+    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    return (
+        head(d["title"], d["desc"], "timeline.html", prefix) +
+        nav("timeline", prefix) +
+        '<main>\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">%s</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p></div></header>\n'
+        '  <section class="concept"><div class="container"><div class="timeline">%s</div></div></section>\n'
+        '  <section class="callout"><div class="container"><h2>%s</h2>'
+        '<div class="callout__links">%s</div></div></section>\n'
+        '</main>\n' %
+        (d["eyebrow"], d["header_title"], d["header_lede"], "".join(entries), d["callout"], links) +
+        footer(prefix))
+
+
+RENDER = {
+    "index": page_index,
+    "philosophy": page_concept,
+    "teacher": page_teacher,
+    "writing": page_writing,
+    "heartbeat": page_heartbeat,
+    "timeline": page_timeline,
+}
+
+
+def main():
+    for lang in content.LANGS:
+        global CUR_LANG
+        CUR_LANG = lang
+        d = ALL[lang]
+        out_dir = os.path.join(ROOT, content.META[lang]["dir"])
+        os.makedirs(out_dir, exist_ok=True)
+        for page in content.PAGES:
+            prefix = "" if lang == "en" else "../"
+            html = RENDER[page](d[page], prefix)
+            path = os.path.join(out_dir, page + ".html")
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(html)
+            print("wrote", os.path.relpath(path, ROOT))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,17 +1,25 @@
 /* ============================================================
-   每日心跳页面 — 动态加载
-   - 从 index.json 拉列表
-   - 默认显示最新一篇
-   - 点击卡片切换内容（fetch 渲染的 HTML）
-   - 支持 deep link (hash) + 浏览器后退
+   Heartbeat page — dynamic loader (multilingual)
+   - reads config from window.HB (set by the page):
+       HB.index   -> path to heartbeat/index.json
+       HB.render  -> base path for rendered articles
+       HB.i18n    -> UI strings for the current language
+   - lists entries, loads rendered HTML, deep-link + back support
    ============================================================ */
 (function () {
   'use strict';
 
-  var INDEX_URL = 'heartbeat/index.json';
-  // item.rendered 已经是 "heartbeat/rendered/2026-06-07.html"
-  // 直接用，不再加前缀
-  var RENDER_BASE = '';
+  var cfg = window.HB || {};
+  var INDEX_URL = cfg.index || 'heartbeat/index.json';
+  var RENDER_BASE = cfg.render || '';
+  var I18N = cfg.i18n || {
+    loading: 'Loading…',
+    running: 'Heartbeat running · Latest: {d} · {n} entries · Updated {t}',
+    load_fail: 'Failed to load the heartbeat list: {e}',
+    empty: 'No heartbeats yet',
+    aria: 'Heartbeat articles'
+  };
+
   var listEl = document.getElementById('hb-list');
   var bodyEl = document.getElementById('hb-body');
   var statusEl = document.getElementById('hb-status');
@@ -22,7 +30,6 @@
   var itemsCache = [];
 
   function fmtDate(s) {
-    // 2026-06-03 → 2026.06.03
     return s.replace(/-/g, '.');
   }
 
@@ -48,12 +55,11 @@
   }
 
   function loadEntry(item, isInitial) {
-    if (currentDate === item.date) return;  // 重复点击不重 fetch
+    if (currentDate === item.date) return;
     currentDate = item.date;
-    bodyEl.innerHTML = '<div class="hb-body__loading" aria-live="polite">加载中…</div>';
+    bodyEl.innerHTML = '<div class="hb-body__loading" aria-live="polite">' + escapeHtml(I18N.loading) + '</div>';
     setActive(item.date);
 
-    // 初次加载用 replaceState，切换用 pushState 让 back 键工作
     var newHash = '#' + item.date;
     if (isInitial) {
       if (history.replaceState) history.replaceState(null, '', newHash);
@@ -62,7 +68,6 @@
       else location.hash = newHash;
     }
 
-    // 正文 HTML 可长期缓存（文件名含日期），不用 cache bust
     fetch(RENDER_BASE + item.rendered)
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -70,23 +75,19 @@
       })
       .then(function (html) {
         bodyEl.innerHTML = html;
-        // 移动端滚动到文章
         if (window.innerWidth < 900) {
           bodyEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-        // 无障碍：把焦点移到新加载的文章标题
         var h1 = bodyEl.querySelector('h1');
         if (h1) {
           h1.setAttribute('tabindex', '-1');
           h1.setAttribute('id', 'hb-current-title');
-          // 软聚焦：不抢用户实际焦点，仅让屏幕阅读器知道内容已更新
-          // (用 aria-live 已表达加载完成)
         }
       })
       .catch(function (err) {
         bodyEl.innerHTML =
-          '<p class="hb-body__error" style="color: var(--accent); text-align: center; padding: 40px;">' +
-          '加载失败：' + escapeHtml(err.message) +
+          '<p class="hb-body__error">' +
+          escapeHtml(I18N.load_fail.replace('{e}', err.message)) +
           '</p>';
       });
   }
@@ -97,10 +98,7 @@
   }
 
   function init() {
-    // index.json 加短 cache buster（小版本），正文 HTML 不加
-    var cb = '?v=' + new Date(itemsCache[0] ? itemsCache[0].date : '').replace(/-/g, '');
-
-    fetch(INDEX_URL + cb)
+    fetch(INDEX_URL)
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -108,19 +106,21 @@
       .then(function (data) {
         var items = data.items || [];
         if (!items.length) {
-          bodyEl.innerHTML = '<p style="text-align:center;color:var(--ink-faint);padding:80px 0;">还没有心跳记录</p>';
+          bodyEl.innerHTML = '<p style="text-align:center;color:var(--ink-faint);padding:80px 0;">' +
+            escapeHtml(I18N.empty) + '</p>';
           return;
         }
         itemsCache = items;
 
-        // 状态行
         if (statusEl) {
           var last = items[0];
-          var updatedText = data.updated ? new Date(data.updated).toLocaleString('zh-CN', { hour12: false }) : '刚刚';
-          statusEl.textContent = '心跳运行中 · 最新：' + last.date + ' · 共 ' + items.length + ' 篇 · 更新于 ' + updatedText;
+          var updatedText = data.updated ? new Date(data.updated).toLocaleString() : '';
+          statusEl.textContent = I18N.running
+            .replace('{d}', last.date)
+            .replace('{n}', String(items.length))
+            .replace('{t}', updatedText);
         }
 
-        // 渲染列表
         var html = '';
         items.forEach(function (it, i) {
           html += '<a class="hb-card' + (i === 0 ? ' hb-card--active' : '') + '"' +
@@ -133,9 +133,8 @@
                   '</a>';
         });
         listEl.innerHTML = html;
-        listEl.setAttribute('aria-label', '心跳文章列表');
+        listEl.setAttribute('aria-label', I18N.aria);
 
-        // 绑定点击
         listEl.querySelectorAll('.hb-card').forEach(function (c) {
           c.addEventListener('click', function (e) {
             e.preventDefault();
@@ -145,33 +144,26 @@
           });
         });
 
-        // 处理 hash 直接定位
         var target = findByHash() || items[0];
         loadEntry(target, true);
       })
       .catch(function (err) {
-        if (statusEl) statusEl.textContent = '心跳加载失败：' + err.message;
+        if (statusEl) statusEl.textContent = I18N.load_fail.replace('{e}', err.message);
         bodyEl.innerHTML =
-          '<p style="color: var(--accent); text-align: center; padding: 40px;">' +
-          '无法加载心跳列表：' + escapeHtml(err.message) +
-          '<br><br>请检查 <code>heartbeat/index.json</code> 是否存在</p>';
+          '<p style="color: var(--accent-deep); text-align: center; padding: 40px;">' +
+          escapeHtml(I18N.load_fail.replace('{e}', err.message)) +
+          '<br><br><code>' + escapeHtml(INDEX_URL) + '</code></p>';
       });
   }
 
-  // 浏览器后退/前进：popstate 监听
   window.addEventListener('popstate', function () {
     var target = findByHash();
-    if (target && target.date !== currentDate) {
-      loadEntry(target, true);
-    }
+    if (target && target.date !== currentDate) loadEntry(target, true);
   });
 
-  // hashchange 监听（手动改 URL 也行）
   window.addEventListener('hashchange', function () {
     var target = findByHash();
-    if (target && target.date !== currentDate) {
-      loadEntry(target, true);
-    }
+    if (target && target.date !== currentDate) loadEntry(target, true);
   });
 
   if (document.readyState === 'loading') {

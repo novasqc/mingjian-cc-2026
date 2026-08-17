@@ -1,88 +1,67 @@
 /* ============================================================
-   每日心跳页面样式
+   Heartbeat page — light editorial styles
    ============================================================ */
 
-.hb-meta {
-  background: var(--bg-2);
-  border-bottom: 1px solid var(--line);
-  padding: 20px 0;
-}
+.hb-meta { padding: 26px 0 0; }
 .hb-meta__line {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.1em;
-  color: var(--ink-dim);
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
 }
 .hb-meta__dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: var(--accent);
+  width: 8px; height: 8px;
   border-radius: 50%;
-  box-shadow: 0 0 8px var(--accent);
-  animation: pulse 2s ease-in-out infinite;
+  background: var(--accent);
+  animation: hb-pulse 2s ease-in-out infinite;
 }
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
-}
-
-/* ===== 两列布局 ===== */
-.hb-grid {
-  padding: 0;
-  background: var(--bg);
-}
-.hb-grid .container {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 0;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0;
+@keyframes hb-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
 }
 
-/* ===== 左侧列表 ===== */
+.hb-grid { padding: 36px 0 80px; }
+.hb-grid .container { display: grid; grid-template-columns: 320px 1fr; gap: 40px; align-items: start; }
+
 .hb-list {
-  background: var(--bg-2);
-  border-right: 1px solid var(--line);
-  padding: 24px 0;
-  max-height: calc(100vh - 200px);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   position: sticky;
-  top: 64px;
+  top: 90px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-right: 6px;
 }
 .hb-card {
   display: block;
-  padding: 16px 24px;
-  border-left: 3px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: none;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--bg);
   color: var(--ink);
+  transition: all 0.2s;
 }
-.hb-card:hover {
-  background: var(--bg-3);
-  border-left-color: var(--ink-faint);
-}
+.hb-card:hover { border-color: var(--accent); color: var(--ink); }
 .hb-card--active {
-  background: var(--bg-3);
-  border-left-color: var(--accent);
+  border-color: var(--accent);
+  background: var(--bg-2);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 .hb-card__date {
   font-family: var(--font-mono);
-  font-size: 14px;
-  letter-spacing: 0.1em;
-  color: var(--ink);
-  margin-bottom: 6px;
-}
-.hb-card--active .hb-card__date { color: var(--accent); }
-.hb-card__sum {
   font-size: 12px;
+  color: var(--accent-deep);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.hb-card__sum {
+  font-size: 14px;
   line-height: 1.6;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -93,176 +72,78 @@
   font-size: 10px;
   color: var(--ink-faint);
   margin-top: 6px;
-  letter-spacing: 0.1em;
 }
 
-/* ===== 右侧内容 ===== */
 .hb-body {
-  padding: 48px clamp(24px, 4vw, 60px);
-  min-height: 600px;
+  min-height: 420px;
   background: var(--bg);
-  color: var(--ink);
-  max-width: 100%;
-  overflow-wrap: break-word;
-}
-.hb-body__loading {
-  text-align: center;
-  color: var(--ink-faint);
-  padding: 80px 0;
-  font-style: italic;
-}
-
-/* ===== Markdown 渲染元素 ===== */
-.hb__h1 {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 32px;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 16px;
-}
-.hb__h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 40px 0 16px;
-  padding: 8px 0;
-  letter-spacing: 0.1em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.hb__h2::before {
-  content: "";
-  display: inline-block;
-  width: 4px;
-  height: 20px;
-  background: var(--accent);
-  border-radius: 2px;
-}
-.hb__h2--src { color: #8eb4d9; }
-.hb__h2--think { color: var(--accent-2); }
-.hb__h2--core { color: var(--accent); }
-.hb__h2--note { color: var(--ink-faint); }
-.hb__h2--next { color: #b8a26b; }
-.hb__h3 {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--ink);
-  margin: 24px 0 12px;
-  letter-spacing: 0.05em;
-}
-.hb__h4 {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink-dim);
-  margin: 20px 0 8px;
-}
-.hb-body p {
-  font-size: 15px;
-  line-height: 1.9;
-  color: var(--ink-dim);
-  margin-bottom: 12px;
-}
-.hb-body strong {
-  color: var(--ink);
-  font-weight: 600;
-}
-.hb-body em {
-  color: var(--accent-2);
-  font-style: normal;
-}
-.hb-body a {
-  color: var(--accent);
-  text-decoration: underline;
-  text-decoration-color: var(--accent-deep);
-  text-underline-offset: 2px;
-}
-.hb-body a:hover { color: var(--accent-2); }
-.hb__ul {
-  list-style: none;
-  margin: 12px 0 24px;
-  padding-left: 0;
-}
-.hb__ul li {
-  position: relative;
-  padding: 6px 0 6px 24px;
-  font-size: 15px;
-  line-height: 1.9;
-  color: var(--ink-dim);
-}
-.hb__ul li::before {
-  content: "·";
-  position: absolute;
-  left: 4px;
-  top: 6px;
-  color: var(--accent);
-  font-size: 22px;
-  line-height: 1;
-}
-.hb__quote {
-  background: var(--bg-2);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 var(--r) var(--r) 0;
-  padding: 20px 24px;
-  margin: 24px 0;
-  font-style: italic;
-  position: relative;
-}
-.hb__quote p {
-  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: clamp(24px, 4vw, 44px);
   font-size: 16px;
   line-height: 1.9;
-  margin-bottom: 12px;
-}
-.hb__quote p:last-child { margin-bottom: 0; }
-.hb__quote strong { color: var(--accent-2); }
-.hb__code {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  background: var(--bg-3);
-  color: var(--accent-2);
-  padding: 2px 6px;
-  border-radius: 3px;
-}
-.hb__hr {
-  border: none;
-  border-top: 1px dashed var(--line);
-  margin: 32px 0;
-}
-
-/* ===== About 段 ===== */
-.hb-about {
-  max-width: 640px;
-  margin: 0 auto 32px;
-  text-align: center;
-  font-size: 15px;
-  line-height: 2;
   color: var(--ink-dim);
 }
-.hb-about em { color: var(--accent-2); }
+.hb-body h1 {
+  font-size: clamp(24px, 3vw, 32px);
+  color: var(--ink);
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.hb-body h2 { font-size: 21px; color: var(--ink); margin: 26px 0 12px; font-weight: 600; }
+.hb-body h3 { font-size: 18px; color: var(--ink); margin: 22px 0 10px; font-weight: 600; }
+.hb-body p { margin-bottom: 16px; }
+.hb-body blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 12px 20px;
+  margin: 20px 0;
+  background: var(--bg-2);
+  font-style: italic;
+  color: var(--ink);
+}
+.hb-body pre {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 16px;
+  overflow-x: auto;
+  font-size: 13px;
+  margin: 16px 0;
+}
+.hb-body code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--bg-2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--accent-deep);
+}
+.hb-body ul, .hb-body ol { margin: 0 0 16px 22px; }
+.hb-body li { margin-bottom: 8px; }
+.hb-body__loading {
+  text-align: center;
+  padding: 80px 0;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.hb-body__error { text-align: center; padding: 60px 0; color: var(--accent-deep); }
 
-/* ===== 响应式 ===== */
+.hb-about {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--ink-dim);
+  max-width: 680px;
+}
+
 @media (max-width: 900px) {
-  .hb-grid .container {
-    grid-template-columns: 1fr;
-  }
+  .hb-grid .container { grid-template-columns: 1fr; }
   .hb-list {
     position: static;
-    max-height: 240px;
-    border-right: none;
-    border-bottom: 1px solid var(--line);
-    display: flex;
+    max-height: 300px;
+    flex-direction: row;
     overflow-x: auto;
-    padding: 0;
+    padding-bottom: 8px;
   }
-  .hb-card {
-    flex: 0 0 200px;
-    border-left: none;
-    border-bottom: 3px solid transparent;
-  }
-  .hb-card--active { border-left-color: transparent; border-bottom-color: var(--accent); }
-  .hb-card__sum { display: none; }
-  .hb-card__size { display: none; }
-  .hb-body { padding: 32px 20px; }
+  .hb-card { min-width: 240px; }
 }
