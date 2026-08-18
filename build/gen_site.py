@@ -754,7 +754,7 @@ def page_blog_post(prefix, slug, lang):
         '</main>\n'
     ) % (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body, back, home)
     return (
-        head(title + " · " + content.SITE_NAME[CUR_LANG], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
+        head(title + " · " + content.SITE_NAME[lang], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
              jsonld_breadcrumb(prefix, "blog", title)) +
         nav("blog", prefix) +
         main_html +
