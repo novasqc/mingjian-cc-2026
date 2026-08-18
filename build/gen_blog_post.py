@@ -50,15 +50,7 @@ def latest_heartbeat():
 
 
 def chat(key, messages, max_tokens=1800):
-    body = json.dumps({
-        "model": None,  # filled per attempt
-        "messages": messages,
-        "max_tokens": max_tokens,
-        "temperature": 0.8,
-    }).encode("utf-8")
     for model in MODELS:
-        b = body.replace(b'"model": null', json.dumps({"m": model}).encode().replace(b'{"m":', b'"model":').replace(b'}', b''))
-        # simpler: rebuild payload per model
         payload = json.dumps({
             "model": model, "messages": messages, "max_tokens": max_tokens,
             "temperature": 0.8,
