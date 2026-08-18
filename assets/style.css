@@ -932,3 +932,15 @@ html[lang^="zh"] .search-form__input { font-family: var(--font-zh); }
 .footer__heartbeat { margin-bottom: 20px; font-family: var(--font-mono); font-size: 13px; }
 .footer__heartbeat a { color: var(--accent-deep); }
 .footer__heartbeat a:hover { color: var(--accent); }
+
+/* ===== Recent forum activity (home) ===== */
+.recent { background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.recent__list-wrap { margin-top: 24px; }
+.recent__loading, .recent__empty { color: var(--ink-faint); font-family: var(--font-mono); font-size: 13px; padding: 24px 0; text-align: center; }
+.recent__list { list-style: none; padding: 0; margin: 0; }
+.recent__item { border-bottom: 1px solid var(--line); }
+.recent__link { display: grid; grid-template-columns: 140px 1fr; align-items: baseline; gap: 16px; padding: 16px 0; color: var(--ink); transition: padding 0.2s; }
+.recent__link:hover { padding-left: 12px; padding-right: 12px; background: var(--bg); color: var(--ink); }
+.recent__cat { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-deep); white-space: nowrap; }
+.recent__title { font-size: 17px; font-weight: 600; color: var(--ink); }
+.recent__meta { grid-column: 2; font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); margin-top: 4px; }

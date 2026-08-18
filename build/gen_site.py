@@ -237,6 +237,13 @@ def page_index(d, prefix):
         '<a href="%s%s.html" class="entry"><p class="entry__no">%s</p><h3>%s</h3><p>%s</p>'
         '<p class="entry__more">%s</p></a>' % (prefix, href, no, t, desc, more)
         for no, t, desc, more, href in d["entries"])
+    recent_section = (
+        '<section class="recent"><div class="container">'
+        '<h2 class="section-title">' + {"en":"Latest from the Forum","zh":"最新论坛话题","es":"\u00daltimo del Foro","pt":"\u00daltimo do F\u00f3rum"}[CUR_LANG] + '</h2>'
+        '<p class="section-lede">' + {"en":"Recent threads from the community. Open one to join.","zh":"社区最近的话题。打开一个参与。","es":"Hilos recientes de la comunidad. Abre uno para unirte.","pt":"Fios recentes da comunidade. Abra um para participar."}[CUR_LANG] + '</p>'
+        '<div id="recent-list" class="recent__list-wrap"><p class="recent__loading">Loading\u2026</p></div>'
+        '</div></section>'
+    )
     ld = [jsonld_website(), jsonld_person(), jsonld_faq(d)]
     return (
         head(d["title"], d["desc"], "index.html", prefix, ld) +
@@ -266,11 +273,13 @@ def page_index(d, prefix):
         '  <section class="entries"><div class="container">'
         '<h2 class="section-title">%s</h2><div class="entries__grid">%s</div></div></section>\n'
         '  %s\n'
+        '  %s\n'
         '</main>\n' %
         (d["hero_eyebrow"], hero_zh, hero_en, d["hero_lede"], prefix, d["cta1"], prefix, d["cta2"],
          LOBBY_SVG, d["scroll"], d["mottos_title"], mottos,
          d["sources_title"], d["sources_lede"], sources, d["entries_title"], entries,
-         faq_section(d)) +
+         recent_section, faq_section(d)) +
+        '<script src="' + prefix + 'assets/recent.js"></script>\n' +
         footer(prefix))
 
 
