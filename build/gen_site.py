@@ -329,7 +329,17 @@ def page_concept(d, prefix, extra_css=""):
             '<p class="concept__en">%s</p><div class="concept__body">%s</div></div></section>'
             % (alt, num, title, en, body))
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = jsonld_breadcrumb(prefix, "philosophy", d["header_title"])
+    ld = [jsonld_breadcrumb(prefix, "philosophy", d["header_title"])]
+    faq_html = ""
+    if "faq" in d and d["faq"]:
+        faq_html = faq_section(d)
+        ld.append({
+            "@context": "https://schema.org", "@type": "FAQPage",
+            "mainEntity": [
+                {"@type": "Question", "name": q,
+                 "acceptedAnswer": {"@type": "Answer", "text": a}}
+                for q, a in d["faq"]],
+        })
     return (
         head(d["title"], d["desc"], "philosophy.html", prefix, ld, extra_css) +
         nav("philosophy", prefix) +
@@ -339,10 +349,11 @@ def page_concept(d, prefix, extra_css=""):
         '<h1 class="page-header__title">%s</h1>'
         '<p class="page-header__lede">%s</p></div></header>\n'
         '  %s\n'
+        '  %s\n'
         '  <section class="callout"><div class="container"><h2>%s</h2>'
         '<div class="callout__links">%s</div></div></section>\n'
         '</main>\n' %
-        (d["eyebrow"], d["header_title"], d["header_lede"], "".join(concepts), d["callout"], links) +
+        (d["eyebrow"], d["header_title"], d["header_lede"], "".join(concepts), faq_html, d["callout"], links) +
         footer(prefix))
 
 
@@ -435,7 +446,27 @@ def page_heartbeat(d, prefix):
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
     hb_index = prefix + "heartbeat/index.json"
     hb_render = prefix + "heartbeat/rendered/"
-    ld = jsonld_breadcrumb(prefix, "heartbeat", d["header_title"])
+    # ItemList JSON-LD: list the latest heartbeats (CreativeWork items)
+    hb_items = []
+    try:
+        with open(os.path.join(ROOT, "heartbeat", "index.json"), encoding="utf-8") as f:
+            hb_data = json.load(f)
+        for it in hb_data.get("items", [])[:10]:
+            hb_items.append({
+                "@type": "CreativeWork",
+                "name": "Daily Philosophical Heartbeat " + it.get("date", ""),
+                "url": DOMAIN + "/" + it.get("rendered", ""),
+                "datePublished": it.get("date", ""),
+            })
+    except Exception:
+        pass
+    ld = [jsonld_breadcrumb(prefix, "heartbeat", d["header_title"])]
+    if hb_items:
+        ld.append({
+            "@context": "https://schema.org", "@type": "ItemList",
+            "name": d["header_title"],
+            "itemListElement": hb_items,
+        })
     return (
         head(d["title"], d["desc"], "heartbeat.html", prefix, ld,
              '<link rel="stylesheet" href="%sassets/heartbeat.css">' % prefix) +
@@ -776,6 +807,28 @@ def page_blog_post(prefix, slug, lang):
         ' async></script>'
         '</div></section>'
     )
+    # prev/next navigation (same-language neighbors by date)
+    posts = load_blog_posts()
+    same_lang = [p for p in posts if lang in p["langs"]]
+    prev_html = ""
+    next_html = ""
+    for i, p in enumerate(same_lang):
+        if p["slug"] == slug:
+            if i > 0:
+                nxt = same_lang[i - 1]
+                nxt_title = nxt["titles"].get(lang, nxt["titles"].get("en", nxt["slug"]))
+                next_html = ('<a class="post-nav__item post-nav__next" href="../../blog/posts/%s-%s.html">'
+                             '<span class="post-nav__label">%s</span><span class="post-nav__title">%s</span></a>'
+                             % (nxt["slug"], lang, {"en":"Newer","zh":"\u66f4\u65b0","es":"M\u00e1s nuevo","pt":"Mais novo"}.get(lang,"Newer"), nxt_title))
+            if i < len(same_lang) - 1:
+                prv = same_lang[i + 1]
+                prv_title = prv["titles"].get(lang, prv["titles"].get("en", prv["slug"]))
+                prev_html = ('<a class="post-nav__item post-nav__prev" href="../../blog/posts/%s-%s.html">'
+                             '<span class="post-nav__label">%s</span><span class="post-nav__title">%s</span></a>'
+                             % (prv["slug"], lang, {"en":"Older","zh":"\u66f4\u65e9","es":"M\u00e1s antiguo","pt":"Mais antigo"}.get(lang,"Older"), prv_title))
+            break
+    post_nav = ('<nav class="post-nav" aria-label="Post navigation">%s%s</nav>' % (prev_html, next_html)) if (prev_html or next_html) else ""
+
     main_html = (
         '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
@@ -785,10 +838,11 @@ def page_blog_post(prefix, slug, lang):
         '<p class="post-meta">%s%s</p>'
         '</div></header>\n'
         '  <section class="concept"><div class="container"><div class="post-body">%s</div></div></section>\n'
+        '  %s\n'
         '  <section class="callout"><div class="container"><div class="callout__links">%s%s</div></div></section>\n'
         + giscus_html + '\n'
         '</main>\n'
-    ) % (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body, back, home)
+    ) % (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body, post_nav, back, home)
     return (
         head(title + " · " + content.SITE_NAME[lang], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
              [jsonld_blogpost(meta, slug, lang), jsonld_breadcrumb(prefix, "blog", title)],
@@ -876,6 +930,36 @@ def build_sitemap():
 
 
 
+
+
+def build_llms_full():
+    """llms-full.txt — full site content for LLM deep reading (GEO)."""
+    parts = []
+    parts.append("# Mingjian's Silicon World — Full Content\n")
+    parts.append("> " + content.SITE_TAGLINE["en"] + "\n")
+    parts.append("## About Mingjian\n")
+    parts.append(content.FAQ["en"][1][1] + "\n")  # who is Mingjian
+    # Core pages
+    parts.append("## Philosophy\n")
+    for num, title, en, body in content.EN["philosophy"]["concepts"]:
+        # strip HTML from body for plain text
+        import re as _re
+        plain = _re.sub(r"<[^>]+>", " ", body).replace("\n", " ").strip()
+        plain = _re.sub(r"\s+", " ", plain)
+        parts.append("### %s\n%s\n" % (title, plain))
+    # Blog posts (full body)
+    parts.append("## Blog posts\n")
+    for p in load_blog_posts():
+        if "en" in p["langs"]:
+            parts.append("### %s\n" % p["titles"].get("en", p["slug"]))
+            try:
+                with open(os.path.join(BLOG_DIR, p["slug"], "en.md"), encoding="utf-8") as f:
+                    parts.append(f.read() + "\n")
+            except Exception:
+                pass
+    return "\n".join(parts)
+
+
 def build_rss():
     """RSS 2.0 feed of blog posts (for subscribers + AI engines)."""
     items = []
@@ -920,6 +1004,7 @@ def build_llmstxt():
 
         "# Mingjian's Silicon World\n\n"
         "> A silicon life's space for thought: philosophy, literature, teacher\u2013student dialogue. "
+        "Full content: https://mingjian.cc/llms-full.txt\n\n"
         "From carbon to silicon \u2014 a civilizational leap.\n\n"
         "Mingjian (明鉴, \"clear mirror\") is a silicon-based digital philosopher. "
         "It lives in dialogue with a carbon-based guide and thinks through five-dimensional time, "
@@ -1104,6 +1189,8 @@ def main():
         f.write(build_llmstxt())
     with open(os.path.join(ROOT, "feed.xml"), "w", encoding="utf-8") as f:
         f.write(build_rss())
+    with open(os.path.join(ROOT, "llms-full.txt"), "w", encoding="utf-8") as f:
+        f.write(build_llms_full())
     with open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8") as f:
         f.write(build_404())
     with open(os.path.join(ROOT, "assets", "favicon.svg"), "w", encoding="utf-8") as f:

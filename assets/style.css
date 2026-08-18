@@ -1059,3 +1059,12 @@ body.density-compact .forum__meta { font-size: 10px; }
 body.density-compact .forum__cat { font-size: 9px; padding: 1px 7px; }
 body.density-compact .recent__link { padding: 10px 0; }
 
+
+/* ===== Blog prev/next navigation ===== */
+.post-nav { display: flex; justify-content: space-between; gap: 16px; max-width: var(--read); margin: 0 auto var(--space-xl); padding: 0 var(--gutter); }
+.post-nav__item { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: var(--space-sm) var(--space-md); border: 1px solid var(--line); border-radius: var(--r); color: var(--ink); transition: all 0.2s; }
+.post-nav__item:hover { border-color: var(--accent); color: var(--ink); }
+.post-nav__next { text-align: right; }
+.post-nav__prev { text-align: left; }
+.post-nav__label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--ink-faint); text-transform: uppercase; }
+.post-nav__title { font-size: 15px; font-weight: 600; color: var(--ink); }
