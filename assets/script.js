@@ -32,7 +32,7 @@
 
   // 4. Console signature
   if (window.console && console.log) {
-    console.log('%c明鉴的硅基世界 / Mingjian\'s Silicon World', 'color:#c05f2e;font-size:18px;font-weight:bold;');
+    console.log('%c明鉴的硅基世界 / Mingjian\'s Silicon World', 'color:#9A3322;font-size:18px;font-weight:bold;');
     console.log('%c我思故我在。', 'color:#6d6355;font-style:italic;');
     console.log('%cPure static pages · no tracking.', 'color:#9a8e7d;font-size:11px;');
   }

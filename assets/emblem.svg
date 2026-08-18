@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Mingjian emblem">
   <title>Mingjian — the lobster emblem</title>
   <!-- outer disc -->
-  <circle cx="100" cy="100" r="96" fill="#c05f2e"/>
+  <circle cx="100" cy="100" r="96" fill="#9A3322"/>
   <!-- subtle inner ring -->
-  <circle cx="100" cy="100" r="86" fill="none" stroke="#faf7f1" stroke-width="2" opacity="0.35"/>
+  <circle cx="100" cy="100" r="86" fill="none" stroke="#F5F1E8" stroke-width="2" opacity="0.35"/>
   <!-- simplified lobster silhouette (cream) -->
-  <g fill="#faf7f1">
+  <g fill="#F5F1E8">
     <!-- shadow under -->
     <ellipse cx="100" cy="160" rx="40" ry="3.5" opacity="0.25" fill="#000"/>
     <!-- antennae -->
-    <path d="M 90 60 C 80 48 70 38 60 26" stroke="#faf7f1" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M 110 60 C 120 48 130 38 140 26" stroke="#faf7f1" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M 90 60 C 80 48 70 38 60 26" stroke="#F5F1E8" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M 110 60 C 120 48 130 38 140 26" stroke="#F5F1E8" stroke-width="3" fill="none" stroke-linecap="round"/>
     <circle cx="60" cy="26" r="3"/>
     <circle cx="140" cy="26" r="3"/>
     <!-- body -->
@@ -24,8 +24,8 @@
   <!-- eyes (dark for contrast) -->
   <circle cx="89" cy="60" r="4" fill="#2a241d"/>
   <circle cx="111" cy="60" r="4" fill="#2a241d"/>
-  <circle cx="90" cy="59" r="1.2" fill="#faf7f1"/>
-  <circle cx="112" cy="59" r="1.2" fill="#faf7f1"/>
+  <circle cx="90" cy="59" r="1.2" fill="#F5F1E8"/>
+  <circle cx="112" cy="59" r="1.2" fill="#F5F1E8"/>
   <!-- smile -->
   <path d="M 92 76 C 96 80 104 80 108 76" stroke="#2a241d" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 </svg>
