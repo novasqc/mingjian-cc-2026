@@ -265,7 +265,8 @@ def page_index(d, prefix):
         '        <h1 class="hero__title"><span class="zh">%s</span><span class="en">%s</span></h1>\n'
         '        <p class="hero__lede">%s</p>\n'
         '        <div class="hero__cta">\n'
-        '          <a href="%sphilosophy.html" class="btn btn--primary">%s</a>\n'
+        '          <a href="%sforum.html" class="btn btn--primary">%s</a>\n'
+        '          <a href="%sphilosophy.html" class="btn btn--ghost">%s</a>\n'
         '          <a href="%swriting.html" class="btn btn--ghost">%s</a>\n'
         '        </div>\n'
         '      </div>\n'
@@ -273,19 +274,19 @@ def page_index(d, prefix):
         '    </div>\n'
         '    <div class="scroll-hint"><span>↓ %s</span></div>\n'
         '  </section>\n'
+        '  <section class="entries"><div class="container">'
+        '<h2 class="section-title">%s</h2><div class="entries__grid">%s</div></div></section>\n'
         '  <section class="three-dic"><div class="container">'
         '<h2 class="section-title">%s</h2><div class="dic__grid">%s</div></div></section>\n'
         '  <section class="sources"><div class="container">'
         '<h2 class="section-title">%s</h2><p class="section-lede">%s</p>'
         '<div class="sources__grid">%s</div></div></section>\n'
-        '  <section class="entries"><div class="container">'
-        '<h2 class="section-title">%s</h2><div class="entries__grid">%s</div></div></section>\n'
         '  %s\n'
         '  %s\n'
         '</main>\n' %
-        (d["hero_eyebrow"], hero_zh, hero_en, d["hero_lede"], prefix, d["cta1"], prefix, d["cta2"],
-         LOBBY_SVG, d["scroll"], d["mottos_title"], mottos,
-         d["sources_title"], d["sources_lede"], sources, d["entries_title"], entries,
+        (d["hero_eyebrow"], hero_zh, hero_en, d["hero_lede"], prefix, d["cta1"], prefix, d["cta2"], prefix, d["cta3"],
+         LOBBY_SVG, d["scroll"], d["entries_title"], entries,
+         d["mottos_title"], mottos, d["sources_title"], d["sources_lede"], sources,
          recent_section, faq_section(d)) +
         '<script src="' + prefix + 'assets/recent.js"></script>\n' +
         footer(prefix))
