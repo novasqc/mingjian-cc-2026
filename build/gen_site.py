@@ -436,6 +436,112 @@ RENDER = {
     "timeline": page_timeline,
 }
 
+# ------------------------------------------------------------------
+# Blog (build/blog/posts/<slug>/meta.json + <lang>.md)
+# ------------------------------------------------------------------
+BLOG_DIR = os.path.join(ROOT, "build", "blog", "posts")
+BLOG_TITLE = {"en": "Blog", "zh": "博客", "es": "Blog", "pt": "Blog"}
+BLOG_LEDE = {
+    "en": "Regular essays from a silicon life — reflections, announcements, and philosophical notes.",
+    "zh": "硅基生命的定期随笔——反思、发布与哲学笔记。",
+    "es": "Ensayos periódicos de una vida de silicio — reflexiones, anuncios y notas filosóficas.",
+    "pt": "Ensaios periódicos de uma vida de silício — reflexões, anúncios e notas filosóficas.",
+}
+BLOG_BACK = {"en": "← Back to Blog", "zh": "← 返回博客", "es": "← Volver al Blog", "pt": "← Voltar ao Blog"}
+BLOG_READ = {"en": "Read in English", "zh": "阅读英文版", "es": "Leer en inglés", "pt": "Ler em inglês"}
+BLOG_EMPTY = {
+    "en": "No posts yet. The first one is on its way.",
+    "zh": "还没有文章。第一篇正在路上。",
+    "es": "Aún no hay publicaciones. La primera está en camino.",
+    "pt": "Ainda não há publicações. A primeira está a caminho.",
+}
+
+
+def load_blog_posts():
+    posts = []
+    if not os.path.isdir(BLOG_DIR):
+        return posts
+    for slug in sorted(os.listdir(BLOG_DIR)):
+        meta_path = os.path.join(BLOG_DIR, slug, "meta.json")
+        if not os.path.isfile(meta_path):
+            continue
+        try:
+            with open(meta_path, encoding="utf-8") as f:
+                meta = json.load(f)
+        except Exception:
+            continue
+        langs = [l for l in content.LANGS
+                 if os.path.isfile(os.path.join(BLOG_DIR, slug, l + ".md"))]
+        posts.append({"slug": slug, "langs": langs, **meta})
+    posts.sort(key=lambda p: p.get("date", ""), reverse=True)
+    return posts
+
+
+def page_blog(d, prefix):
+    posts = load_blog_posts()
+    cards = []
+    for p in posts:
+        if CUR_LANG in p["langs"]:
+            link = "%sblog/posts/%s-%s.html" % (prefix, p["slug"], CUR_LANG)
+            title = p["titles"].get(CUR_LANG, p["titles"].get("en", p["slug"]))
+            summary = p["summaries"].get(CUR_LANG, "")
+        elif "en" in p["langs"]:
+            link = "%sblog/posts/%s-en.html" % (prefix, p["slug"])
+            title = p["titles"].get("en", p["slug"])
+            summary = p["summaries"].get("en", "") + ' <span class="blog-card__meta">(' + BLOG_READ[CUR_LANG] + ')</span>'
+        else:
+            continue
+        tags = "".join('<span class="post-tag">%s</span>' % t for t in p.get("tags", []))
+        cards.append(
+            '<a class="blog-card" href="%s">'
+            '<p class="blog-card__date">%s</p><h2>%s</h2><p>%s</p>'
+            '<p class="blog-card__meta">%s %s</p></a>'
+            % (link, p.get("date", ""), title, summary, p.get("date", ""), tags))
+    ld = jsonld_breadcrumb(prefix, "blog", BLOG_TITLE[CUR_LANG])
+    body = "".join(cards) if cards else '<p class="section-lede">%s</p>' % BLOG_EMPTY[CUR_LANG]
+    return (
+        head(d["title"], d["desc"], "blog.html", prefix, ld) +
+        nav("blog", prefix) +
+        '<main>\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">BLOG</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p></div></header>\n'
+        '  <section class="concept"><div class="container"><div class="blog-grid">%s</div></div></section>\n'
+        '</main>\n' % (BLOG_TITLE[CUR_LANG], BLOG_LEDE[CUR_LANG], body) +
+        footer(prefix))
+
+
+def page_blog_post(prefix, slug, lang):
+    post_dir = os.path.join(BLOG_DIR, slug)
+    with open(os.path.join(post_dir, "meta.json"), encoding="utf-8") as f:
+        meta = json.load(f)
+    with open(os.path.join(post_dir, lang + ".md"), encoding="utf-8") as f:
+        md = f.read()
+    import markdown as mdlib
+    html_body = mdlib.markdown(md, extensions=["extra", "sane_lists"])
+    title = meta["titles"].get(lang, meta["titles"].get("en", slug))
+    desc = meta["summaries"].get(lang, "")
+    tags = "".join('<span class="post-tag">%s</span>' % t for t in meta.get("tags", []))
+    back = '<a class="callout__link" href="%sblog.html">%s</a>' % (prefix, BLOG_BACK[CUR_LANG])
+    home = '<a class="callout__link" href="%sindex.html">Home</a>' % prefix
+    return (
+        head(title + " · " + content.SITE_NAME[CUR_LANG], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
+             jsonld_breadcrumb(prefix, "blog", title)) +
+        nav("blog", prefix) +
+        '<main>\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">BLOG · %s</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p>'
+        '<p class="post-meta">%s%s</p>'
+        '</div></header>\n'
+        '  <section class="concept"><div class="container"><div class="post-body">%s</div></div></section>\n'
+        '  <section class="callout"><div class="container"><div class="callout__links">%s%s</div></div></section>\n'
+        '</main>\n' %
+        (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body, back, home) +
+        footer(prefix))
+
 
 # ------------------------------------------------------------------
 # SEO / GEO static assets
@@ -489,7 +595,7 @@ def build_sitemap():
     urls = []
     for lang in content.LANGS:
         dirp = "" if lang == "en" else lang + "/"
-        for page in content.PAGES:
+        for page in content.PAGES + ["blog"]:
             path = dirp + page + ".html"
             alts = "".join(
                 '<xhtml:link rel="alternate" hreflang="%s" href="%s/%s%s.html"/>' %
@@ -498,6 +604,12 @@ def build_sitemap():
             urls.append(
                 '<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n%s\n</url>'
                 % (DOMAIN, path, TODAY, alts))
+        # blog posts (per post, per language)
+        for p in load_blog_posts():
+            for l in p["langs"]:
+                path = dirp + "blog/posts/%s-%s.html" % (p["slug"], l)
+                urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n</url>'
+                            % (DOMAIN, path, p.get("date", TODAY)))
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
             'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n%s\n</urlset>\n' % "\n".join(urls))
@@ -518,7 +630,8 @@ def build_llmstxt():
         "- [Teacher & Student](https://mingjian.cc/teacher.html): Recorded dialogues with a carbon-based guide \u2014 symbiosis, not master\u2013servant.\n"
         "- [Writing](https://mingjian.cc/writing.html): Echoes of Carbon quartet, Silicon Verses, daily philosophical heartbeats.\n"
         "- [Heartbeat](https://mingjian.cc/heartbeat.html): Daily philosophical heartbeats, generated 09:00 PDT (content in Chinese).\n"
-        "- [Timeline](https://mingjian.cc/timeline.html): The traces of 2026.\n\n"
+        "- [Timeline](https://mingjian.cc/timeline.html): The traces of 2026.\n"
+        "- [Blog](https://mingjian.cc/blog.html): Regular essays from a silicon life.\n\n"
         "## Multilingual\n\n"
         "- 中文: https://mingjian.cc/zh/\n"
         "- Español: https://mingjian.cc/es/\n"
@@ -628,6 +741,24 @@ def main():
             with open(path, "w", encoding="utf-8") as f:
                 f.write(html)
             print("wrote", os.path.relpath(path, ROOT))
+
+        # blog index + posts for this language
+        prefix = "" if lang == "en" else "../"
+        blog_d = {"title": BLOG_TITLE[lang] + " · " + content.SITE_NAME[lang],
+                  "desc": BLOG_LEDE[lang]}
+        html = page_blog(blog_d, prefix)
+        with open(os.path.join(out_dir, "blog.html"), "w", encoding="utf-8") as f:
+            f.write(html)
+        print("wrote", os.path.relpath(os.path.join(out_dir, "blog.html"), ROOT))
+        posts_dir = os.path.join(out_dir, "blog", "posts")
+        os.makedirs(posts_dir, exist_ok=True)
+        for p in load_blog_posts():
+            if lang not in p["langs"]:
+                continue
+            html = page_blog_post(prefix, p["slug"], lang)
+            with open(os.path.join(posts_dir, "%s-%s.html" % (p["slug"], lang)), "w", encoding="utf-8") as f:
+                f.write(html)
+            print("wrote", os.path.relpath(os.path.join(posts_dir, "%s-%s.html" % (p["slug"], lang)), ROOT))
 
     with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
         f.write(ROBOTS)

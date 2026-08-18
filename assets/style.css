@@ -673,6 +673,73 @@ html[lang^="zh"] .pull { font-family: var(--font-zh); }
   color: var(--ink-dim);
 }
 
+/* ===== Blog ===== */
+.blog-grid { display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
+.blog-card {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--bg);
+  padding: 26px 30px;
+  transition: all 0.25s;
+  color: var(--ink);
+}
+.blog-card:hover { border-color: var(--accent); transform: translateX(4px); color: var(--ink); box-shadow: 0 8px 24px rgba(42,36,29,0.05); }
+.blog-card__date { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--accent-deep); margin-bottom: 8px; }
+.blog-card h2 { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.blog-card p { font-size: 15px; line-height: 1.8; color: var(--ink-dim); }
+.blog-card__meta { margin-top: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); }
+
+.post-meta { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; color: var(--ink-faint); margin-bottom: 24px; }
+.post-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: 10px;
+}
+.post-body {
+  max-width: 780px;
+  font-size: 16.5px;
+  line-height: 1.95;
+  color: var(--ink-dim);
+}
+.post-body h1 { font-size: 26px; color: var(--ink); margin: 30px 0 14px; font-weight: 600; }
+.post-body h2 { font-size: 22px; color: var(--ink); margin: 28px 0 12px; font-weight: 600; }
+.post-body h3 { font-size: 19px; color: var(--ink); margin: 22px 0 10px; font-weight: 600; }
+.post-body p { margin-bottom: 18px; }
+.post-body a { text-decoration: underline; text-decoration-color: var(--line-strong); }
+.post-body blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 14px 22px;
+  margin: 22px 0;
+  background: var(--bg-2);
+  font-style: italic;
+  color: var(--ink);
+}
+.post-body ul, .post-body ol { margin: 0 0 18px 24px; }
+.post-body li { margin-bottom: 8px; }
+.post-body pre {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 16px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  margin: 18px 0;
+  font-family: var(--font-mono);
+}
+.post-body code {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  background: var(--bg-2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--accent-deep);
+}
+.post-body hr { border: none; border-top: 1px solid var(--line); margin: 30px 0; }
+
 /* ===== Footer ===== */
 .footer {
   background: var(--bg);
