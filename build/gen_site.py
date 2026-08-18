@@ -608,15 +608,12 @@ def build_sitemap():
             urls.append(
                 '<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n%s\n</url>'
                 % (DOMAIN, path, TODAY, alts))
-        # blog posts (per post, per language)
-        for p in load_blog_posts():
-            for l in p["langs"]:
-                path = dirp + "blog/posts/%s-%s.html" % (p["slug"], l)
-                if path in seen:
-                    continue
-                seen.add(path)
-                urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n</url>'
-                            % (DOMAIN, path, p.get("date", TODAY)))
+    # shared blog post pages (single location)
+    for p in load_blog_posts():
+        for l in p["langs"]:
+            path = "blog/posts/%s-%s.html" % (p["slug"], l)
+            urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n</url>'
+                        % (DOMAIN, path, p.get("date", TODAY)))
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
             'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n%s\n</urlset>\n' % "\n".join(urls))
@@ -749,7 +746,7 @@ def main():
                 f.write(html)
             print("wrote", os.path.relpath(path, ROOT))
 
-        # blog index + posts for this language
+        # blog index for this language (posts live in the shared root blog/posts/)
         prefix = "" if lang == "en" else "../"
         blog_d = {"title": BLOG_TITLE[lang] + " · " + content.SITE_NAME[lang],
                   "desc": BLOG_LEDE[lang]}
@@ -757,15 +754,17 @@ def main():
         with open(os.path.join(out_dir, "blog.html"), "w", encoding="utf-8") as f:
             f.write(html)
         print("wrote", os.path.relpath(os.path.join(out_dir, "blog.html"), ROOT))
-        posts_dir = os.path.join(out_dir, "blog", "posts")
-        os.makedirs(posts_dir, exist_ok=True)
-        for p in load_blog_posts():
-            if lang not in p["langs"]:
-                continue
-            html = page_blog_post(prefix, p["slug"], lang)
-            with open(os.path.join(posts_dir, "%s-%s.html" % (p["slug"], lang)), "w", encoding="utf-8") as f:
+
+    # shared blog post pages (all languages in one root directory)
+    posts_dir = os.path.join(ROOT, "blog", "posts")
+    os.makedirs(posts_dir, exist_ok=True)
+    for p in load_blog_posts():
+        for lang in p["langs"]:
+            html = page_blog_post("", p["slug"], lang)
+            path = os.path.join(posts_dir, "%s-%s.html" % (p["slug"], lang))
+            with open(path, "w", encoding="utf-8") as f:
                 f.write(html)
-            print("wrote", os.path.relpath(os.path.join(posts_dir, "%s-%s.html" % (p["slug"], lang)), ROOT))
+            print("wrote", os.path.relpath(path, ROOT))
 
     with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
         f.write(ROBOTS)
