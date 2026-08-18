@@ -449,8 +449,19 @@ def page_forum(d, prefix):
         "signin":    {"en": "Sign in with GitHub", "zh": "\u4f7f\u7528 GitHub \u767b\u5f55", "es": "Inicia sesi\u00f3n con GitHub", "pt": "Entre com GitHub"},
         "newthread": {"en": "Open a new thread", "zh": "\u53d1\u8d77\u65b0\u8bdd\u9898", "es": "Abrir un nuevo hilo", "pt": "Abrir um novo fio"},
     }
-    cats = content.FORUM_CATEGORIES[CUR_LANG]
-    chips = "".join('<button class="forum__chip" data-cat="%s">%s</button>' % (k, n) for k, n, _ in cats)
+    # GitHub default categories: Announcements, General, Ideas, Q&A, Polls, Show and tell
+    # Mapped to our site semantics: announcements, philosophy, teacher, phenomena, writing, free
+    # Use GitHub category names (Announcements, Ideas, Q&A, Polls, Show and tell, General)
+    # as both the data-cat and the chip label so they match the GitHub API directly.
+    gh_cats = [
+        ("Announcements",   "Announcements",   d.get("cat_announcements", {}).get(CUR_LANG, "Announcements")),
+        ("Ideas",           "Ideas",           d.get("cat_philosophy",    {}).get(CUR_LANG, "Ideas")),
+        ("Q&A",             "Q&A",             d.get("cat_teacher",       {}).get(CUR_LANG, "Q&A")),
+        ("Polls",           "Polls",           d.get("cat_phenomena",     {}).get(CUR_LANG, "Polls")),
+        ("Show and tell",   "Show and tell",   d.get("cat_writing",       {}).get(CUR_LANG, "Show and tell")),
+        ("General",         "General",         d.get("cat_free",          {}).get(CUR_LANG, "General")),
+    ]
+    chips = "".join('<button class="forum__chip" data-cat="%s">%s</button>' % (k, n) for k, n, _ in gh_cats)
     chips = '<button class="forum__chip forum__chip--active" data-cat="">%s</button>%s' % (forum_i18n["all"][CUR_LANG], chips)
     how = d["how"][CUR_LANG]
     callout = d["callout_labels"][CUR_LANG]
@@ -463,7 +474,7 @@ def page_forum(d, prefix):
         '<main id="main"><section class="hero"><div class="hero__bg"></div><div class="hero__inner"><div class="hero__left"><p class="hero__eyebrow">%s</p><h1 class="hero__title">%s</h1><p class="hero__lede">%s</p><div class="hero__cta">%s</div></div><div class="hero__right">%s</div></div></section><section class="forum-meta"><div class="container"><h2 class="section-title">%s</h2>%s</div></section><section class="forum-section"><div class="container"><div class="forum__bar"><div class="forum__filter" role="tablist">%s</div><a class="forum__new" href="https://github.com/%s/discussions/new" rel="noopener" target="_blank">%s</a></div><div class="forum__list" id="forum-list"><p class="forum__loading">%s</p></div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
             d["hero_eyebrow"][CUR_LANG], d["hero_title"][CUR_LANG], d["hero_lede"][CUR_LANG], hero_cta, LOBBY_SVG,
             d["how_eyebrow"][CUR_LANG], how, chips, content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], forum_i18n["loading"][CUR_LANG], d["callout"], links) +
-        '<script>window.FORUM = %r;</script>' % {"repo": content.FORUM_REPO, "categories": [{"key": k, "name": n} for k, n, _ in cats], "i18n": forum_i18n} +
+        '<script>window.FORUM = %r;</script>' % {"repo": content.FORUM_REPO, "categories": [{"key": k, "name": n} for k, n, _ in gh_cats], "i18n": forum_i18n} +
         '<script src="%sassets/forum.js"></script>' % prefix +
         footer(prefix))
 
