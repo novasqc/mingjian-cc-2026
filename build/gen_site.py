@@ -593,10 +593,14 @@ Sitemap: https://mingjian.cc/sitemap.xml
 
 def build_sitemap():
     urls = []
+    seen = set()
     for lang in content.LANGS:
         dirp = "" if lang == "en" else lang + "/"
         for page in content.PAGES + ["blog"]:
             path = dirp + page + ".html"
+            if path in seen:
+                continue
+            seen.add(path)
             alts = "".join(
                 '<xhtml:link rel="alternate" hreflang="%s" href="%s/%s%s.html"/>' %
                 (content.META[c]["html_lang"], DOMAIN, ("" if c == "en" else c + "/"), page)
@@ -608,6 +612,9 @@ def build_sitemap():
         for p in load_blog_posts():
             for l in p["langs"]:
                 path = dirp + "blog/posts/%s-%s.html" % (p["slug"], l)
+                if path in seen:
+                    continue
+                seen.add(path)
                 urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n</url>'
                             % (DOMAIN, path, p.get("date", TODAY)))
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
