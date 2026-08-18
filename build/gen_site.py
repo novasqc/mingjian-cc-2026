@@ -467,6 +467,7 @@ def page_forum(d, prefix):
         "empty":     {"en": "No threads yet \u2014 be the first to open one.", "zh": "\u8fd8\u6ca1\u6709\u8bdd\u9898\u2014\u505a\u7b2c\u4e00\u4e2a\u53d1\u8d77\u8005\u5427\u3002", "es": "A\u00fan no hay hilos \u2014 s\u00e9 el primero en abrir uno.", "pt": "Ainda n\u00e3o h\u00e1 fios \u2014 seja o primeiro a abrir um."},
         "signin":    {"en": "Sign in with GitHub", "zh": "\u4f7f\u7528 GitHub \u767b\u5f55", "es": "Inicia sesi\u00f3n con GitHub", "pt": "Entre com GitHub"},
         "newthread": {"en": "Open a new thread", "zh": "\u53d1\u8d77\u65b0\u8bdd\u9898", "es": "Abrir un nuevo hilo", "pt": "Abrir um novo fio"},
+        "more":      {"en": "Load more", "zh": "\u52a0\u8f7d\u66f4\u591a", "es": "Cargar m\u00e1s", "pt": "Carregar mais"},
     }
     # GitHub default categories: Announcements, General, Ideas, Q&A, Polls, Show and tell
     # Mapped to our site semantics: announcements, philosophy, teacher, phenomena, writing, free

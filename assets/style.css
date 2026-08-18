@@ -944,3 +944,12 @@ html[lang^="zh"] .search-form__input { font-family: var(--font-zh); }
 .recent__cat { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-deep); white-space: nowrap; }
 .recent__title { font-size: 17px; font-weight: 600; color: var(--ink); }
 .recent__meta { grid-column: 2; font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); margin-top: 4px; }
+
+/* ===== Forum "Load more" ===== */
+.forum__more {
+  display: block; margin: 24px auto 0; padding: 10px 28px;
+  background: transparent; border: 1px solid var(--line-strong); color: var(--ink-dim);
+  border-radius: 999px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em;
+  cursor: pointer; transition: all 0.2s;
+}
+.forum__more:hover { color: var(--accent-deep); border-color: var(--accent); }

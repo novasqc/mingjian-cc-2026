@@ -1,11 +1,10 @@
 /* ============================================================
-   Forum — client-side GitHub Discussions GraphQL fetch
+   Forum — client-side GitHub Discussions fetch (REST, anonymous)
    Reads config from window.FORUM (set by forum.html):
      FORUM.repo      -> "owner/repo"
      FORUM.categories -> [{key, name}, ...]
      FORUM.i18n      -> UI strings for the current language
-   Renders threads into #forum-list with category filtering.
-   Anonymous reads (GitHub GraphQL public API, unauthenticated).
+   Renders threads into #forum-list with category filtering + pagination.
    ============================================================ */
 (function () {
   'use strict';
@@ -13,19 +12,17 @@
   var cfg = window.FORUM || {};
   var REPO = cfg.repo || 'novasqc/mingjian-cc-2026';
   var I18N = cfg.i18n || {};
-  var CATS = cfg.categories || [];
   var listEl = document.getElementById('forum-list');
   if (!listEl) return;
 
-  // GitHub GraphQL endpoint
-  var endpoint = 'https://api.github.com/graphql';
-  // Anonymous GraphQL: shares a small per-IP budget; cache aggressively.
   var cacheKey = 'mingjian_forum_' + REPO.replace('/', '_');
   var CACHE_TTL_MS = 90 * 1000; // 90 seconds
+  var PER_PAGE = 20;
+  var currentPage = 0;
+  var allItems = [];
 
-  function t(key, vars) {
+  function t(key) {
     var s = I18N[key] || key;
-    if (vars) for (var k in vars) s = s.replace('{' + k + '}', vars[k]);
     return s;
   }
 
@@ -48,7 +45,6 @@
 
   function shortBody(body) {
     if (!body) return '';
-    // strip markdown image/link, keep text
     var text = body
       .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
       .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
@@ -58,43 +54,68 @@
     return text.length > 180 ? text.slice(0, 180) + '\u2026' : text;
   }
 
-  function renderList(items) {
-    if (!items || !items.length) {
-      listEl.innerHTML = '<p class="forum__empty">' + escapeHtml(t('empty')) + '</p>';
+  function itemHtml(it) {
+    var cat = (it.category && it.category.name) || '';
+    var replies = (it.comments && it.comments.totalCount) || 0;
+    var label = (it.labels && it.labels.nodes) || [];
+    var labelHtml = label.slice(0, 3).map(function (l) {
+      return '<span class="forum__label">' + escapeHtml(l.name) + '</span>';
+    }).join('');
+    return (
+      '<li class="forum__thread" data-cat="' + escapeHtml(cat) + '">' +
+      '<a class="forum__link" href="' + escapeHtml(it.url) + '" target="_blank" rel="noopener">' +
+        '<div class="forum__head">' +
+          '<span class="forum__cat">' + escapeHtml(cat) + '</span>' +
+          '<h3 class="forum__title">' + escapeHtml(it.title) + '</h3>' +
+        '</div>' +
+        '<p class="forum__excerpt">' + escapeHtml(shortBody(it.body)) + '</p>' +
+        '<div class="forum__meta">' +
+          '<span class="forum__author">' + escapeHtml((it.author && it.author.login) || t('anon')) + '</span>' +
+          '<span class="forum__dot">·</span>' +
+          '<span class="forum__time" title="' + escapeHtml(it.updatedAt) + '">' +
+            t('last') + ' ' + relTime(it.updatedAt) +
+          '</span>' +
+          '<span class="forum__dot">·</span>' +
+          '<span class="forum__replies">' + replies + ' ' + (replies === 1 ? t('reply') : t('replies')) + '</span>' +
+          (labelHtml ? '<span class="forum__labels">' + labelHtml + '</span>' : '') +
+        '</div>' +
+      '</a></li>'
+    );
+  }
+
+  function renderList(items, append) {
+    if (!items.length) {
+      if (!append) listEl.innerHTML = '<p class="forum__empty">' + escapeHtml(t('empty')) + '</p>';
+      else removeLoadMore();
       return;
     }
-    var html = '<ul class="forum__threads" role="list">';
-    items.forEach(function (it) {
-      var cat = (it.category && it.category.name) || '';
-      var catKey = (it.category && it.category.key) || '';
-      var replies = (it.comments && it.comments.totalCount) || 0;
-      var label = (it.labels && it.labels.nodes) || [];
-      var labelHtml = label.slice(0, 3).map(function (l) {
-        return '<span class="forum__label">' + escapeHtml(l.name) + '</span>';
-      }).join('');
-      html +=
-        '<li class="forum__thread" data-cat="' + escapeHtml(catKey) + '">' +
-        '<a class="forum__link" href="' + escapeHtml(it.url) + '" target="_blank" rel="noopener">' +
-          '<div class="forum__head">' +
-            '<span class="forum__cat">' + escapeHtml(cat) + '</span>' +
-            '<h3 class="forum__title">' + escapeHtml(it.title) + '</h3>' +
-          '</div>' +
-          '<p class="forum__excerpt">' + escapeHtml(shortBody(it.body)) + '</p>' +
-          '<div class="forum__meta">' +
-            '<span class="forum__author">' + escapeHtml((it.author && it.author.login) || t('anon')) + '</span>' +
-            '<span class="forum__dot">·</span>' +
-            '<span class="forum__time" title="' + escapeHtml(it.updatedAt) + '">' +
-              t('last') + ' ' + relTime(it.updatedAt) +
-            '</span>' +
-            '<span class="forum__dot">·</span>' +
-            '<span class="forum__replies">' + replies + ' ' + (replies === 1 ? t('reply') : t('replies')) + '</span>' +
-            (labelHtml ? '<span class="forum__labels">' + labelHtml + '</span>' : '') +
-          '</div>' +
-        '</a></li>';
-    });
-    html += '</ul>';
-    listEl.innerHTML = html;
+    var html = '<ul class="forum__threads" role="list">' + items.map(itemHtml).join('') + '</ul>';
+    if (append) {
+      // append after removing the old load-more button
+      removeLoadMore();
+      listEl.insertAdjacentHTML('beforeend', html);
+    } else {
+      listEl.innerHTML = html;
+    }
     applyFilter();
+  }
+
+  function removeLoadMore() {
+    var btn = document.getElementById('forum-more');
+    if (btn) btn.remove();
+  }
+
+  function addLoadMore() {
+    removeLoadMore();
+    var btn = document.createElement('button');
+    btn.id = 'forum-more';
+    btn.className = 'forum__more';
+    btn.type = 'button';
+    btn.textContent = t('more') || 'Load more';
+    btn.addEventListener('click', function () {
+      fetchPage(currentPage + 1);
+    });
+    listEl.appendChild(btn);
   }
 
   function applyFilter() {
@@ -118,8 +139,46 @@
     });
   }
 
-  // Try to fetch from the public GraphQL API; fall back to cached data, then to
-  // REST /discussions list (also anonymous).
+  function fetchPage(page) {
+    if (page === 1) {
+      listEl.innerHTML = '<p class="forum__loading">' + escapeHtml(t('loading')) + '</p>';
+    }
+    var url = 'https://api.github.com/repos/' + REPO + '/discussions?per_page=' + PER_PAGE + '&page=' + page + '&state=all';
+    fetch(url, { headers: { 'Accept': 'application/vnd.github+json' } })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var items = (data || []).map(function (d) {
+          return {
+            title: d.title,
+            url: d.html_url,
+            body: d.body,
+            updatedAt: d.updated_at,
+            author: { login: d.user && d.user.login },
+            category: { name: d.category && d.category.name },
+            comments: { totalCount: d.comments || 0 },
+            labels: { nodes: (d.labels || []).map(function (l) { return { name: l.name }; }) },
+          };
+        });
+        currentPage = page;
+        allItems = (page === 1) ? items : allItems.concat(items);
+        renderList(items, page > 1);
+        bindChips();
+        // show load-more if this page was full
+        if (items.length === PER_PAGE) {
+          addLoadMore();
+        } else {
+          removeLoadMore();
+        }
+        if (page === 1) {
+          try { sessionStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), d: items })); } catch (e) {}
+        }
+      })
+      .catch(function () {
+        listEl.innerHTML = '<p class="forum__error">' +
+          escapeHtml(t('error')) + '<a href="https://github.com/' + REPO + '/discussions" target="_blank" rel="noopener">GitHub</a>.</p>';
+      });
+  }
+
   function fetchDiscussions() {
     var cached = null;
     try {
@@ -131,42 +190,12 @@
     } catch (e) {}
 
     if (cached) {
-      renderList(cached);
+      allItems = cached;
+      renderList(cached, false);
       bindChips();
       return;
     }
-
-    // REST: list discussions (anonymous, 60 req/hr/IP)
-    var url = 'https://api.github.com/repos/' + REPO + '/discussions?per_page=30&state=all';
-    fetch(url, { headers: { 'Accept': 'application/vnd.github+json' } })
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(function (data) {
-        var items = (data || []).map(function (d) {
-          return {
-            title: d.title,
-            url: d.html_url,
-            body: d.body,
-            updatedAt: d.updated_at,
-            author: { login: d.user && d.user.login },
-            category: {
-              key: ((d.category && d.category.name) || '').toLowerCase().replace(/[^a-z]/g, ''),
-              name: d.category && d.category.name,
-            },
-            comments: { totalCount: d.comments || 0 },
-            labels: { nodes: (d.labels || []).map(function (l) { return { name: l.name }; }) },
-          };
-        });
-        try { sessionStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), d: items })); } catch (e) {}
-        renderList(items);
-        bindChips();
-      })
-      .catch(function (err) {
-        listEl.innerHTML = '<p class="forum__error">' +
-          escapeHtml(t('error')) + '<a href="https://github.com/' + REPO + '/discussions" target="_blank" rel="noopener">GitHub</a>.</p>';
-      });
+    fetchPage(1);
   }
 
   if (document.readyState === 'loading') {
