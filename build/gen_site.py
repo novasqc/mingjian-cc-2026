@@ -71,6 +71,13 @@ def lang_links(prefix):
     return "".join(out)
 
 
+def href(prefix, h):
+    """Resolve an internal link; leave external (http/https) links untouched."""
+    if h.startswith(("http://", "https://")):
+        return h
+    return prefix + h
+
+
 def abs_url(prefix, path):
     return "%s/%s%s" % (DOMAIN, prefix, path)
 
@@ -200,7 +207,7 @@ def footer(prefix):
         "es": [("blog.html", "Blog"), ("teacher.html", "Maestro y Disc\u00edpulo"), ("about.html", "Acerca"), ("library.html", "Biblioteca")],
         "pt": [("blog.html", "Blog"), ("teacher.html", "Mestre e Disc\u00edpulo"), ("about.html", "Sobre"), ("library.html", "Biblioteca")],
     }
-    nav_links = "".join('<a href="%s%s" class="footer__link">%s</a>' % (prefix, h, t) for h, t in footer_nav[CUR_LANG])
+    nav_links = "".join('<a href="%s" class="footer__link">%s</a>' % (href(prefix, h), t) for h, t in footer_nav[CUR_LANG])
     heartbeat_label = {"en": "Read today's Heartbeat \u2192", "zh": "\u9605\u8bfb\u4eca\u65e5\u5fc3\u8df3 \u2192", "es": "Lee el Latido de hoy \u2192", "pt": "Leia a Batida de hoje \u2192"}[CUR_LANG]
     return (
         '<footer class="footer">\n'
@@ -234,7 +241,7 @@ def page_index(d, prefix):
     sources = "".join('<div class="source"><p class="source__cn">%s</p><p class="source__en">%s</p></div>'
                       % (c, e) for c, e in d["sources"])
     entries = "".join(
-        '<a href="%s%s.html" class="entry"><p class="entry__no">%s</p><h3>%s</h3><p>%s</p>'
+        '<a href="%s%s" class="entry"><p class="entry__no">%s</p><h3>%s</h3><p>%s</p>'
         '<p class="entry__more">%s</p></a>' % (prefix, href, no, t, desc, more)
         for no, t, desc, more, href in d["entries"])
     recent_section = (
@@ -292,7 +299,7 @@ def page_concept(d, prefix, extra_css=""):
             '<p class="concept__num">%s</p><h2 class="concept__title">%s</h2>'
             '<p class="concept__en">%s</p><div class="concept__body">%s</div></div></section>'
             % (alt, num, title, en, body))
-    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
     ld = jsonld_breadcrumb(prefix, "philosophy", d["header_title"])
     return (
         head(d["title"], d["desc"], "philosophy.html", prefix, ld, extra_css) +
@@ -322,7 +329,7 @@ def page_teacher(d, prefix):
             '<div class="dialogue__entry %s"><p class="dialogue__who">%s</p>'
             '<div class="dialogue__text">%s</div>%s</div>' % (entry_cls, who, text, date_html))
     learn = "".join('<li><strong>%s</strong> %s</li>' % (t, b) for t, b in d["learn_items"])
-    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
     ld = jsonld_breadcrumb(prefix, "teacher", d["header_title"])
     return (
         head(d["title"], d["desc"], "teacher.html", prefix, ld) +
@@ -365,7 +372,7 @@ def page_writing(d, prefix):
             '<p class="work__subtitle">%s</p>'
             '<div class="work__body">%s</div>'
             '<p class="work__meta">%s</p></article>' % (wtype, title, subtitle, body, meta))
-    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
     ld = jsonld_breadcrumb(prefix, "writing", d["header_title"])
     return (
         head(d["title"], d["desc"], "writing.html", prefix, ld) +
@@ -396,7 +403,7 @@ HB_I18N = {
 
 
 def page_heartbeat(d, prefix):
-    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
     hb_index = prefix + "heartbeat/index.json"
     hb_render = prefix + "heartbeat/rendered/"
     ld = jsonld_breadcrumb(prefix, "heartbeat", d["header_title"])
@@ -435,7 +442,7 @@ def page_timeline(d, prefix):
         entries.append(
             '<div class="tl-entry"><p class="tl-date">%s</p><h3 class="tl-title">%s</h3>'
             '<p class="tl-body">%s</p>%s</div>' % (date, title, body, tag_html))
-    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"])
+    links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
     ld = jsonld_breadcrumb(prefix, "timeline", d["header_title"])
     return (
         head(d["title"], d["desc"], "timeline.html", prefix, ld) +
@@ -485,7 +492,7 @@ def page_forum(d, prefix):
     chips = '<button class="forum__chip forum__chip--active" data-cat="">%s</button>%s' % (forum_i18n["all"][CUR_LANG], chips)
     how = d["how"][CUR_LANG]
     callout = d["callout_labels"][CUR_LANG]
-    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in callout)
+    links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in callout)
     ld = [jsonld_website(), {"@context": "https://schema.org", "@type": "DiscussionForumPosting", "name": d["title"][CUR_LANG], "headline": d["hero_title"][CUR_LANG], "description": d["desc"][CUR_LANG], "url": abs_url(prefix, "forum.html"), "author": {"@type": "Person", "name": "Mingjian"}}]
     hero_cta = '<a href="https://github.com/%s/discussions/new" class="btn btn--primary" rel="noopener">%s</a><a href="https://github.com/%s/discussions" class="btn btn--ghost" rel="noopener" target="_blank">%s</a>' % (content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], content.FORUM_REPO, forum_i18n["open"][CUR_LANG])
     return (
@@ -503,7 +510,7 @@ def page_library(d, prefix):
     canon_rows = "".join('<tr><th>%s</th><td><strong>%s</strong></td><td>%s</td></tr>' % (t, x, f) for t, x, f in d["canon"][CUR_LANG])
     gloss = "".join('<dt>%s</dt><dd>%s</dd>' % (t, df) for t, df in d["glossary"][CUR_LANG])
     paths = "".join('<div class="lib__path"><h3>%s</h3><ol>%s</ol></div>' % (t, "".join('<li>%s</li>' % i for i in it)) for t, it in d["reading"][CUR_LANG])
-    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"][CUR_LANG])
+    links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"][CUR_LANG])
     ld = jsonld_breadcrumb(prefix, "library", d["header_title"][CUR_LANG])
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "library.html", prefix, ld) +
@@ -520,7 +527,7 @@ def page_about(d, prefix):
     principles = "".join('<div class="about__principle"><h3>%s</h3><p>%s</p></div>' % (t, b) for t, b in d["principles"][CUR_LANG])
     steps = "".join('<div class="about__step"><h3>%s</h3><p>%s</p></div>' % (t, b) for t, b in d["contribute"][CUR_LANG])
     stack = d["stack"][CUR_LANG]
-    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"][CUR_LANG])
+    links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"][CUR_LANG])
     ld = jsonld_breadcrumb(prefix, "about", d["header_title"][CUR_LANG])
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "about.html", prefix, ld) +
@@ -1004,7 +1011,7 @@ def main():
     os.makedirs(posts_dir, exist_ok=True)
     for p in load_blog_posts():
         for lang in p["langs"]:
-            html = page_blog_post("", p["slug"], lang)
+            html = page_blog_post("../../", p["slug"], lang)
             path = os.path.join(posts_dir, "%s-%s.html" % (p["slug"], lang))
             with open(path, "w", encoding="utf-8") as f:
                 f.write(html)
