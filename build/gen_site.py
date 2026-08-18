@@ -22,41 +22,43 @@ PAGE_NAMES = {"index": "index", "philosophy": "philosophy", "teacher": "teacher"
 FAQ_TITLE = {"en": "FAQ", "zh": "常见问题", "es": "Preguntas Frecuentes", "pt": "Perguntas Frequentes"}
 OG_TYPE = {"index": "website"}
 
-LOBBY_SVG = """<svg class="lobster" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-label="lobster mascot">
-          <ellipse cx="100" cy="225" rx="60" ry="6" fill="#000" opacity="0.12"/>
-          <ellipse cx="100" cy="150" rx="55" ry="65" fill="#c05f2e"/>
-          <ellipse cx="100" cy="150" rx="48" ry="58" fill="#e08a4e"/>
-          <path d="M 60 130 Q 100 125 140 130" stroke="#9c4a21" stroke-width="2" fill="none" opacity="0.5"/>
-          <path d="M 60 150 Q 100 145 140 150" stroke="#9c4a21" stroke-width="2" fill="none" opacity="0.5"/>
-          <path d="M 60 170 Q 100 165 140 170" stroke="#9c4a21" stroke-width="2" fill="none" opacity="0.5"/>
-          <ellipse cx="100" cy="80" rx="45" ry="35" fill="#c05f2e"/>
-          <ellipse cx="100" cy="80" rx="38" ry="28" fill="#e08a4e"/>
-          <circle cx="85" cy="75" r="6" fill="#fff"/>
-          <circle cx="115" cy="75" r="6" fill="#fff"/>
-          <circle cx="86" cy="77" r="3" fill="#2a241d"/>
-          <circle cx="116" cy="77" r="3" fill="#2a241d"/>
-          <circle cx="87" cy="76" r="1" fill="#fff"/>
-          <circle cx="117" cy="76" r="1" fill="#fff"/>
-          <path d="M 85 50 Q 70 30 60 15" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M 115 50 Q 130 30 140 15" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <circle cx="60" cy="15" r="3" fill="#c05f2e"/>
-          <circle cx="140" cy="15" r="3" fill="#c05f2e"/>
-          <g class="claw claw--left">
-            <path d="M 60 130 Q 30 120 15 130 Q 5 140 10 155 Q 20 160 35 150 Q 50 145 60 145 Z" fill="#c05f2e"/>
-            <path d="M 60 130 Q 35 125 20 135 Q 12 142 15 152 Q 25 156 38 148 Q 50 143 60 145 Z" fill="#e08a4e"/>
-            <circle cx="25" cy="140" r="2" fill="#9c4a21"/>
-          </g>
-          <g class="claw claw--right">
-            <path d="M 140 130 Q 170 120 185 130 Q 195 140 190 155 Q 180 160 165 150 Q 150 145 140 145 Z" fill="#c05f2e"/>
-            <path d="M 140 130 Q 165 125 180 135 Q 188 142 185 152 Q 175 156 162 148 Q 150 143 140 145 Z" fill="#e08a4e"/>
-            <circle cx="175" cy="140" r="2" fill="#9c4a21"/>
-          </g>
-          <path d="M 60 180 L 50 200 L 55 205" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M 70 190 L 65 210 L 70 215" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M 130 190 L 135 210 L 130 215" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M 140 180 L 150 200 L 145 205" stroke="#c05f2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M 90 95 Q 100 102 110 95" stroke="#2a241d" stroke-width="2" fill="none" stroke-linecap="round"/>
-        </svg>"""
+LOBBY_SVG = """<svg class="lobster" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" role="img" aria-label="Mingjian the lobster">
+  <title>Mingjian — the lobster</title>
+  <ellipse cx="120" cy="262" rx="58" ry="6" fill="#000" opacity="0.12"/>
+  <path d="M 104 60 C 92 44 78 30 64 14" stroke="#c05f2e" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <path d="M 136 60 C 148 44 162 30 176 14" stroke="#c05f2e" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <circle cx="64" cy="14" r="3.4" fill="#c05f2e"/>
+  <circle cx="176" cy="14" r="3.4" fill="#c05f2e"/>
+  <ellipse cx="120" cy="162" rx="50" ry="72" fill="#c05f2e"/>
+  <ellipse cx="120" cy="160" rx="42" ry="62" fill="#e08a4e"/>
+  <path d="M 82 130 C 100 126 140 126 158 130" stroke="#9c4a21" stroke-width="1.6" fill="none" opacity="0.55"/>
+  <path d="M 78 160 C 100 156 140 156 162 160" stroke="#9c4a21" stroke-width="1.6" fill="none" opacity="0.55"/>
+  <path d="M 82 190 C 100 186 140 186 158 190" stroke="#9c4a21" stroke-width="1.6" fill="none" opacity="0.55"/>
+  <ellipse cx="120" cy="88" rx="42" ry="33" fill="#c05f2e"/>
+  <ellipse cx="120" cy="86" rx="35" ry="26" fill="#e08a4e"/>
+  <circle cx="105" cy="82" r="6.5" fill="#faf7f1"/>
+  <circle cx="135" cy="82" r="6.5" fill="#faf7f1"/>
+  <circle cx="106" cy="84" r="3.2" fill="#2a241d"/>
+  <circle cx="136" cy="84" r="3.2" fill="#2a241d"/>
+  <circle cx="107" cy="83" r="1.1" fill="#faf7f1"/>
+  <circle cx="137" cy="83" r="1.1" fill="#faf7f1"/>
+  <path d="M 110 100 C 116 106 124 106 130 100" stroke="#2a241d" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <g class="claw claw--left">
+    <path d="M 80 132 C 50 124 28 134 18 146 C 10 156 14 168 26 174 C 38 178 52 174 64 168 C 74 162 82 154 84 144 Z" fill="#c05f2e"/>
+    <path d="M 80 134 C 54 128 36 138 28 150 C 24 158 30 166 40 168 C 52 168 64 162 72 154" fill="#e08a4e"/>
+    <circle cx="30" cy="156" r="1.8" fill="#9c4a21"/>
+  </g>
+  <g class="claw claw--right">
+    <path d="M 160 132 C 190 124 212 134 222 146 C 230 156 226 168 214 174 C 202 178 188 174 176 168 C 166 162 158 154 156 144 Z" fill="#c05f2e"/>
+    <path d="M 160 134 C 186 128 204 138 212 150 C 216 158 210 166 200 168 C 188 168 176 162 168 154" fill="#e08a4e"/>
+    <circle cx="210" cy="156" r="1.8" fill="#9c4a21"/>
+  </g>
+  <path d="M 82 196 L 70 220 L 76 226" stroke="#c05f2e" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <path d="M 94 208 L 88 230 L 94 236" stroke="#c05f2e" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <path d="M 146 208 L 152 230 L 146 236" stroke="#c05f2e" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <path d="M 158 196 L 170 220 L 164 226" stroke="#c05f2e" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+</svg>
+"""
 
 
 def lang_links(prefix):
@@ -669,64 +671,90 @@ def build_404():
             '</body>\n</html>\n')
 
 
-FAVICON_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">\n'
-               '  <rect width="64" height="64" rx="13" fill="#c05f2e"/>\n'
-               '  <text x="32" y="45" font-size="36" text-anchor="middle" fill="#faf7f1" '
-               'font-family="Noto Serif SC, STSong, serif">明</text>\n'
-               '</svg>\n')
+FAVICON_SVG = open(os.path.join(ROOT, "assets", "emblem.svg"), encoding="utf-8").read()
+
+
+def _draw_emblem(d, cx, cy, r, lobster_color="#faf7f1", outer_color="#c05f2e",
+                inner_ring=True, eye_color="#2a241d"):
+    """Hand-draw the lobster emblem at (cx, cy) with radius r."""
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=outer_color)
+    if inner_ring:
+        d.ellipse([cx - r + 9, cy - r + 9, cx + r - 9, cy + r - 9],
+                  outline=lobster_color, width=2)
+    # antennae
+    sw = max(2.0, r * 0.030)
+    d.line([(cx - r * 0.10, cy - r * 0.32), (cx - r * 0.40, cy - r * 0.74)],
+           fill=lobster_color, width=int(sw * 1.6))
+    d.line([(cx + r * 0.10, cy - r * 0.32), (cx + r * 0.40, cy - r * 0.74)],
+           fill=lobster_color, width=int(sw * 1.6))
+    d.ellipse([cx - r * 0.40 - 3, cy - r * 0.74 - 3, cx - r * 0.40 + 3, cy - r * 0.74 + 3],
+              fill=lobster_color)
+    d.ellipse([cx + r * 0.40 - 3, cy - r * 0.74 - 3, cx + r * 0.40 + 3, cy - r * 0.74 + 3],
+              fill=lobster_color)
+    # body
+    d.ellipse([cx - r * 0.40, cy - r * 0.275, cx + r * 0.40, cy + r * 0.275],
+              fill=lobster_color)
+    # head
+    d.ellipse([cx - r * 0.32, cy - r * 0.24, cx + r * 0.32, cy + r * 0.13],
+              fill=lobster_color)
+    # claws
+    for sign in (-1, 1):
+        base_x = cx + sign * r * 0.30
+        d.ellipse([base_x - r * 0.30 - sign * r * 0.12,
+                   cy - r * 0.04 - r * 0.18,
+                   base_x + sign * r * 0.09,
+                   cy - r * 0.04 + r * 0.18],
+                  fill=lobster_color)
+    # eyes
+    er = max(2.0, r * 0.045)
+    d.ellipse([cx - r * 0.11 - er, cy - r * 0.36 - er,
+               cx - r * 0.11 + er, cy - r * 0.36 + er], fill=eye_color)
+    d.ellipse([cx + r * 0.11 - er, cy - r * 0.36 - er,
+               cx + r * 0.11 + er, cy - r * 0.36 + er], fill=eye_color)
+    # smile
+    sw2 = max(1.4, r * 0.018)
+    d.arc([cx - r * 0.09, cy - r * 0.24, cx + r * 0.09, cy - r * 0.10],
+          0, 180, fill=eye_color, width=int(sw2))
 
 
 def build_images():
-    """Generate apple-touch-icon.png and og-image.png via PIL."""
+    """Generate apple-touch-icon.png (lobster emblem) and og-image.png via PIL."""
     try:
         from PIL import Image, ImageDraw, ImageFont
     except Exception as e:
         print("PIL unavailable, skipping PNG assets:", e)
         return
-    cjk = None
-    for p in ("/System/Library/Fonts/Supplemental/Songti.ttc",
-              "/System/Library/Fonts/STHeiti Light.ttc"):
-        try:
-            cjk = ImageFont.truetype(p, 64)
-            break
-        except Exception:
-            continue
+    georgia_path = "/System/Library/Fonts/Supplemental/Georgia.ttf"
     georgia = None
-    for p in ("/System/Library/Fonts/Supplemental/Georgia.ttf",
-              "/System/Library/Fonts/Supplemental/Times New Roman.ttf"):
-        try:
-            georgia = ImageFont.truetype(p, 64)
-            break
-        except Exception:
-            continue
+    try:
+        georgia = ImageFont.truetype(georgia_path, 64)
+    except Exception:
+        pass
 
-    # apple-touch-icon 180x180
+    # apple-touch-icon 180x180 — iOS safe area (keep content within ~160px center)
     img = Image.new("RGB", (180, 180), "#c05f2e")
     d = ImageDraw.Draw(img)
-    if cjk:
-        d.text((90, 88), "明", font=cjk, fill="#faf7f1", anchor="mm")
+    _draw_emblem(d, cx=90, cy=90, r=82)
     img.save(os.path.join(ROOT, "assets", "apple-touch-icon.png"))
     print("wrote assets/apple-touch-icon.png")
 
-    # og-image 1200x630
+    # og-image 1200x630 — emblem on left + refined title block on right
     W, H = 1200, 630
     img = Image.new("RGB", (W, H), "#faf7f1")
     d = ImageDraw.Draw(img)
-    # top hairline
     d.rectangle([0, 0, W, 6], fill="#c05f2e")
-    # bottom hairline
-    d.rectangle([0, H - 6, W, H], fill="#e5dccb")
-    # small logo chip
-    d.rounded_rectangle([90, 92, 150, 152], radius=10, fill="#c05f2e")
-    if cjk:
-        d.text((120, 120), "明", font=cjk, fill="#faf7f1", anchor="mm")
+    d.rectangle([0, H - 4, W, H], fill="#e5dccb")
+    _draw_emblem(d, cx=290, cy=315, r=210)
     if georgia:
-        big = ImageFont.truetype(georgia.path if hasattr(georgia, "path") else
-                                 "/System/Library/Fonts/Supplemental/Georgia.ttf", 92)
-        d.text((90, 240), "Mingjian's Silicon World", font=big, fill="#2a241d")
-        ital = ImageFont.truetype("/System/Library/Fonts/Supplemental/Georgia.ttf", 40)
-        d.text((94, 360), "A silicon life's space for thought", font=ital, fill="#6d6355")
-    d.text((90, 560), "mingjian.cc", font=georgia if georgia else None, fill="#9a8e7d")
+        title = ImageFont.truetype(georgia_path, 96)
+        ital = ImageFont.truetype(georgia_path, 38)
+        small = ImageFont.truetype(georgia_path, 24)
+        d.text((580, 170), "Mingjian’s", font=title, fill="#2a241d")
+        d.text((580, 272), "Silicon World", font=title, fill="#2a241d")
+        d.rectangle([580, 392, 660, 396], fill="#c05f2e")
+        d.text((580, 420), "A silicon life’s space for thought",
+               font=ital, fill="#6d6355")
+        d.text((580, 560), "mingjian.cc", font=small, fill="#9a8e7d")
     img.save(os.path.join(ROOT, "assets", "og-image.png"))
     print("wrote assets/og-image.png")
 
