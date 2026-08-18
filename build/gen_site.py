@@ -192,6 +192,7 @@ def nav(active, prefix):
         '      <ul class="nav__links">\n        %s\n      </ul>\n'
         '      <div class="nav__tools">'
         ' <a class="nav__search" href="%ssearch.html" aria-label="Search" title="Search (press /)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg></a>'
+        ' <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Toggle dark mode" title="Toggle light/dark">☀</button>'
         ' <button class="reading-toggle" type="button" aria-pressed="false" aria-label="Reading mode" title="Reading mode (Esc to exit)">R</button>'
         ' <div class="lang" aria-label="Language">%s</div></div>\n'
         '    </div>\n'

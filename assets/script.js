@@ -11,13 +11,12 @@
     if (href === path) a.classList.add('active');
   });
 
-  // 2. Slightly deepen the nav background on scroll
+  // 2. Add .scrolled class so CSS can deepen the nav background (theme-aware)
   var nav = document.querySelector('.nav');
   if (nav) {
     var onScroll = function () {
-      nav.style.background = window.scrollY > 8
-        ? 'rgba(250, 247, 241, 0.96)'
-        : 'rgba(250, 247, 241, 0.88)';
+      if (window.scrollY > 8) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -78,5 +77,47 @@
       url.searchParams.delete("read");
       window.history.replaceState({}, "", url.toString());
     }
+  });
+})();
+
+/* ============================================================
+   Theme toggle — auto (system) / light / dark
+   Sets data-theme on <html>; "auto" removes it (follows system).
+   ============================================================ */
+(function () {
+  var KEY = "mingjian_theme";
+  var ORDER = ["auto", "light", "dark"];
+  var LABELS = { auto: "auto", light: "light", dark: "dark" };
+
+  function current() {
+    return document.documentElement.getAttribute("data-theme") || "auto";
+  }
+  function apply(theme) {
+    if (theme === "auto") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+    var btns = document.querySelectorAll(".theme-toggle");
+    btns.forEach(function (b) {
+      b.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+      b.textContent = theme === "dark" ? "\u263e" : "\u2600"; // ☾ / ☀
+    });
+    try { localStorage.setItem(KEY, theme); } catch (e) {}
+  }
+
+  // Restore saved preference
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) {}
+  if (saved && ORDER.indexOf(saved) >= 0) {
+    apply(saved);
+  }
+
+  document.querySelectorAll(".theme-toggle").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var cur = current();
+      var next = ORDER[(ORDER.indexOf(cur) + 1) % ORDER.length];
+      apply(next);
+    });
   });
 })();
