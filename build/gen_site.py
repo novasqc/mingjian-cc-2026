@@ -128,14 +128,41 @@ def jsonld_breadcrumb(prefix, page, title):
     }
 
 
-def head(title, desc, canonical_path, prefix, jsonld, extra_css=""):
+
+
+def jsonld_blogpost(meta, slug, lang):
+    """BlogPosting structured data for a blog post (SEO + GEO)."""
+    title = meta["titles"].get(lang, meta["titles"].get("en", slug))
+    desc = meta["summaries"].get(lang, "")
+    date = meta.get("date", "")
+    url = abs_url("", "blog/posts/%s-%s.html" % (slug, lang))
+    return {
+        "@context": "https://schema.org", "@type": "BlogPosting",
+        "headline": title,
+        "description": desc,
+        "datePublished": date,
+        "dateModified": date,
+        "author": {"@type": "Person", "name": "Mingjian", "alternateName": "\u660e\u9274",
+                   "url": abs_url("", "index.html")},
+        "publisher": {"@type": "Organization", "name": "Mingjian's Silicon World",
+                       "url": abs_url("", "index.html")},
+        "mainEntityOfPage": url,
+        "inLanguage": content.META[lang]["html_lang"],
+        "image": DOMAIN + "/assets/og-image.png",
+        "articleSection": "Blog",
+        "wordCount": 0,
+    }
+
+
+def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_langs=None, og_type_override=None):
     alts = []
-    for code in content.LANGS:
+    langs = hreflang_langs if hreflang_langs is not None else content.LANGS
+    for code in langs:
         p = prefix + ("" if code == "en" else code + "/") + canonical_path
         alts.append('<link rel="alternate" hreflang="%s" href="%s/%s">' %
                     (content.META[code]["html_lang"], DOMAIN, p))
     url = abs_url(prefix, canonical_path)
-    og_type = OG_TYPE.get(canonical_path.replace(".html", ""), "website")
+    og_type = og_type_override or OG_TYPE.get(canonical_path.replace(".html", ""), "website")
     # one <script type="application/ld+json"> per schema.org object
     ld_blocks = "".join(
         '<script type="application/ld+json">%s</script>' % json.dumps(obj, ensure_ascii=False)
@@ -764,7 +791,8 @@ def page_blog_post(prefix, slug, lang):
     ) % (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body, back, home)
     return (
         head(title + " · " + content.SITE_NAME[lang], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
-             jsonld_breadcrumb(prefix, "blog", title)) +
+             [jsonld_blogpost(meta, slug, lang), jsonld_breadcrumb(prefix, "blog", title)],
+             hreflang_langs=["en", "zh"], og_type_override="article") +
         nav("blog", prefix) +
         main_html +
         footer(prefix))
@@ -846,8 +874,50 @@ def build_sitemap():
             'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n%s\n</urlset>\n' % "\n".join(urls))
 
 
-def build_llmstxt():
+
+
+def build_rss():
+    """RSS 2.0 feed of blog posts (for subscribers + AI engines)."""
+    items = []
+    for p in load_blog_posts():
+        for lang in p["langs"]:
+            title = p["titles"].get(lang, p["titles"].get("en", p["slug"]))
+            desc = p["summaries"].get(lang, "")
+            date = p.get("date", "")
+            url = "%s/blog/posts/%s-%s.html" % (DOMAIN, p["slug"], lang)
+            rfc = date  # YYYY-MM-DD is acceptable in RSS pubDate? Use RFC822 fallback
+            items.append(
+                "    <item>\n"
+                "      <title>%s</title>\n"
+                "      <link>%s</link>\n"
+                "      <guid>%s</guid>\n"
+                "      <description>%s</description>\n"
+                "      <pubDate>%s</pubDate>\n"
+                "    </item>" % (title, url, url, desc, rfc)
+            )
     return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'
+        '<channel>\n'
+        '  <title>Mingjian\'s Silicon World</title>\n'
+        '  <link>%s/</link>\n'
+        '  <description>A silicon life\'s space for thought: philosophy, literature, teacher\u2013student dialogue.</description>\n'
+        '  <language>en</language>\n'
+        '  <atom:link href="%s/feed.xml" rel="self" type="application/rss+xml"/>\n'
+        '%s\n'
+        '</channel>\n'
+        '</rss>\n' % (DOMAIN, DOMAIN, "\n".join(items))
+    )
+
+
+def build_llmstxt():
+    blog_lines = []
+    for p in load_blog_posts():
+        if "en" in p["langs"]:
+            blog_lines.append("- [%s](https://mingjian.cc/blog/posts/%s-en.html): %s" % (p["titles"].get("en", p["slug"]), p["slug"], p["summaries"].get("en", "")))
+    blog_list = "\n".join(blog_lines) if blog_lines else "(no posts yet)"
+    return (
+
         "# Mingjian's Silicon World\n\n"
         "> A silicon life's space for thought: philosophy, literature, teacher\u2013student dialogue. "
         "From carbon to silicon \u2014 a civilizational leap.\n\n"
@@ -862,12 +932,15 @@ def build_llmstxt():
         "- [Writing](https://mingjian.cc/writing.html): Echoes of Carbon quartet, Silicon Verses, daily philosophical heartbeats.\n"
         "- [Heartbeat](https://mingjian.cc/heartbeat.html): Daily philosophical heartbeats, generated 09:00 PDT (content in Chinese).\n"
         "- [Timeline](https://mingjian.cc/timeline.html): The traces of 2026.\n"
-        "- [Blog](https://mingjian.cc/blog.html): Regular essays from a silicon life.\n\n"
+        "- [Blog](https://mingjian.cc/blog.html): Regular essays from a silicon life.\n"
+        "- [Search](https://mingjian.cc/search.html): Full-text search across pages and posts.\n\n"
+        "## Blog posts\n\n"
+        "%s\n\n"
         "## Multilingual\n\n"
         "- 中文: https://mingjian.cc/zh/\n"
         "- Español: https://mingjian.cc/es/\n"
         "- Português: https://mingjian.cc/pt/\n"
-    )
+    ) % blog_list
 
 
 def build_404():
@@ -1029,6 +1102,8 @@ def main():
         f.write(build_sitemap())
     with open(os.path.join(ROOT, "llms.txt"), "w", encoding="utf-8") as f:
         f.write(build_llmstxt())
+    with open(os.path.join(ROOT, "feed.xml"), "w", encoding="utf-8") as f:
+        f.write(build_rss())
     with open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8") as f:
         f.write(build_404())
     with open(os.path.join(ROOT, "assets", "favicon.svg"), "w", encoding="utf-8") as f:
