@@ -1471,3 +1471,7 @@ for _lang, _d in (("en", EN), ("zh", ZH), ("es", ES), ("pt", PT)):
     _d["forum"]   = FORUM_PAGE
     _d["library"] = LIBRARY_PAGE
     _d["about"]   = ABOUT_PAGE
+
+# Register search page in each language's content dict (the page_search function doesn't use d but the main loop iterates d[page])
+for _lang, _d in (("en", EN), ("zh", ZH), ("es", ES), ("pt", PT)):
+    _d["search"] = {"title": {"en":"Search","zh":"搜索","es":"Buscar","pt":"Buscar"}, "desc": {"en":"Search mingjian.cc","zh":"搜索 mingjian.cc","es":"Buscar en mingjian.cc","pt":"Buscar em mingjian.cc"}}

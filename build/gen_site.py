@@ -160,7 +160,7 @@ def head(title, desc, canonical_path, prefix, jsonld, extra_css=""):
         '  <link rel="stylesheet" href="%sassets/style.css">\n'
         '  %s\n'
         '  %s\n'
-        '</head>\n<body>\n' %
+        '</head>\n<body>\n<a class="skip-link" href="#main">Skip to content</a>\n' %
         (content.META[CUR_LANG]["html_lang"], title, desc, url,
          "\n  ".join(alts), prefix, prefix, og_type, content.SITE_NAME[CUR_LANG],
          content.OG_LOCALE[CUR_LANG], title, desc, url, DOMAIN, title, desc, DOMAIN,
@@ -170,6 +170,8 @@ def head(title, desc, canonical_path, prefix, jsonld, extra_css=""):
 def nav(active, prefix):
     nav_items = []
     for i, page in enumerate(content.PAGES):
+        if page == "search":
+            continue
         cls = ' class="active"' if page == active else ""
         nav_items.append('<li><a href="%s%s.html"%s>%s</a></li>' %
                          (prefix, page, cls, content.NAV[CUR_LANG][i]))
@@ -181,10 +183,13 @@ def nav(active, prefix):
         '    </a>\n'
         '    <div class="nav__right">\n'
         '      <ul class="nav__links">\n        %s\n      </ul>\n'
-        '      <div class="lang" aria-label="Language">%s</div>\n'
+        '      <div class="nav__tools">'
+        ' <a class="nav__search" href="%ssearch.html" aria-label="Search" title="Search (press /)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg></a>'
+        ' <button class="reading-toggle" type="button" aria-pressed="false" aria-label="Reading mode" title="Reading mode (Esc to exit)">R</button>'
+        ' <div class="lang" aria-label="Language">%s</div></div>\n'
         '    </div>\n'
         '  </div>\n'
-        '</nav>\n' % (prefix, "\n        ".join(nav_items), lang_links(prefix)))
+        '</nav>\n' % (prefix, "\n        ".join(nav_items), prefix, lang_links(prefix)))
 
 
 def footer(prefix):
@@ -226,7 +231,7 @@ def page_index(d, prefix):
     return (
         head(d["title"], d["desc"], "index.html", prefix, ld) +
         nav("index", prefix) +
-        '<main>\n'
+        '<main id="main">\n'
         '  <section class="hero">\n'
         '    <div class="hero__bg"></div>\n'
         '    <div class="hero__inner">\n'
@@ -273,7 +278,7 @@ def page_concept(d, prefix, extra_css=""):
     return (
         head(d["title"], d["desc"], "philosophy.html", prefix, ld, extra_css) +
         nav("philosophy", prefix) +
-        '<main>\n'
+        '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
         '<p class="page-header__eyebrow">%s</p>'
         '<h1 class="page-header__title">%s</h1>'
@@ -303,7 +308,7 @@ def page_teacher(d, prefix):
     return (
         head(d["title"], d["desc"], "teacher.html", prefix, ld) +
         nav("teacher", prefix) +
-        '<main>\n'
+        '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
         '<p class="page-header__eyebrow">%s</p>'
         '<h1 class="page-header__title">%s</h1>'
@@ -346,7 +351,7 @@ def page_writing(d, prefix):
     return (
         head(d["title"], d["desc"], "writing.html", prefix, ld) +
         nav("writing", prefix) +
-        '<main>\n'
+        '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
         '<p class="page-header__eyebrow">%s</p>'
         '<h1 class="page-header__title">%s</h1>'
@@ -380,7 +385,7 @@ def page_heartbeat(d, prefix):
         head(d["title"], d["desc"], "heartbeat.html", prefix, ld,
              '<link rel="stylesheet" href="%sassets/heartbeat.css">' % prefix) +
         nav("heartbeat", prefix) +
-        '<main>\n'
+        '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
         '<p class="page-header__eyebrow">%s</p>'
         '<h1 class="page-header__title">%s</h1>'
@@ -416,7 +421,7 @@ def page_timeline(d, prefix):
     return (
         head(d["title"], d["desc"], "timeline.html", prefix, ld) +
         nav("timeline", prefix) +
-        '<main>\n'
+        '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
         '<p class="page-header__eyebrow">%s</p>'
         '<h1 class="page-header__title">%s</h1>'
@@ -455,7 +460,7 @@ def page_forum(d, prefix):
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "forum.html", prefix, ld) +
         nav("forum", prefix) +
-        '<main><section class="hero"><div class="hero__bg"></div><div class="hero__inner"><div class="hero__left"><p class="hero__eyebrow">%s</p><h1 class="hero__title">%s</h1><p class="hero__lede">%s</p><div class="hero__cta">%s</div></div><div class="hero__right">%s</div></div></section><section class="forum-meta"><div class="container"><h2 class="section-title">%s</h2>%s</div></section><section class="forum-section"><div class="container"><div class="forum__bar"><div class="forum__filter" role="tablist">%s</div><a class="forum__new" href="https://github.com/%s/discussions/new" rel="noopener" target="_blank">%s</a></div><div class="forum__list" id="forum-list"><p class="forum__loading">%s</p></div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
+        '<main id="main"><section class="hero"><div class="hero__bg"></div><div class="hero__inner"><div class="hero__left"><p class="hero__eyebrow">%s</p><h1 class="hero__title">%s</h1><p class="hero__lede">%s</p><div class="hero__cta">%s</div></div><div class="hero__right">%s</div></div></section><section class="forum-meta"><div class="container"><h2 class="section-title">%s</h2>%s</div></section><section class="forum-section"><div class="container"><div class="forum__bar"><div class="forum__filter" role="tablist">%s</div><a class="forum__new" href="https://github.com/%s/discussions/new" rel="noopener" target="_blank">%s</a></div><div class="forum__list" id="forum-list"><p class="forum__loading">%s</p></div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
             d["hero_eyebrow"][CUR_LANG], d["hero_title"][CUR_LANG], d["hero_lede"][CUR_LANG], hero_cta, LOBBY_SVG,
             d["how_eyebrow"][CUR_LANG], how, chips, content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], forum_i18n["loading"][CUR_LANG], d["callout"], links) +
         '<script>window.FORUM = %r;</script>' % {"repo": content.FORUM_REPO, "categories": [{"key": k, "name": n} for k, n, _ in cats], "i18n": forum_i18n} +
@@ -472,7 +477,7 @@ def page_library(d, prefix):
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "library.html", prefix, ld) +
         nav("library", prefix) +
-        '<main><header class="page-header"><div class="container"><p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1><p class="page-header__lede">%s</p></div></header><section class="concept"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><table class="lib__canon"><tbody>%s</tbody></table></div></section><section class="concept concept--alt"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><dl class="lib__glossary">%s</dl></div></section><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="lib__paths">%s</div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
+        '<main id="main"><header class="page-header"><div class="container"><p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1><p class="page-header__lede">%s</p></div></header><section class="concept"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><table class="lib__canon"><tbody>%s</tbody></table></div></section><section class="concept concept--alt"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><dl class="lib__glossary">%s</dl></div></section><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="lib__paths">%s</div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
             d["eyebrow"][CUR_LANG], d["header_title"][CUR_LANG], d["header_lede"][CUR_LANG],
             d["canon_title"][CUR_LANG], d["canon_lede"][CUR_LANG], canon_rows,
             d["glossary_title"][CUR_LANG], d["glossary_lede"][CUR_LANG], gloss,
@@ -489,11 +494,93 @@ def page_about(d, prefix):
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "about.html", prefix, ld) +
         nav("about", prefix) +
-        '<main><header class="page-header"><div class="container"><p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1><p class="page-header__lede">%s</p></div></header><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="about__grid">%s</div></div></section><section class="concept concept--alt"><div class="container"><h2 class="section-title">%s</h2><div class="about__stack">%s</div></div></section><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="about__grid">%s</div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
+        '<main id="main"><header class="page-header"><div class="container"><p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1><p class="page-header__lede">%s</p></div></header><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="about__grid">%s</div></div></section><section class="concept concept--alt"><div class="container"><h2 class="section-title">%s</h2><div class="about__stack">%s</div></div></section><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="about__grid">%s</div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
             d["eyebrow"][CUR_LANG], d["header_title"][CUR_LANG], d["header_lede"][CUR_LANG],
             d["principles_title"][CUR_LANG], principles,
             d["stack_title"][CUR_LANG], stack,
             d["contribute_title"][CUR_LANG], steps, d["callout"], links) +
+        footer(prefix))
+
+
+
+def page_search(d, prefix):
+    """Search results page (works without JS via GET form, enhanced with JS)."""
+    # Build a local search index from the site's content
+    import json as _json
+    index = []
+    # Index all main pages
+    for page in content.PAGES:
+        if page in d:
+            dd = d[page]
+            index.append({
+                "id": page,
+                "title": dd.get("header_title", dd.get("hero_title", page.title())),
+                "desc":  dd.get("desc", dd.get("lede", dd.get("header_lede", ""))),
+                "url":   prefix + page + ".html",
+                "type":  "page",
+            })
+    # Index the forum page (special structure)
+    if "forum" in d:
+        index.append({
+            "id": "forum",
+            "title": d["forum"].get("hero_title", "Forum"),
+            "desc":  d["forum"].get("desc", ""),
+            "url":   prefix + "forum.html",
+            "type":  "page",
+        })
+    # Index blog posts
+    for p in load_blog_posts():
+        if CUR_LANG in p["langs"]:
+            index.append({
+                "id": "blog-" + p["slug"],
+                "title": p["titles"].get(CUR_LANG, p["slug"]),
+                "desc":  p["summaries"].get(CUR_LANG, ""),
+                "url":   prefix + "blog/posts/" + p["slug"] + "-" + CUR_LANG + ".html",
+                "type":  "blog",
+            })
+    index_json = _json.dumps(index, ensure_ascii=False)
+    i18n = {
+        "title":       {"en": "Search", "zh": "搜索", "es": "Buscar", "pt": "Buscar"},
+        "placeholder": {"en": "Search thoughts, names, topics…",
+                         "zh": "搜索思想、人名、话题…",
+                         "es": "Buscar pensamientos, nombres, temas…",
+                         "pt": "Buscar pensamentos, nomes, temas…"},
+        "empty":       {"en": "No results for «\u00a0\u00a0». Try a different word, or browse the forum.",
+                         "zh": "没有匹配「\u00a0\u00a0」的结果。换个词，或去论坛看看。",
+                         "es": "Sin resultados para «\u00a0\u00a0». Prueba otra palabra o visita el foro.",
+                         "pt": "Sem resultados para ««». Tente outra palavra ou visite o fórum."},
+        "hint":        {"en": "Tip: press / anywhere to search.",
+                         "zh": "提示：在任何页面按 / 即可搜索。",
+                         "es": "Pista: pulsa / en cualquier página para buscar.",
+                         "pt": "Dica: prima / em qualquer página para pesquisar."},
+        "all_results": {"en": "All results", "zh": "全部结果", "es": "Todos los resultados", "pt": "Todos os resultados"},
+    }
+    ld = {"@context": "https://schema.org", "@type": "WebSite", "potentialAction": {
+        "@type": "SearchAction", "target": abs_url(prefix, "search.html?q={search_term_string}"),
+        "query-input": "required name=search_term_string"}}
+    return (
+        head(d["title"][CUR_LANG] if "title" in d else i18n["title"][CUR_LANG],
+             d.get("desc", "Search mingjian.cc") if "desc" in d else "",
+             "search.html", prefix, ld) +
+        nav("search", prefix) +
+        '<main id="main"><section class="search-hero"><div class="container">'
+        '<h1 class="search-hero__title">' + i18n["title"][CUR_LANG] + '</h1>'
+        '<form class="search-form" role="search" method="get" action="' + prefix + 'search.html" data-search-form>'
+        '<label class="search-form__label" for="q">Q</label>'
+        '<input class="search-form__input" type="search" id="q" name="q" autocomplete="off" autofocus'
+        ' placeholder="' + i18n["placeholder"][CUR_LANG] + '" data-search-input>'
+        '</form>'
+        '<p class="search-form__hint">' + i18n["hint"][CUR_LANG] + '</p>'
+        '</div></section>'
+        '<section class="search-results"><div class="container">'
+        '<p class="search-results__count" id="search-count" role="status" aria-live="polite"></p>'
+        '<ul class="search-results__list" id="search-list" role="list"></ul>'
+        '<p class="search-results__empty" id="search-empty" hidden>' + i18n["empty"][CUR_LANG] + '</p>'
+        '</div></section>'
+        '</main>' +
+        '<script type="application/json" id="search-index">' + index_json + '</script>' +
+        '<script>window.SEARCH_I18N = ' + _json.dumps(i18n, ensure_ascii=False) + ';</script>' +
+        '<script src="' + prefix + 'assets/search.js"></script>' +
         footer(prefix))
 
 
@@ -506,6 +593,7 @@ RENDER = {
     "heartbeat": page_heartbeat,
     "writing": page_writing,
     "timeline": page_timeline,
+    "search": page_search,
 }
 
 # teacher and about are accessible via footer/secondary links
@@ -578,7 +666,7 @@ def page_blog(d, prefix):
     return (
         head(d["title"], d["desc"], "blog.html", prefix, ld) +
         nav("blog", prefix) +
-        '<main>\n'
+        '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
         '<p class="page-header__eyebrow">BLOG</p>'
         '<h1 class="page-header__title">%s</h1>'
@@ -605,7 +693,7 @@ def page_blog_post(prefix, slug, lang):
         head(title + " · " + content.SITE_NAME[CUR_LANG], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
              jsonld_breadcrumb(prefix, "blog", title)) +
         nav("blog", prefix) +
-        '<main>\n'
+        '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
         '<p class="page-header__eyebrow">BLOG · %s</p>'
         '<h1 class="page-header__title">%s</h1>'
@@ -840,7 +928,7 @@ def main():
         d = ALL[lang]
         out_dir = os.path.join(ROOT, content.META[lang]["dir"])
         os.makedirs(out_dir, exist_ok=True)
-        for page in content.PAGES + (["about"] if lang == "en" else ["about"]):
+        for page in (content.PAGES + ["search"]):
             prefix = "" if lang == "en" else "../"
             html = RENDER[page](d[page], prefix)
             path = os.path.join(out_dir, page + ".html")

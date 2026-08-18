@@ -37,3 +37,46 @@
     console.log('%cPure static pages · no tracking.', 'color:#9a8e7d;font-size:11px;');
   }
 })();
+
+
+/* ============================================================
+   Reading mode (LW ?hide-nav-bars pattern) — toggle via ?read=1
+   ============================================================ */
+(function () {
+  var KEY = "mingjian_read_mode";
+  function apply(on) {
+    document.body.classList.toggle("reading-mode", on);
+    var btn = document.querySelector(".reading-toggle");
+    if (btn) btn.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+  function isOn() { return document.body.classList.contains("reading-mode"); }
+  // Initial state from URL or localStorage
+  var params = new URLSearchParams(window.location.search);
+  var fromUrl = params.get("read") === "1";
+  var fromStorage = localStorage.getItem(KEY) === "1";
+  if (fromUrl || fromStorage) apply(true);
+
+  // Bind toggle buttons
+  document.querySelectorAll(".reading-toggle").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      var next = !isOn();
+      apply(next);
+      try { localStorage.setItem(KEY, next ? "1" : "0"); } catch (err) {}
+      var url = new URL(window.location.href);
+      if (next) url.searchParams.set("read", "1"); else url.searchParams.delete("read");
+      window.history.replaceState({}, "", url.toString());
+    });
+  });
+
+  // Esc exits reading mode
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && isOn()) {
+      apply(false);
+      try { localStorage.setItem(KEY, "0"); } catch (err) {}
+      var url = new URL(window.location.href);
+      url.searchParams.delete("read");
+      window.history.replaceState({}, "", url.toString());
+    }
+  });
+})();
