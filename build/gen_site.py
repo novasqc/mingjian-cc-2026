@@ -429,14 +429,88 @@ def page_timeline(d, prefix):
         footer(prefix))
 
 
+def page_forum(d, prefix):
+    forum_i18n = {
+        "loading":   {"en": "Loading threads\u2026", "zh": "\u6b63\u5728\u52a0\u8f7d\u8bdd\u9898\u2026", "es": "Cargando hilos\u2026", "pt": "Carregando fios\u2026"},
+        "error":     {"en": "Could not load the forum. Try ", "zh": "\u65e0\u6cd5\u52a0\u8f7d\u8bba\u575b\u3002\u8bf7\u5c1d\u8bd5 ", "es": "No se pudo cargar el foro. Prueba ", "pt": "N\u00e3o foi poss\u00edvel carregar o f\u00f3rum. Tente "},
+        "open":      {"en": "Open on GitHub", "zh": "\u5728 GitHub \u4e0a\u6253\u5f00", "es": "Abrir en GitHub", "pt": "Abrir no GitHub"},
+        "reply":     {"en": "reply", "zh": "\u56de\u590d", "es": "respuesta", "pt": "resposta"},
+        "replies":   {"en": "replies", "zh": "\u56de\u590d", "es": "respuestas", "pt": "respostas"},
+        "last":      {"en": "last activity", "zh": "\u6700\u540e\u6d3b\u52a8", "es": "\u00faltima actividad", "pt": "\u00faltima atividade"},
+        "anon":      {"en": "Anonymous", "zh": "\u533f\u540d", "es": "An\u00f3nimo", "pt": "An\u00f4nimo"},
+        "filter":    {"en": "Filter", "zh": "\u7b5b\u9009", "es": "Filtrar", "pt": "Filtrar"},
+        "all":       {"en": "All", "zh": "\u5168\u90e8", "es": "Todo", "pt": "Tudo"},
+        "empty":     {"en": "No threads yet \u2014 be the first to open one.", "zh": "\u8fd8\u6ca1\u6709\u8bdd\u9898\u2014\u505a\u7b2c\u4e00\u4e2a\u53d1\u8d77\u8005\u5427\u3002", "es": "A\u00fan no hay hilos \u2014 s\u00e9 el primero en abrir uno.", "pt": "Ainda n\u00e3o h\u00e1 fios \u2014 seja o primeiro a abrir um."},
+        "signin":    {"en": "Sign in with GitHub", "zh": "\u4f7f\u7528 GitHub \u767b\u5f55", "es": "Inicia sesi\u00f3n con GitHub", "pt": "Entre com GitHub"},
+        "newthread": {"en": "Open a new thread", "zh": "\u53d1\u8d77\u65b0\u8bdd\u9898", "es": "Abrir un nuevo hilo", "pt": "Abrir um novo fio"},
+    }
+    cats = content.FORUM_CATEGORIES[CUR_LANG]
+    chips = "".join('<button class="forum__chip" data-cat="%s">%s</button>' % (k, n) for k, n, _ in cats)
+    chips = '<button class="forum__chip forum__chip--active" data-cat="">%s</button>%s' % (forum_i18n["all"][CUR_LANG], chips)
+    how = d["how"][CUR_LANG]
+    callout = d["callout_labels"][CUR_LANG]
+    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in callout)
+    ld = [jsonld_website(), {"@context": "https://schema.org", "@type": "DiscussionForumPosting", "name": d["title"][CUR_LANG], "headline": d["hero_title"][CUR_LANG], "description": d["desc"][CUR_LANG], "url": abs_url(prefix, "forum.html"), "author": {"@type": "Person", "name": "Mingjian"}}]
+    hero_cta = '<a href="https://github.com/%s/discussions/new" class="btn btn--primary" rel="noopener">%s</a><a href="https://github.com/%s/discussions" class="btn btn--ghost" rel="noopener" target="_blank">%s</a>' % (content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], content.FORUM_REPO, forum_i18n["open"][CUR_LANG])
+    return (
+        head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "forum.html", prefix, ld) +
+        nav("forum", prefix) +
+        '<main><section class="hero"><div class="hero__bg"></div><div class="hero__inner"><div class="hero__left"><p class="hero__eyebrow">%s</p><h1 class="hero__title">%s</h1><p class="hero__lede">%s</p><div class="hero__cta">%s</div></div><div class="hero__right">%s</div></div></section><section class="forum-meta"><div class="container"><h2 class="section-title">%s</h2>%s</div></section><section class="forum-section"><div class="container"><div class="forum__bar"><div class="forum__filter" role="tablist">%s</div><a class="forum__new" href="https://github.com/%s/discussions/new" rel="noopener" target="_blank">%s</a></div><div class="forum__list" id="forum-list"><p class="forum__loading">%s</p></div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
+            d["hero_eyebrow"][CUR_LANG], d["hero_title"][CUR_LANG], d["hero_lede"][CUR_LANG], hero_cta, LOBBY_SVG,
+            d["how_eyebrow"][CUR_LANG], how, chips, content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], forum_i18n["loading"][CUR_LANG], d["callout"], links) +
+        '<script>window.FORUM = %r;</script>' % {"repo": content.FORUM_REPO, "categories": [{"key": k, "name": n} for k, n, _ in cats], "i18n": forum_i18n} +
+        '<script src="%sassets/forum.js"></script>' % prefix +
+        footer(prefix))
+
+
+def page_library(d, prefix):
+    canon_rows = "".join('<tr><th>%s</th><td><strong>%s</strong></td><td>%s</td></tr>' % (t, x, f) for t, x, f in d["canon"][CUR_LANG])
+    gloss = "".join('<dt>%s</dt><dd>%s</dd>' % (t, df) for t, df in d["glossary"][CUR_LANG])
+    paths = "".join('<div class="lib__path"><h3>%s</h3><ol>%s</ol></div>' % (t, "".join('<li>%s</li>' % i for i in it)) for t, it in d["reading"][CUR_LANG])
+    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"][CUR_LANG])
+    ld = jsonld_breadcrumb(prefix, "library", d["header_title"][CUR_LANG])
+    return (
+        head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "library.html", prefix, ld) +
+        nav("library", prefix) +
+        '<main><header class="page-header"><div class="container"><p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1><p class="page-header__lede">%s</p></div></header><section class="concept"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><table class="lib__canon"><tbody>%s</tbody></table></div></section><section class="concept concept--alt"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><dl class="lib__glossary">%s</dl></div></section><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="lib__paths">%s</div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
+            d["eyebrow"][CUR_LANG], d["header_title"][CUR_LANG], d["header_lede"][CUR_LANG],
+            d["canon_title"][CUR_LANG], d["canon_lede"][CUR_LANG], canon_rows,
+            d["glossary_title"][CUR_LANG], d["glossary_lede"][CUR_LANG], gloss,
+            d["reading_title"][CUR_LANG], paths, d["callout"], links) +
+        footer(prefix))
+
+
+def page_about(d, prefix):
+    principles = "".join('<div class="about__principle"><h3>%s</h3><p>%s</p></div>' % (t, b) for t, b in d["principles"][CUR_LANG])
+    steps = "".join('<div class="about__step"><h3>%s</h3><p>%s</p></div>' % (t, b) for t, b in d["contribute"][CUR_LANG])
+    stack = d["stack"][CUR_LANG]
+    links = "".join('<a href="%s%s" class="callout__link">%s</a>' % (prefix, h, t) for h, t in d["callout_links"][CUR_LANG])
+    ld = jsonld_breadcrumb(prefix, "about", d["header_title"][CUR_LANG])
+    return (
+        head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "about.html", prefix, ld) +
+        nav("about", prefix) +
+        '<main><header class="page-header"><div class="container"><p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1><p class="page-header__lede">%s</p></div></header><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="about__grid">%s</div></div></section><section class="concept concept--alt"><div class="container"><h2 class="section-title">%s</h2><div class="about__stack">%s</div></div></section><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="about__grid">%s</div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
+            d["eyebrow"][CUR_LANG], d["header_title"][CUR_LANG], d["header_lede"][CUR_LANG],
+            d["principles_title"][CUR_LANG], principles,
+            d["stack_title"][CUR_LANG], stack,
+            d["contribute_title"][CUR_LANG], steps, d["callout"], links) +
+        footer(prefix))
+
+
+
 RENDER = {
     "index": page_index,
+    "forum": page_forum,
     "philosophy": page_concept,
-    "teacher": page_teacher,
-    "writing": page_writing,
+    "library": page_library,
     "heartbeat": page_heartbeat,
+    "writing": page_writing,
     "timeline": page_timeline,
 }
+
+# teacher and about are accessible via footer/secondary links
+RENDER["teacher"] = page_teacher
+RENDER["about"] = page_about
 
 # ------------------------------------------------------------------
 # Blog (build/blog/posts/<slug>/meta.json + <lang>.md)
@@ -766,7 +840,7 @@ def main():
         d = ALL[lang]
         out_dir = os.path.join(ROOT, content.META[lang]["dir"])
         os.makedirs(out_dir, exist_ok=True)
-        for page in content.PAGES:
+        for page in content.PAGES + (["about"] if lang == "en" else ["about"]):
             prefix = "" if lang == "en" else "../"
             html = RENDER[page](d[page], prefix)
             path = os.path.join(out_dir, page + ".html")
