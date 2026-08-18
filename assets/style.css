@@ -21,6 +21,7 @@
   --font-display: "Fraunces", "Cormorant Garamond", Georgia, serif;
   --font-en: "Newsreader", "Source Serif 4", Georgia, serif;  /* body */
   --font-zh: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+  --font-zh-display: "LXGW WenKai TC", "Noto Serif SC", "Source Han Serif SC", serif;
   --font-ui: "IBM Plex Sans", "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
 
@@ -1017,3 +1018,37 @@ html[lang^="zh"] .search-form__input { font-family: var(--font-zh); }
   transition: all 0.2s;
 }
 .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Chinese display headings use LXGW WenKai (literary kai warmth) */
+html[lang^="zh"] .hero__title,
+html[lang^="zh"] .section-title,
+html[lang^="zh"] .page-header__title,
+html[lang^="zh"] .concept__title,
+html[lang^="zh"] .work__title,
+html[lang^="zh"] .entry h3,
+html[lang^="zh"] .dic__title,
+html[lang^="zh"] .blog-card h2,
+html[lang^="zh"] .search-item__title,
+html[lang^="zh"] .forum__title,
+html[lang^="zh"] .tl-title,
+html[lang^="zh"] .pull {
+  font-family: var(--font-zh-display);
+}
+
+/* ===== Density toggle (compact vs comfortable) ===== */
+.density-toggle {
+  background: transparent; border: 1px solid var(--line-strong); color: var(--ink-dim);
+  width: 30px; height: 30px; border-radius: 6px; font-size: 15px; line-height: 1;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  margin-right: 8px; transition: all 0.2s;
+}
+.density-toggle:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Compact density: tighter thread list */
+body.density-compact .forum__link { padding: 12px 0; }
+body.density-compact .forum__title { font-size: 16px; }
+body.density-compact .forum__excerpt { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+body.density-compact .forum__meta { font-size: 10px; }
+body.density-compact .forum__cat { font-size: 9px; padding: 1px 7px; }
+body.density-compact .recent__link { padding: 10px 0; }
+

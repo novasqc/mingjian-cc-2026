@@ -121,3 +121,77 @@
     });
   });
 })();
+
+/* ============================================================
+   Density toggle — compact vs comfortable forum list
+   ============================================================ */
+(function () {
+  var KEY = "mingjian_density";
+  function apply(compact) {
+    document.body.classList.toggle("density-compact", compact);
+    var btn = document.querySelector(".density-toggle");
+    if (btn) btn.setAttribute("aria-pressed", compact ? "true" : "false");
+  }
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) {}
+  if (saved === "1") apply(true);
+  document.querySelectorAll(".density-toggle").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var next = !document.body.classList.contains("density-compact");
+      apply(next);
+      try { localStorage.setItem(KEY, next ? "1" : "0"); } catch (e) {}
+    });
+  });
+})();
+
+
+/* ============================================================
+   Giscus theme bridge — sync our theme toggle with the giscus
+   comment widget (blog posts). Uses giscus.sendMessage to set
+   its theme without reloading.
+   ============================================================ */
+(function () {
+  function giscusFrame() {
+    return document.querySelector('iframe.giscus-frame');
+  }
+  function notifyGiscus(theme) {
+    var frame = giscusFrame();
+    if (!frame || !frame.contentWindow) return;
+    var giscusTheme = theme === 'dark' ? 'dark' : theme === 'light' ? 'light' : 'preferred_color_scheme';
+    frame.contentWindow.postMessage({ giscus: { setConfig: { theme: giscusTheme } } }, 'https://giscus.app');
+  }
+  function currentTheme() {
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t) return t;
+    // follow system
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+
+  // Notify on load (once giscus iframe is ready)
+  function onLoad() {
+    var frame = giscusFrame();
+    if (frame) {
+      notifyGiscus(currentTheme());
+    } else {
+      // giscus loads async; retry a few times
+      var tries = 0;
+      var iv = setInterval(function () {
+        tries++;
+        if (giscusFrame()) { notifyGiscus(currentTheme()); clearInterval(iv); }
+        else if (tries > 20) clearInterval(iv);
+      }, 500);
+    }
+  }
+
+  // Re-notify when theme toggle button is clicked (listen after our toggle applies)
+  var observer = new MutationObserver(function () {
+    notifyGiscus(currentTheme());
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onLoad);
+  } else {
+    onLoad();
+  }
+})();
