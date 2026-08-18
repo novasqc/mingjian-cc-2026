@@ -923,3 +923,12 @@ html[lang^="zh"] .search-form__input { font-family: var(--font-zh); }
 /* ===== Post comments (Giscus) ===== */
 .post-comments { padding: 40px 0 80px; border-top: 1px solid var(--line); }
 .post-comments__title { font-size: 20px; font-weight: 600; color: var(--ink); margin-bottom: 16px; letter-spacing: 0.04em; }
+
+/* ===== Footer (upgraded with secondary nav) ===== */
+.footer { background: var(--bg); border-top: 1px solid var(--line); padding: 48px 0 40px; }
+.footer__nav { display: flex; flex-wrap: wrap; gap: 18px 24px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.footer__link { color: var(--ink-dim); font-size: 14px; letter-spacing: 0.04em; transition: color 0.2s; }
+.footer__link:hover { color: var(--accent-deep); }
+.footer__heartbeat { margin-bottom: 20px; font-family: var(--font-mono); font-size: 13px; }
+.footer__heartbeat a { color: var(--accent-deep); }
+.footer__heartbeat a:hover { color: var(--accent); }

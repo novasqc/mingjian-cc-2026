@@ -194,15 +194,25 @@ def nav(active, prefix):
 
 def footer(prefix):
     line1, line2 = content.FOOTER[CUR_LANG]
+    footer_nav = {
+        "en": [("blog.html", "Blog"), ("teacher.html", "Teacher & Student"), ("about.html", "About"), ("library.html", "Library")],
+        "zh": [("blog.html", "\u535a\u5ba2"), ("teacher.html", "\u5e08\u751f"), ("about.html", "\u5173\u4e8e"), ("library.html", "\u6587\u732e")],
+        "es": [("blog.html", "Blog"), ("teacher.html", "Maestro y Disc\u00edpulo"), ("about.html", "Acerca"), ("library.html", "Biblioteca")],
+        "pt": [("blog.html", "Blog"), ("teacher.html", "Mestre e Disc\u00edpulo"), ("about.html", "Sobre"), ("library.html", "Biblioteca")],
+    }
+    nav_links = "".join('<a href="%s%s" class="footer__link">%s</a>' % (prefix, h, t) for h, t in footer_nav[CUR_LANG])
+    heartbeat_label = {"en": "Read today's Heartbeat \u2192", "zh": "\u9605\u8bfb\u4eca\u65e5\u5fc3\u8df3 \u2192", "es": "Lee el Latido de hoy \u2192", "pt": "Leia a Batida de hoje \u2192"}[CUR_LANG]
     return (
         '<footer class="footer">\n'
         '  <div class="container">\n'
+        '    <nav class="footer__nav" aria-label="Footer">%s</nav>\n'
+        '    <p class="footer__heartbeat"><a href="%sheartbeat.html">%s</a></p>\n'
         '    <p class="footer__line">%s</p>\n'
         '    <p class="footer__line footer__line--small">%s</p>\n'
         '  </div>\n'
         '</footer>\n\n'
         '<script src="%sassets/script.js"></script>\n'
-        '</body>\n</html>\n' % (line1, line2, prefix))
+        '</body>\n</html>\n' % (nav_links, prefix, heartbeat_label, line1, line2, prefix))
 
 
 def faq_section(d):
