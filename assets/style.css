@@ -919,3 +919,7 @@ html[lang^="zh"] .search-form__input { font-family: var(--font-zh); }
   border-radius: 50%; transition: all 0.2s;
 }
 .nav__search:hover { color: var(--accent-deep); background: var(--bg-2); }
+
+/* ===== Post comments (Giscus) ===== */
+.post-comments { padding: 40px 0 80px; border-top: 1px solid var(--line); }
+.post-comments__title { font-size: 20px; font-weight: 600; color: var(--ink); margin-bottom: 16px; letter-spacing: 0.04em; }

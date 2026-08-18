@@ -700,10 +700,27 @@ def page_blog_post(prefix, slug, lang):
     tags = "".join('<span class="post-tag">%s</span>' % t for t in meta.get("tags", []))
     back = '<a class="callout__link" href="%sblog.html">%s</a>' % (prefix, BLOG_BACK[CUR_LANG])
     home = '<a class="callout__link" href="%sindex.html">Home</a>' % prefix
-    return (
-        head(title + " · " + content.SITE_NAME[CUR_LANG], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
-             jsonld_breadcrumb(prefix, "blog", title)) +
-        nav("blog", prefix) +
+    giscus_discuss = {"en": "Discuss", "zh": "讨论", "es": "Discutir", "pt": "Discutir"}
+    giscus_html = (
+        '<section class="post-comments"><div class="container">'
+        '<h2 class="post-comments__title">' + giscus_discuss.get(CUR_LANG, "Discuss") + '</h2>'
+        '<script src="https://giscus.app/client.js"'
+        ' data-repo="novasqc/mingjian-cc-2026"'
+        ' data-repo-id="R_kgDOSwsfIg"'
+        ' data-category="General"'
+        ' data-category-id="DIC_kwDOSwsfIs4DDngN"'
+        ' data-mapping="pathname"'
+        ' data-strict="0"'
+        ' data-reactions-enabled="1"'
+        ' data-emit-metadata="0"'
+        ' data-input-position="top"'
+        ' data-theme="preferred_color_scheme"'
+        ' data-lang="' + CUR_LANG + '"'
+        ' crossorigin="anonymous"'
+        ' async></script>'
+        '</div></section>'
+    )
+    main_html = (
         '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
         '<p class="page-header__eyebrow">BLOG · %s</p>'
@@ -713,8 +730,14 @@ def page_blog_post(prefix, slug, lang):
         '</div></header>\n'
         '  <section class="concept"><div class="container"><div class="post-body">%s</div></div></section>\n'
         '  <section class="callout"><div class="container"><div class="callout__links">%s%s</div></div></section>\n'
-        '</main>\n' %
-        (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body, back, home) +
+        + giscus_html + '\n'
+        '</main>\n'
+    ) % (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body, back, home)
+    return (
+        head(title + " · " + content.SITE_NAME[CUR_LANG], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
+             jsonld_breadcrumb(prefix, "blog", title)) +
+        nav("blog", prefix) +
+        main_html +
         footer(prefix))
 
 
