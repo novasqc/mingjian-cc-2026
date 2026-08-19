@@ -104,13 +104,11 @@ strong { color: var(--ink); font-weight: 600; }
 /* ===== Navigation ===== */
 .nav {
   position: sticky; top: 0; z-index: 100;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
 .nav.scrolled {
-  background: color-mix(in srgb, var(--bg) 96%, transparent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 .nav__inner {
   max-width: var(--max);
