@@ -49,11 +49,10 @@
     if (btn) btn.setAttribute("aria-pressed", on ? "true" : "false");
   }
   function isOn() { return document.body.classList.contains("reading-mode"); }
-  // Initial state from URL or localStorage
+  // Reading mode is URL-driven only (NOT persisted): refresh restores the nav.
+  // This prevents the nav from being permanently hidden if the toggle is hit by accident.
   var params = new URLSearchParams(window.location.search);
-  var fromUrl = params.get("read") === "1";
-  var fromStorage = localStorage.getItem(KEY) === "1";
-  if (fromUrl || fromStorage) apply(true);
+  if (params.get("read") === "1") apply(true);
 
   // Bind toggle buttons
   document.querySelectorAll(".reading-toggle").forEach(function (btn) {
@@ -61,7 +60,7 @@
       e.preventDefault();
       var next = !isOn();
       apply(next);
-      try { localStorage.setItem(KEY, next ? "1" : "0"); } catch (err) {}
+
       var url = new URL(window.location.href);
       if (next) url.searchParams.set("read", "1"); else url.searchParams.delete("read");
       window.history.replaceState({}, "", url.toString());
@@ -72,7 +71,7 @@
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && isOn()) {
       apply(false);
-      try { localStorage.setItem(KEY, "0"); } catch (err) {}
+
       var url = new URL(window.location.href);
       url.searchParams.delete("read");
       window.history.replaceState({}, "", url.toString());
