@@ -191,7 +191,7 @@ def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_lan
         '  <meta name="twitter:description" content="%s">\n'
         '  <meta name="twitter:image" content="%s/assets/og-image.png">\n'
         '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=LXGW+WenKai+TC&display=swap">\n'
-        '  <link rel="stylesheet" href="%sassets/style.css">\n'
+        '  <link rel="stylesheet" href="%sassets/style.css?v=20260818">\n'
         '  %s\n'
         '  %s\n'
         '</head>\n<body>\n<a class="skip-link" href="#main">Skip to content</a>\n' %
@@ -246,7 +246,7 @@ def footer(prefix):
         '    <p class="footer__line footer__line--small">%s</p>\n'
         '  </div>\n'
         '</footer>\n\n'
-        '<script src="%sassets/script.js"></script>\n'
+        '<script src="%sassets/script.js?v=20260818"></script>\n'
         '</body>\n</html>\n' % (nav_links, prefix, heartbeat_label, line1, line2, prefix))
 
 
@@ -315,7 +315,7 @@ def page_index(d, prefix):
          LOBBY_SVG, d["scroll"], d["entries_title"], entries,
          d["mottos_title"], mottos, d["sources_title"], d["sources_lede"], sources,
          recent_section, faq_section(d)) +
-        '<script src="' + prefix + 'assets/recent.js"></script>\n' +
+        '<script src="' + prefix + 'assets/recent.js?v=20260818"></script>\n' +
         footer(prefix))
 
 
@@ -469,7 +469,7 @@ def page_heartbeat(d, prefix):
         })
     return (
         head(d["title"], d["desc"], "heartbeat.html", prefix, ld,
-             '<link rel="stylesheet" href="%sassets/heartbeat.css">' % prefix) +
+             '<link rel="stylesheet" href="%sassets/heartbeat.css?v=20260818">' % prefix) +
         nav("heartbeat", prefix) +
         '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
@@ -491,7 +491,7 @@ def page_heartbeat(d, prefix):
          d["about_title"], d["about"], links) +
         '<script>window.HB = %r;</script>\n' % {
             "index": hb_index, "render": hb_render, "i18n": HB_I18N[CUR_LANG]} +
-        '<script src="%sassets/heartbeat.js"></script>\n' % prefix +
+        '<script src="%sassets/heartbeat.js?v=20260818"></script>\n' % prefix +
         footer(prefix))
 
 
@@ -562,7 +562,7 @@ def page_forum(d, prefix):
             d["hero_eyebrow"][CUR_LANG], d["hero_title"][CUR_LANG], d["hero_lede"][CUR_LANG], hero_cta, LOBBY_SVG,
             d["how_eyebrow"][CUR_LANG], how, chips, content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], forum_i18n["loading"][CUR_LANG], d["callout"], links) +
         '<script>window.FORUM = %r;</script>' % {"repo": content.FORUM_REPO, "categories": [{"key": k, "name": n} for k, n, _ in gh_cats], "i18n": forum_i18n} +
-        '<script src="%sassets/forum.js"></script>' % prefix +
+        '<script src="%sassets/forum.js?v=20260818"></script>' % prefix +
         footer(prefix))
 
 
@@ -678,7 +678,7 @@ def page_search(d, prefix):
         '</main>' +
         '<script type="application/json" id="search-index">' + index_json + '</script>' +
         '<script>window.SEARCH_I18N = ' + _json.dumps(i18n, ensure_ascii=False) + ';</script>' +
-        '<script src="' + prefix + 'assets/search.js"></script>' +
+        '<script src="' + prefix + 'assets/search.js?v=20260818"></script>' +
         footer(prefix))
 
 
