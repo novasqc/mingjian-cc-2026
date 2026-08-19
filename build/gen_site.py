@@ -128,6 +128,18 @@ def jsonld_breadcrumb(prefix, page, title):
     }
 
 
+def jsonld_webpage(prefix, page, title, desc, lang=None):
+    """Generic WebPage structured data for any non-homepage page."""
+    return {
+        "@context": "https://schema.org", "@type": "WebPage",
+        "name": title,
+        "description": desc,
+        "url": abs_url(prefix, page + ".html"),
+        "inLanguage": content.META[lang or CUR_LANG]["html_lang"],
+        "isPartOf": {"@type": "WebSite", "name": content.SITE_NAME[lang or CUR_LANG],
+                     "url": DOMAIN + "/"},
+        "publisher": {"@type": "Organization", "name": content.SITE_NAME[lang or CUR_LANG]},
+    }
 
 
 def jsonld_blogpost(meta, slug, lang):
@@ -370,7 +382,8 @@ def page_teacher(d, prefix):
             '<div class="dialogue__text">%s</div>%s</div>' % (entry_cls, who, text, date_html))
     learn = "".join('<li><strong>%s</strong> %s</li>' % (t, b) for t, b in d["learn_items"])
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = jsonld_breadcrumb(prefix, "teacher", d["header_title"])
+    ld = [jsonld_breadcrumb(prefix, "teacher", d["header_title"]),
+          jsonld_webpage(prefix, "teacher", d["header_title"], d["desc"])]
     return (
         head(d["title"], d["desc"], "teacher.html", prefix, ld) +
         nav("teacher", prefix) +
@@ -413,7 +426,8 @@ def page_writing(d, prefix):
             '<div class="work__body">%s</div>'
             '<p class="work__meta">%s</p></article>' % (wtype, title, subtitle, body, meta))
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = jsonld_breadcrumb(prefix, "writing", d["header_title"])
+    ld = [jsonld_breadcrumb(prefix, "writing", d["header_title"]),
+          jsonld_webpage(prefix, "writing", d["header_title"], d["desc"])]
     return (
         head(d["title"], d["desc"], "writing.html", prefix, ld) +
         nav("writing", prefix) +
@@ -503,7 +517,8 @@ def page_timeline(d, prefix):
             '<div class="tl-entry"><p class="tl-date">%s</p><h3 class="tl-title">%s</h3>'
             '<p class="tl-body">%s</p>%s</div>' % (date, title, body, tag_html))
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = jsonld_breadcrumb(prefix, "timeline", d["header_title"])
+    ld = [jsonld_breadcrumb(prefix, "timeline", d["header_title"]),
+          jsonld_webpage(prefix, "timeline", d["header_title"], d["desc"])]
     return (
         head(d["title"], d["desc"], "timeline.html", prefix, ld) +
         nav("timeline", prefix) +
@@ -653,9 +668,11 @@ def page_search(d, prefix):
                          "pt": "Dica: prima / em qualquer página para pesquisar."},
         "all_results": {"en": "All results", "zh": "全部结果", "es": "Todos los resultados", "pt": "Todos os resultados"},
     }
-    ld = {"@context": "https://schema.org", "@type": "WebSite", "potentialAction": {
-        "@type": "SearchAction", "target": abs_url(prefix, "search.html?q={search_term_string}"),
-        "query-input": "required name=search_term_string"}}
+    ld = [{"@context": "https://schema.org", "@type": "WebSite",
+           "potentialAction": {"@type": "SearchAction",
+                               "target": abs_url(prefix, "search.html?q={search_term_string}"),
+                               "query-input": "required name=search_term_string"}},
+          jsonld_webpage(prefix, "search", d["title"][CUR_LANG], d["title"][CUR_LANG])]
     return (
         head(d["title"][CUR_LANG] if "title" in d else i18n["title"][CUR_LANG],
              d.get("desc", "Search mingjian.cc") if "desc" in d else "",
@@ -1036,9 +1053,15 @@ def build_404():
             '  <meta name="description" content="This page does not exist — but Mingjian does.">\n'
             '  <meta name="robots" content="noindex,follow">\n'
             '  <meta name="theme-color" content="#F5F1E8">\n'
+            '  <meta property="og:type" content="website">\n'
+            '  <meta property="og:title" content="404 · Mingjian\'s Silicon World">\n'
+            '  <meta property="og:site_name" content="Mingjian\'s Silicon World">\n'
             '  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">\n'
-            '  <link rel="stylesheet" href="assets/style.css">\n'
+            '  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">\n'
+            '  <link rel="stylesheet" href="assets/style.css?v=20260818">\n'
+            '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=LXGW+WenKai+TC&display=swap">\n'
             '</head>\n<body>\n'
+            '<a class="skip-link" href="#main">Skip to content</a>\n'
             '<main id="main" style="min-height:70vh;display:flex;align-items:center;justify-content:center;">\n'
             '  <div class="container" style="text-align:center;padding:80px 0;">\n'
             '    <p class="hero__eyebrow">404</p>\n'
@@ -1153,7 +1176,7 @@ def main():
         d = ALL[lang]
         out_dir = os.path.join(ROOT, content.META[lang]["dir"])
         os.makedirs(out_dir, exist_ok=True)
-        for page in (content.PAGES + ["search"]):
+        for page in (content.PAGES + ["search", "teacher", "about"]):
             prefix = "" if lang == "en" else "../"
             html = RENDER[page](d[page], prefix)
             path = os.path.join(out_dir, page + ".html")
