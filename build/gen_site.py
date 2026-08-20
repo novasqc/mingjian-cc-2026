@@ -205,6 +205,10 @@ def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_lan
             alt_path = ("" if code == "en" else code + "/") + canonical_path
         alts.append('<link rel="alternate" hreflang="%s" href="%s/%s">' %
                     (content.META[code]["html_lang"], DOMAIN, alt_path))
+    # RSS auto-discovery: lets aggregators (Feedly, Inoreader, …) and some
+    # crawlers find the daily feed without a human giving them the URL.
+    alts.append('<link rel="alternate" type="application/rss+xml" '
+                'title="%s" href="%s/feed.xml">' % (content.SITE_NAME["en"], DOMAIN))
     og_type = og_type_override or OG_TYPE.get(canonical_path.replace(".html", ""), "website")
     # one <script type="application/ld+json"> per schema.org object
     ld_blocks = "".join(
