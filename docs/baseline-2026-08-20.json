@@ -1,0 +1,23 @@
+{
+  "frozen_at": "2026-08-20",
+  "note": "Baseline captured after the 2026-08-20 SEO/GEO work (indexable heartbeats, quad-lingual blog, IndexNow, daily publish pipeline). Used by scripts/weekly_verify.py to judge whether real indexing moved.",
+  "intervention_date": "2026-08-20",
+  "signals": {
+    "sitemap_urls": 172,
+    "heartbeat_pages": 116,
+    "blog_pages": 16,
+    "core_pages": 40,
+    "llms_full_kb": 626.3,
+    "feed_items": 56,
+    "indexnow_urls": 172,
+    "indexnow_endpoints_ok": 3,
+    "indexnow_endpoints_total": 3,
+    "live_ok": 8,
+    "live_total": 8,
+    "commoncrawl_pages": 0,
+    "commoncrawl_note": "index API unreachable (server 404/503) — unknown, retry daily",
+    "wayback_captures": 134,
+    "bing_mentions": 22,
+    "bing_mentions_note": "weak scrape signal; authoritative count lives in Bing Webmaster Tools"
+  }
+}
