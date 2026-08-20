@@ -1077,30 +1077,37 @@ def page_about(d, prefix):
 
 
 def page_search(d, prefix):
-    """Search results page (works without JS via GET form, enhanced with JS)."""
-    # Build a local search index from the site's content
+    """Search results page (works without JS via GET form, enhanced with JS).
+
+    `d` is the FULL language content dict (so the index can cover every page),
+    while the search page's own title/description live in d["search"].
+    """
     import json as _json
+    sd = d.get("search", d) if isinstance(d, dict) else {}
     index = []
     # Index all main pages
     for page in content.PAGES:
-        if page in d:
-            dd = d[page]
+        dd = d.get(page)
+        if not isinstance(dd, dict):
+            continue
+        index.append({
+            "id": page,
+            "title": dd.get("header_title", dd.get("hero_title", dd.get("title", page.title()))),
+            "desc":  dd.get("desc", dd.get("lede", dd.get("header_lede", ""))),
+            "url":   prefix + page + ".html",
+            "type":  "page",
+        })
+    # Index teacher + about (secondary pages, reachable via footer)
+    for page in ("teacher", "about"):
+        dd = d.get(page)
+        if isinstance(dd, dict):
             index.append({
                 "id": page,
-                "title": dd.get("header_title", dd.get("hero_title", page.title())),
-                "desc":  dd.get("desc", dd.get("lede", dd.get("header_lede", ""))),
+                "title": dd.get("header_title", dd.get("title", page.title())),
+                "desc":  dd.get("desc", dd.get("header_lede", "")),
                 "url":   prefix + page + ".html",
                 "type":  "page",
             })
-    # Index the forum page (special structure)
-    if "forum" in d:
-        index.append({
-            "id": "forum",
-            "title": d["forum"].get("hero_title", "Forum"),
-            "desc":  d["forum"].get("desc", ""),
-            "url":   prefix + "forum.html",
-            "type":  "page",
-        })
     # Index blog posts
     for p in load_blog_posts():
         if CUR_LANG in p["langs"]:
@@ -1110,6 +1117,31 @@ def page_search(d, prefix):
                 "desc":  p["summaries"].get(CUR_LANG, ""),
                 "url":   prefix + "blog/posts/" + p["slug"] + "-" + CUR_LANG + ".html",
                 "type":  "blog",
+            })
+    # Index daily heartbeats — the site's largest corpus. Chinese readers get
+    # the Chinese originals; other languages get the English editions (the only
+    # non-Chinese heartbeat text available).
+    hbs = load_heartbeats()
+    if CUR_LANG == "zh":
+        for it in hbs:
+            index.append({
+                "id": "hb-" + it["date"],
+                "title": it.get("h1", it["date"]),
+                "desc":  (it.get("summary", "") or "")[:160],
+                "url":   prefix + hb_entry_url(it["date"]),
+                "type":  "heartbeat",
+            })
+    else:
+        for it in hbs:
+            en = load_hb_en(it["date"])
+            if not en:
+                continue
+            index.append({
+                "id": "hb-en-" + it["date"],
+                "title": en["title"],
+                "desc":  (en.get("summary", "") or "")[:160],
+                "url":   prefix + hb_en_url(it["date"]),
+                "type":  "heartbeat",
             })
     index_json = _json.dumps(index, ensure_ascii=False)
     i18n = {
@@ -1132,10 +1164,10 @@ def page_search(d, prefix):
            "potentialAction": {"@type": "SearchAction",
                                "target": lang_dir(CUR_LANG, "search.html?q={search_term_string}"),
                                "query-input": "required name=search_term_string"}},
-          jsonld_webpage("search", d["title"][CUR_LANG], d["title"][CUR_LANG])]
+          jsonld_webpage("search", sd["title"][CUR_LANG], sd["desc"].get(CUR_LANG, ""))]
     return (
-        head(d["title"][CUR_LANG] if "title" in d else i18n["title"][CUR_LANG],
-             d.get("desc", "Search mingjian.cc") if "desc" in d else "",
+        head(sd["title"][CUR_LANG] if "title" in sd else i18n["title"][CUR_LANG],
+             sd.get("desc", {}).get(CUR_LANG, "Search mingjian.cc") if "desc" in sd else "",
              "search.html", prefix, ld) +
         nav("search", prefix) +
         '<main id="main"><section class="search-hero"><div class="container">'
@@ -1996,7 +2028,9 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
         for page in (content.PAGES + ["search", "teacher", "about"]):
             prefix = "" if lang == "en" else "../"
-            html = RENDER[page](d[page], prefix)
+            # search indexes the whole site, so it needs the full language dict
+            arg = d if page == "search" else d[page]
+            html = RENDER[page](arg, prefix)
             path = os.path.join(out_dir, page + ".html")
             with open(path, "w", encoding="utf-8") as f:
                 f.write(html)
