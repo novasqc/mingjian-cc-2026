@@ -70,6 +70,19 @@ def step_generate():
     return True
 
 
+def step_audit():
+    """Run the site QA audit. Advisory: a failure is logged loudly but does not
+    block publishing (a false positive must not stop the daily heartbeat)."""
+    code, out, err = run([PY, os.path.join(ROOT, "scripts", "audit_site.py"),
+                          "--quiet"])
+    if code == 0:
+        log("audit: ok (0 issues)")
+        return True
+    tail = (out or err).strip().splitlines()[-6:]
+    log("audit: %d issue(s) FOUND\n%s" % (len(tail), "\n".join(tail)))
+    return False
+
+
 def step_commit_push(no_push):
     run(["git", "add", "-A"])
     code, _, _ = run(["git", "diff", "--cached", "--quiet"])
@@ -149,6 +162,7 @@ def main(argv):
     if not step_generate():
         log("=== aborted: generator failed ===")
         return 1
+    step_audit()
 
     state = step_commit_push(no_push)
     if state == "fail":
