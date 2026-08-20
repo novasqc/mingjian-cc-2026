@@ -267,3 +267,24 @@
   .hb-arch__sum { grid-column: 1; }
   .hb-pn__link--next { text-align: left; }
 }
+
+/* English edition cross-links */
+.hb-single__h1 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 38px);
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+.hb-alt { margin: 0 0 18px; font-size: 14px; }
+.hb-alt a { color: var(--accent); }
+.hb-alt--note {
+  color: var(--ink-faint);
+  font-size: 13px;
+  line-height: 1.7;
+  border-left: 2px solid var(--line);
+  padding-left: 14px;
+  margin-bottom: 24px;
+}
+.hb-index__all { display: flex; gap: 12px; flex-wrap: wrap; }

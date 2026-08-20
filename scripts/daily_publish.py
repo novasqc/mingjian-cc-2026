@@ -50,13 +50,23 @@ def step_render():
     return code == 0
 
 
+def step_translate():
+    """English edition of any new heartbeat. The site's core language is English,
+    so a Chinese-only entry stays invisible to English search and AI answers."""
+    code, out, err = run([PY, os.path.join(ROOT, "scripts", "translate_heartbeats.py"),
+                          "--limit", "3"])
+    tail = (out or err).splitlines()[-2:]
+    log("translate heartbeats: exit=%d | %s" % (code, " / ".join(tail)))
+    return code == 0
+
+
 def step_generate():
     code, out, err = run([PY, os.path.join(ROOT, "build", "gen_site.py")])
     if code != 0:
         log("generator FAILED: %s" % err[-600:])
         return False
     hb = [l for l in out.splitlines() if "heartbeat page" in l]
-    log("generate site: ok | %s" % (hb[-1] if hb else "no heartbeat line"))
+    log("generate site: ok | %s" % (" | ".join(hb) if hb else "no heartbeat line"))
     return True
 
 
@@ -134,6 +144,8 @@ def main(argv):
     log("=== daily publish start ===")
 
     step_render()
+    if "--no-translate" not in argv:
+        step_translate()
     if not step_generate():
         log("=== aborted: generator failed ===")
         return 1
@@ -148,6 +160,8 @@ def main(argv):
         checks = ["sitemap.xml", "heartbeat/archive.html"]
         if latest:
             checks.append("heartbeat/%s.html" % latest)
+            if os.path.isfile(os.path.join(ROOT, "heartbeat", "en", latest + ".json")):
+                checks.append("heartbeat/en/%s.html" % latest)
         step_verify(checks)
         step_indexnow(changed_only=True)
     elif state == "nochange":

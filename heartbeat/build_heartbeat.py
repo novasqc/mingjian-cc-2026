@@ -28,7 +28,24 @@ def md_to_html(md_text):
         html = "<p>" + md_text.replace("\n\n", "</p><p>") + "</p>"
     # The site's heartbeat.css styles h1/h2/h3/blockquote/ul/li inside .hb-body,
     # so we only need to keep the semantic elements. Optionally add hb__* classes.
-    return html
+    return strip_local_links(html)
+
+
+def strip_local_links(html):
+    """Unwrap anchors that point at local files instead of web resources.
+
+    The heartbeat sources are written in Mingjian's local workspace and
+    sometimes reference files there (e.g. `anti-patterns.md`). Published as-is
+    those are dead links: bad for readers, wasted crawl budget. Keep the link
+    text, drop the broken href.
+    """
+    def repl(m):
+        href, text = m.group(1), m.group(2)
+        if re.match(r"^(https?:|mailto:|#|/)", href.strip(), re.I):
+            return m.group(0)
+        return text
+    return re.sub(r'<a\s+[^>]*href="([^"]*)"[^>]*>(.*?)</a>', repl, html,
+                  flags=re.S | re.I)
 
 
 def extract_summary(md_text, max_len=240):
