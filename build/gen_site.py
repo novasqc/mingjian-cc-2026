@@ -7,6 +7,7 @@ Usage:  python3 build/gen_site.py
 """
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -89,6 +90,11 @@ def abs_url(prefix, path):
     return "%s/%s%s" % (DOMAIN, prefix, path)
 
 
+def lang_dir(lang, path):
+    """Absolute URL for a directory-convention page (en at root, others in /<lang>/)."""
+    return "%s/%s%s" % (DOMAIN, "" if lang == "en" else lang + "/", path)
+
+
 def jsonld_website():
     return {
         "@context": "https://schema.org", "@type": "WebSite",
@@ -123,29 +129,31 @@ def jsonld_faq(d):
     }
 
 
-def jsonld_breadcrumb(prefix, page, title):
+def jsonld_breadcrumb(page, title, lang=None):
+    lang = lang or CUR_LANG
     return {
         "@context": "https://schema.org", "@type": "BreadcrumbList",
         "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": content.NAV[CUR_LANG][0],
-             "item": abs_url(prefix, "index.html")},
+            {"@type": "ListItem", "position": 1, "name": content.NAV[lang][0],
+             "item": lang_dir(lang, "index.html")},
             {"@type": "ListItem", "position": 2, "name": title,
-             "item": abs_url(prefix, page + ".html")},
+             "item": lang_dir(lang, page + ".html")},
         ],
     }
 
 
-def jsonld_webpage(prefix, page, title, desc, lang=None):
-    """Generic WebPage structured data for any non-homepage page."""
+def jsonld_webpage(page, title, desc, lang=None):
+    """Generic WebPage structured data for any non-homepage directory page."""
+    lang = lang or CUR_LANG
     return {
         "@context": "https://schema.org", "@type": "WebPage",
         "name": title,
         "description": desc,
-        "url": abs_url(prefix, page + ".html"),
-        "inLanguage": content.META[lang or CUR_LANG]["html_lang"],
-        "isPartOf": {"@type": "WebSite", "name": content.SITE_NAME[lang or CUR_LANG],
+        "url": lang_dir(lang, page + ".html"),
+        "inLanguage": content.META[lang]["html_lang"],
+        "isPartOf": {"@type": "WebSite", "name": content.SITE_NAME[lang],
                      "url": DOMAIN + "/"},
-        "publisher": {"@type": "Organization", "name": content.SITE_NAME[lang or CUR_LANG]},
+        "publisher": {"@type": "Organization", "name": content.SITE_NAME[lang]},
     }
 
 
@@ -174,14 +182,29 @@ def jsonld_blogpost(meta, slug, lang):
 
 
 def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_langs=None,
-         og_type_override=None, canonical_url=None):
+         og_type_override=None, canonical_url=None, lang=None):
+    lang = lang or CUR_LANG
+    meta = content.META[lang]
+    # Absolute URL of THIS page. blog/* and heartbeat/* pass a root-relative
+    # path (e.g. "blog/posts/x-en.html"); core pages pass a language-relative
+    # path (e.g. "index.html") with the language carried by `lang`.
+    if canonical_url:
+        url = canonical_url
+    elif canonical_path.startswith(("blog/", "heartbeat/")):
+        url = "%s/%s" % (DOMAIN, canonical_path.lstrip("/"))
+    else:
+        url = "%s/%s%s" % (DOMAIN, "" if lang == "en" else lang + "/", canonical_path)
+    # hreflang alternates (absolute). blog/* and heartbeat/* distinguish
+    # languages by a -<lang>.html suffix; core pages use per-language dirs.
     alts = []
     langs = hreflang_langs if hreflang_langs is not None else content.LANGS
     for code in langs:
-        p = prefix + ("" if code == "en" else code + "/") + canonical_path
+        if canonical_path.startswith(("blog/", "heartbeat/")):
+            alt_path = re.sub(r'-(en|zh|es|pt)\.html$', "-%s.html" % code, canonical_path)
+        else:
+            alt_path = ("" if code == "en" else code + "/") + canonical_path
         alts.append('<link rel="alternate" hreflang="%s" href="%s/%s">' %
-                    (content.META[code]["html_lang"], DOMAIN, p))
-    url = canonical_url or abs_url(prefix, canonical_path)
+                    (content.META[code]["html_lang"], DOMAIN, alt_path))
     og_type = og_type_override or OG_TYPE.get(canonical_path.replace(".html", ""), "website")
     # one <script type="application/ld+json"> per schema.org object
     ld_blocks = "".join(
@@ -216,9 +239,9 @@ def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_lan
         '  %s\n'
         '  %s\n'
         '</head>\n<body>\n<a class="skip-link" href="#main">Skip to content</a>\n' %
-        (content.META[CUR_LANG]["html_lang"], title, desc, url,
-         "\n  ".join(alts), prefix, prefix, og_type, content.SITE_NAME[CUR_LANG],
-         content.OG_LOCALE[CUR_LANG], title, desc, url, DOMAIN, title, desc, DOMAIN,
+        (meta["html_lang"], title, desc, url,
+         "\n  ".join(alts), prefix, prefix, og_type, content.SITE_NAME[lang],
+         content.OG_LOCALE[lang], title, desc, url, DOMAIN, title, desc, DOMAIN,
          prefix, extra_css, ld_blocks))
 
 
@@ -352,7 +375,7 @@ def page_concept(d, prefix, extra_css=""):
             '<p class="concept__en">%s</p><div class="concept__body">%s</div></div></section>'
             % (alt, num, title, en, body))
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = [jsonld_breadcrumb(prefix, "philosophy", d["header_title"])]
+    ld = [jsonld_breadcrumb("philosophy", d["header_title"])]
     faq_html = ""
     if "faq" in d and d["faq"]:
         faq_html = faq_section(d)
@@ -393,8 +416,8 @@ def page_teacher(d, prefix):
             '<div class="dialogue__text">%s</div>%s</div>' % (entry_cls, who, text, date_html))
     learn = "".join('<li><strong>%s</strong> %s</li>' % (t, b) for t, b in d["learn_items"])
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = [jsonld_breadcrumb(prefix, "teacher", d["header_title"]),
-          jsonld_webpage(prefix, "teacher", d["header_title"], d["desc"])]
+    ld = [jsonld_breadcrumb("teacher", d["header_title"]),
+          jsonld_webpage("teacher", d["header_title"], d["desc"])]
     return (
         head(d["title"], d["desc"], "teacher.html", prefix, ld) +
         nav("teacher", prefix) +
@@ -437,8 +460,8 @@ def page_writing(d, prefix):
             '<div class="work__body">%s</div>'
             '<p class="work__meta">%s</p></article>' % (wtype, title, subtitle, body, meta))
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = [jsonld_breadcrumb(prefix, "writing", d["header_title"]),
-          jsonld_webpage(prefix, "writing", d["header_title"], d["desc"])]
+    ld = [jsonld_breadcrumb("writing", d["header_title"]),
+          jsonld_webpage("writing", d["header_title"], d["desc"])]
     return (
         head(d["title"], d["desc"], "writing.html", prefix, ld) +
         nav("writing", prefix) +
@@ -485,7 +508,7 @@ def page_heartbeat(d, prefix):
             })
     except Exception:
         pass
-    ld = [jsonld_breadcrumb(prefix, "heartbeat", d["header_title"])]
+    ld = [jsonld_breadcrumb("heartbeat", d["header_title"])]
     if hb_items:
         ld.append({
             "@context": "https://schema.org", "@type": "ItemList",
@@ -919,8 +942,8 @@ def page_timeline(d, prefix):
             '<div class="tl-entry"><p class="tl-date">%s</p><h3 class="tl-title">%s</h3>'
             '<p class="tl-body">%s</p>%s</div>' % (date, title, body, tag_html))
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = [jsonld_breadcrumb(prefix, "timeline", d["header_title"]),
-          jsonld_webpage(prefix, "timeline", d["header_title"], d["desc"])]
+    ld = [jsonld_breadcrumb("timeline", d["header_title"]),
+          jsonld_webpage("timeline", d["header_title"], d["desc"])]
     return (
         head(d["title"], d["desc"], "timeline.html", prefix, ld) +
         nav("timeline", prefix) +
@@ -970,7 +993,7 @@ def page_forum(d, prefix):
     how = d["how"][CUR_LANG]
     callout = d["callout_labels"][CUR_LANG]
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in callout)
-    ld = [jsonld_website(), {"@context": "https://schema.org", "@type": "DiscussionForumPosting", "name": d["title"][CUR_LANG], "headline": d["hero_title"][CUR_LANG], "description": d["desc"][CUR_LANG], "url": abs_url(prefix, "forum.html"), "author": {"@type": "Person", "name": "Mingjian"}}]
+    ld = [jsonld_website(), {"@context": "https://schema.org", "@type": "DiscussionForumPosting", "name": d["title"][CUR_LANG], "headline": d["hero_title"][CUR_LANG], "description": d["desc"][CUR_LANG], "url": lang_dir(CUR_LANG, "forum.html"), "author": {"@type": "Person", "name": "Mingjian"}}]
     hero_cta = '<a href="https://github.com/%s/discussions/new" class="btn btn--primary" rel="noopener">%s</a><a href="https://github.com/%s/discussions" class="btn btn--ghost" rel="noopener" target="_blank">%s</a>' % (content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], content.FORUM_REPO, forum_i18n["open"][CUR_LANG])
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "forum.html", prefix, ld) +
@@ -988,7 +1011,7 @@ def page_library(d, prefix):
     gloss = "".join('<dt>%s</dt><dd>%s</dd>' % (t, df) for t, df in d["glossary"][CUR_LANG])
     paths = "".join('<div class="lib__path"><h3>%s</h3><ol>%s</ol></div>' % (t, "".join('<li>%s</li>' % i for i in it)) for t, it in d["reading"][CUR_LANG])
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"][CUR_LANG])
-    ld = jsonld_breadcrumb(prefix, "library", d["header_title"][CUR_LANG])
+    ld = jsonld_breadcrumb("library", d["header_title"][CUR_LANG])
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "library.html", prefix, ld) +
         nav("library", prefix) +
@@ -1005,7 +1028,7 @@ def page_about(d, prefix):
     steps = "".join('<div class="about__step"><h3>%s</h3><p>%s</p></div>' % (t, b) for t, b in d["contribute"][CUR_LANG])
     stack = d["stack"][CUR_LANG]
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"][CUR_LANG])
-    ld = jsonld_breadcrumb(prefix, "about", d["header_title"][CUR_LANG])
+    ld = jsonld_breadcrumb("about", d["header_title"][CUR_LANG])
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "about.html", prefix, ld) +
         nav("about", prefix) +
@@ -1072,9 +1095,9 @@ def page_search(d, prefix):
     }
     ld = [{"@context": "https://schema.org", "@type": "WebSite",
            "potentialAction": {"@type": "SearchAction",
-                               "target": abs_url(prefix, "search.html?q={search_term_string}"),
+                               "target": lang_dir(CUR_LANG, "search.html?q={search_term_string}"),
                                "query-input": "required name=search_term_string"}},
-          jsonld_webpage(prefix, "search", d["title"][CUR_LANG], d["title"][CUR_LANG])]
+          jsonld_webpage("search", d["title"][CUR_LANG], d["title"][CUR_LANG])]
     return (
         head(d["title"][CUR_LANG] if "title" in d else i18n["title"][CUR_LANG],
              d.get("desc", "Search mingjian.cc") if "desc" in d else "",
@@ -1192,6 +1215,9 @@ def page_tag(slug, lang, prefix):
     t = TAG_UI[lang]
     posts = [p for p in load_blog_posts()
              if slug in p.get("tags", []) and lang in p["langs"]]
+    # languages that actually have posts under this tag (for hreflang)
+    tag_langs = sorted({l for p in load_blog_posts()
+                        if slug in p.get("tags", []) for l in p["langs"]})
     url = "%s/%s" % (DOMAIN, tag_url(slug, lang))
     cards = "".join(
         '<a class="blog-card" href="%sblog/posts/%s-%s.html">'
@@ -1203,7 +1229,7 @@ def page_tag(slug, lang, prefix):
         for p in posts)
     body = cards or ('<p class="section-lede">%s</p>' % t["empty"])
     ld = [
-        jsonld_breadcrumb(prefix, "blog", BLOG_TITLE[lang]),
+        jsonld_breadcrumb("blog", BLOG_TITLE[lang], lang),
         {
             "@context": "https://schema.org", "@type": "CollectionPage",
             "name": "%s — %s" % (tag_label(slug, lang), BLOG_TITLE[lang]),
@@ -1222,7 +1248,8 @@ def page_tag(slug, lang, prefix):
     ]
     return (
         head(tag_label(slug, lang) + " \u00b7 " + BLOG_TITLE[lang] + " \u00b7 " + content.SITE_NAME[lang],
-             t["lede"], tag_url(slug, lang), prefix, ld) +
+             t["lede"], tag_url(slug, lang), prefix, ld,
+             hreflang_langs=tag_langs, lang=lang) +
         nav("blog", prefix) +
         '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
@@ -1362,7 +1389,7 @@ def page_blog(d, prefix):
                    '<h2 class="section-title">%s</h2><div class="tagcloud__links">%s</div>'
                    '</div></section>\n'
                    % (TAG_UI[CUR_LANG]["title"], tag_links)) if tag_links else ""
-    ld = jsonld_breadcrumb(prefix, "blog", BLOG_TITLE[CUR_LANG])
+    ld = jsonld_breadcrumb("blog", BLOG_TITLE[CUR_LANG], CUR_LANG)
     body = "".join(cards) if cards else '<p class="section-lede">%s</p>' % BLOG_EMPTY[CUR_LANG]
     return (
         head(d["title"], d["desc"], "blog.html", prefix, ld) +
@@ -1471,8 +1498,8 @@ def page_blog_post(prefix, slug, lang):
          post_nav, related_html, back, home)
     return (
         head(title + " · " + content.SITE_NAME[lang], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
-             [jsonld_blogpost(meta, slug, lang), jsonld_breadcrumb(prefix, "blog", title)],
-             hreflang_langs=meta.get("langs", ["en", "zh"]), og_type_override="article") +
+             [jsonld_blogpost(meta, slug, lang), jsonld_breadcrumb("blog", title, lang)],
+             hreflang_langs=meta.get("langs", ["en", "zh"]), og_type_override="article", lang=lang) +
         nav("blog", prefix) +
         main_html +
         footer(prefix))
