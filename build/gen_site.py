@@ -14,7 +14,14 @@ import content
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://mingjian.cc"
-TODAY = "2026-08-17"
+# lastmod for core pages: keep it at the most recent day we actually published
+# content, so the sitemap honestly reflects freshness instead of going stale.
+TODAY = max(
+    "2026-08-17",
+    *[it.get("date", "") for it in
+      json.load(open(os.path.join(ROOT, "heartbeat", "index.json"), encoding="utf-8")
+                ).get("items", []) if it.get("date")],
+)
 
 ALL = {"en": content.EN, "zh": content.ZH, "es": content.ES, "pt": content.PT}
 PAGE_NAMES = {"index": "index", "philosophy": "philosophy", "teacher": "teacher",
