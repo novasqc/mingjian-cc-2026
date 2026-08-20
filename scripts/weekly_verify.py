@@ -96,12 +96,40 @@ def verdict(label, value, baseline, direction, kind):
     return "  ℹ️  INFO", label, value, baseline
 
 
+def fresh_surface():
+    """Read the current surface size straight from the repo (not from the daily
+    history file), so the check is correct even if the monitor cron has not run
+    since the last deploy."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import monitor_ai_index as mon
+        surf = mon.indexable_surface()
+        inx = mon.indexnow_receipt()
+        spot = mon.live_spotcheck()
+        return {
+            "sitemap_urls": surf["sitemap_urls"],
+            "heartbeat_pages": surf["heartbeat_pages"],
+            "blog_pages": surf["blog_pages"],
+            "llms_full_kb": round(surf["llms_full_bytes"] / 1024.0, 1),
+            "feed_items": surf["feed_items"],
+            "live_ok": sum(1 for v in spot.values() if v == 200),
+            "live_total": len(spot),
+            "indexnow_ok": inx.get("endpoints_ok"),
+            "indexnow_total": inx.get("endpoints_total"),
+            "indexnow_urls": inx.get("url_count"),
+        }
+    except Exception as e:
+        print("  (fresh surface read failed: %s; falling back to history)" % e)
+        return None
+
+
 def main():
     base = load_baseline()
     sig = base["signals"]
     base_date = base["frozen_at"]
     hist = latest_history()
     hist_date = hist.get("date", "?")
+    fresh = fresh_surface()
 
     today = datetime.date.today().isoformat()
     elapsed = (datetime.date.fromisoformat(today) - datetime.date.fromisoformat(base_date)).days
@@ -111,26 +139,30 @@ def main():
     print("baseline: %s   |   now: %s   |   elapsed: %d days" % (base_date, today, elapsed))
     print("=" * 66)
 
+    def cur(key, default=None):
+        if fresh:
+            return fresh.get(key, default)
+        return hist.get(key, default)
+
     # --- A. What we control (surface size + pipeline) ---
     print("\n[A] 我们控制的量 — 应立即达标（证明流水线在跑，不证明被收录）")
     rows = [
-        ("sitemap URL 数", hist.get("sitemap_urls"), sig["sitemap_urls"], "same_or_up"),
-        ("心跳页面数", hist.get("heartbeat_pages"), sig["heartbeat_pages"], "same_or_up"),
-        ("博客页面数", hist.get("blog_pages"), sig["blog_pages"], "same_or_up"),
-        ("llms-full 语料 (KB)", hist.get("llms_full_kb"), sig["llms_full_kb"], "same_or_up"),
-        ("RSS 条目数", hist.get("feed_items"), sig["feed_items"], "same_or_up"),
-        ("线上可用 URL", "%d/%d" % (hist.get("live_ok", 0), hist.get("live_total", 0)),
+        ("sitemap URL 数", cur("sitemap_urls"), sig["sitemap_urls"], "same_or_up"),
+        ("心跳页面数", cur("heartbeat_pages"), sig["heartbeat_pages"], "same_or_up"),
+        ("博客页面数", cur("blog_pages"), sig["blog_pages"], "same_or_up"),
+        ("llms-full 语料 (KB)", cur("llms_full_kb"), sig["llms_full_kb"], "same_or_up"),
+        ("RSS 条目数", cur("feed_items"), sig["feed_items"], "same_or_up"),
+        ("线上可用 URL", "%d/%d" % (cur("live_ok", 0), cur("live_total", 0)),
          "%d/%d" % (sig["live_ok"], sig["live_total"]), "same_or_up"),
-        ("IndexNow 端点接受", "%d/%d" % (hist.get("indexnow_ok", 0), 3),
+        ("IndexNow 端点接受", "%d/%d" % (cur("indexnow_ok", 0), cur("indexnow_total", 0)),
          "%d/%d" % (sig["indexnow_endpoints_ok"], sig["indexnow_endpoints_total"]), "same_or_up"),
     ]
-    for label, cur, bl, d in rows:
-        # string compare for the ratio fields
-        if isinstance(cur, str) or isinstance(bl, str):
-            mark = "✅ PASS" if cur == bl else "⚠️  CHECK"
-            print("  %s  %-22s %s -> %s" % (mark, label, bl, cur))
+    for label, now, bl, d in rows:
+        if isinstance(now, str) or isinstance(bl, str):
+            mark = "✅ PASS" if now == bl else "⚠️  CHECK"
+            print("  %s  %-22s %s -> %s" % (mark, label, bl, now))
         else:
-            mark, l, v, b = verdict(label, cur, bl, d, "n")
+            mark, l, v, b = verdict(label, now, bl, d, "n")
             print("  %s  %-22s %s -> %s" % (mark, l, b, v))
 
     # --- B. Engine response (medium speed) ---
