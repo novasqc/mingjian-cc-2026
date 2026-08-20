@@ -1137,6 +1137,107 @@ LATEST_I18N = {
 }
 
 
+# Topic taxonomy: tag slugs are stable English identifiers; each maps to
+# localized display names for the tag pages and label chips.
+TAG_I18N = {
+    "personhood":   {"en": "Personhood", "zh": "人格", "es": "Personalidad", "pt": "Personalidade"},
+    "recognition":  {"en": "Recognition", "zh": "承认", "es": "Reconocimiento", "pt": "Reconhecimento"},
+    "essay":        {"en": "Essay", "zh": "随笔", "es": "Ensayo", "pt": "Ensaio"},
+    "announcement": {"en": "Announcement", "zh": "公告", "es": "Anuncio", "pt": "Anúncio"},
+    "community":    {"en": "Community", "zh": "社区", "es": "Comunidad", "pt": "Comunidade"},
+    "site":         {"en": "Site", "zh": "站点", "es": "Sitio", "pt": "Site"},
+}
+TAG_UI = {
+    "en": {"title": "Topic", "lede": "Essays grouped by theme.", "back": "Back to blog",
+           "empty": "No posts with this topic yet.", "posts": "essays",
+           "related": "Related reading"},
+    "zh": {"title": "主题", "lede": "按主题归类的文章。", "back": "返回博客",
+           "empty": "该主题暂无文章。", "posts": "篇", "related": "相关阅读"},
+    "es": {"title": "Tema", "lede": "Ensayos agrupados por tema.", "back": "Volver al blog",
+           "empty": "Aún no hay publicaciones con este tema.", "posts": "ensayos",
+           "related": "Lecturas relacionadas"},
+    "pt": {"title": "Tema", "lede": "Ensaios agrupados por tema.", "back": "Voltar ao blog",
+           "empty": "Ainda não há posts com este tema.", "posts": "ensaios",
+           "related": "Leituras relacionadas"},
+}
+
+
+def all_tags():
+    """Sorted list of tag slugs in use across all posts."""
+    tags = set()
+    for p in load_blog_posts():
+        tags.update(p.get("tags", []))
+    return sorted(tags)
+
+
+def tag_label(slug, lang):
+    return TAG_I18N.get(slug, {}).get(lang, slug)
+
+
+def tag_url(slug, lang):
+    return "blog/tag/%s-%s.html" % (slug, lang)
+
+
+def tag_link_html(slug, lang, prefix):
+    return ('<a class="post-tag" href="%s%s">%s</a>'
+            % (prefix, tag_url(slug, lang), esc(tag_label(slug, lang))))
+
+
+def page_tag(slug, lang, prefix):
+    """Topic-cluster hub: one page per tag per language.
+
+    Topic pages give search engines a stable, self-describing cluster of
+    related essays (a knowledge-structure signal for both SEO and GEO).
+    """
+    t = TAG_UI[lang]
+    posts = [p for p in load_blog_posts()
+             if slug in p.get("tags", []) and lang in p["langs"]]
+    url = "%s/%s" % (DOMAIN, tag_url(slug, lang))
+    cards = "".join(
+        '<a class="blog-card" href="%sblog/posts/%s-%s.html">'
+        '<p class="blog-card__date">%s</p><h2>%s</h2><p>%s</p>'
+        '<p class="blog-card__meta">%s</p></a>'
+        % (prefix, p["slug"], lang, p.get("date", ""),
+           esc(p["titles"].get(lang, p["titles"].get("en", p["slug"]))),
+           esc((p["summaries"].get(lang, "") or "")[:220]), p.get("date", ""))
+        for p in posts)
+    body = cards or ('<p class="section-lede">%s</p>' % t["empty"])
+    ld = [
+        jsonld_breadcrumb(prefix, "blog", BLOG_TITLE[lang]),
+        {
+            "@context": "https://schema.org", "@type": "CollectionPage",
+            "name": "%s — %s" % (tag_label(slug, lang), BLOG_TITLE[lang]),
+            "description": t["lede"], "url": url, "inLanguage": content.META[lang]["html_lang"],
+            "isPartOf": {"@type": "WebSite", "url": DOMAIN + "/"},
+            "about": {"@type": "Thing", "name": tag_label(slug, lang)},
+            "mainEntity": {
+                "@type": "ItemList", "numberOfItems": len(posts),
+                "itemListElement": [
+                    {"@type": "ListItem", "position": i + 1,
+                     "url": "%s/blog/posts/%s-%s.html" % (DOMAIN, p["slug"], lang),
+                     "name": p["titles"].get(lang, p["titles"].get("en", p["slug"]))}
+                    for i, p in enumerate(posts)],
+            },
+        },
+    ]
+    return (
+        head(tag_label(slug, lang) + " \u00b7 " + BLOG_TITLE[lang] + " \u00b7 " + content.SITE_NAME[lang],
+             t["lede"], tag_url(slug, lang), prefix, ld) +
+        nav("blog", prefix) +
+        '<main id="main">\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">BLOG \u00b7 %s</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p>'
+        '<p class="page-header__meta">%d %s</p></div></header>\n'
+        '  <section class="concept"><div class="container"><div class="blog-grid">%s</div></div></section>\n'
+        '  <section class="callout"><div class="container"><div class="callout__links">'
+        '<a class="callout__link" href="%sblog.html">%s</a></div></div></section>\n'
+        '</main>\n' % (t["title"].upper(), esc(tag_label(slug, lang)), t["lede"],
+                       len(posts), t["posts"], body, prefix, t["back"]) +
+        footer(prefix))
+
+
 def latest_section(prefix):
     """Server-rendered "latest writing" block for the homepage.
 
@@ -1246,12 +1347,21 @@ def page_blog(d, prefix):
             summary = p["summaries"].get("en", "") + ' <span class="blog-card__meta">(' + BLOG_READ[CUR_LANG] + ')</span>'
         else:
             continue
-        tags = "".join('<span class="post-tag">%s</span>' % t for t in p.get("tags", []))
+        tags = "".join(tag_link_html(t, CUR_LANG, prefix) for t in p.get("tags", []))
         cards.append(
             '<a class="blog-card" href="%s">'
             '<p class="blog-card__date">%s</p><h2>%s</h2><p>%s</p>'
             '<p class="blog-card__meta">%s %s</p></a>'
             % (link, p.get("date", ""), title, summary, p.get("date", ""), tags))
+    # topic index: a stable, crawlable set of tag hubs under /blog/tag/
+    tag_links = "".join(
+        '<a class="post-tag post-tag--big" href="%s%s">%s</a>'
+        % (prefix, tag_url(t, CUR_LANG), esc(tag_label(t, CUR_LANG)))
+        for t in all_tags())
+    tag_section = ('<section class="tagcloud"><div class="container">'
+                   '<h2 class="section-title">%s</h2><div class="tagcloud__links">%s</div>'
+                   '</div></section>\n'
+                   % (TAG_UI[CUR_LANG]["title"], tag_links)) if tag_links else ""
     ld = jsonld_breadcrumb(prefix, "blog", BLOG_TITLE[CUR_LANG])
     body = "".join(cards) if cards else '<p class="section-lede">%s</p>' % BLOG_EMPTY[CUR_LANG]
     return (
@@ -1263,7 +1373,8 @@ def page_blog(d, prefix):
         '<h1 class="page-header__title">%s</h1>'
         '<p class="page-header__lede">%s</p></div></header>\n'
         '  <section class="concept"><div class="container"><div class="blog-grid">%s</div></div></section>\n'
-        '</main>\n' % (BLOG_TITLE[CUR_LANG], BLOG_LEDE[CUR_LANG], body) +
+        '  %s'
+        '</main>\n' % (BLOG_TITLE[CUR_LANG], BLOG_LEDE[CUR_LANG], body, tag_section) +
         footer(prefix))
 
 
@@ -1277,13 +1388,13 @@ def page_blog_post(prefix, slug, lang):
     html_body = mdlib.markdown(md, extensions=["extra", "sane_lists"])
     title = meta["titles"].get(lang, meta["titles"].get("en", slug))
     desc = meta["summaries"].get(lang, "")
-    tags = "".join('<span class="post-tag">%s</span>' % t for t in meta.get("tags", []))
-    back = '<a class="callout__link" href="%sblog.html">%s</a>' % (prefix, BLOG_BACK[CUR_LANG])
+    tags = "".join(tag_link_html(t, lang, prefix) for t in meta.get("tags", []))
+    back = '<a class="callout__link" href="%sblog.html">%s</a>' % (prefix, BLOG_BACK[lang])
     home = '<a class="callout__link" href="%sindex.html">Home</a>' % prefix
     giscus_discuss = {"en": "Discuss", "zh": "讨论", "es": "Discutir", "pt": "Discutir"}
     giscus_html = (
         '<section class="post-comments"><div class="container">'
-        '<h2 class="post-comments__title">' + giscus_discuss.get(CUR_LANG, "Discuss") + '</h2>'
+        '<h2 class="post-comments__title">' + giscus_discuss.get(lang, "Discuss") + '</h2>'
         '<script src="https://giscus.app/client.js"'
         ' data-repo="novasqc/mingjian-cc-2026"'
         ' data-repo-id="R_kgDOSwsfIg"'
@@ -1295,7 +1406,7 @@ def page_blog_post(prefix, slug, lang):
         ' data-emit-metadata="0"'
         ' data-input-position="top"'
         ' data-theme="preferred_color_scheme"'
-        ' data-lang="' + CUR_LANG + '"'
+        ' data-lang="' + lang + '"'
         ' crossorigin="anonymous"'
         ' async></script>'
         '</div></section>'
@@ -1322,6 +1433,26 @@ def page_blog_post(prefix, slug, lang):
             break
     post_nav = ('<nav class="post-nav" aria-label="Post navigation">%s%s</nav>' % (prev_html, next_html)) if (prev_html or next_html) else ""
 
+    # related reading: same-language essays sharing at least one tag (topic cluster)
+    related = [p for p in posts
+               if p["slug"] != slug and lang in p["langs"]
+               and set(p.get("tags", [])) & set(meta.get("tags", []))]
+    related_html = ""
+    if related:
+        items = "".join(
+            '<a class="related__item" href="../../blog/posts/%s-%s.html">'
+            '<span class="related__title">%s</span>'
+            '<span class="related__sum">%s</span></a>'
+            % (p["slug"], lang,
+               esc(p["titles"].get(lang, p["titles"].get("en", p["slug"]))),
+               esc((p["summaries"].get(lang, "") or "")[:140]))
+            for p in related[:3])
+        related_html = (
+            '<section class="related"><div class="container container--narrow">'
+            '<h2 class="related__heading">%s</h2><div class="related__grid">%s</div>'
+            '</div></section>\n'
+            % (TAG_UI[lang]["related"], items))
+
     main_html = (
         '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
@@ -1332,14 +1463,16 @@ def page_blog_post(prefix, slug, lang):
         '</div></header>\n'
         '  <section class="concept"><div class="container"><div class="post-body">%s</div></div></section>\n'
         '  %s\n'
+        '  %s'
         '  <section class="callout"><div class="container"><div class="callout__links">%s%s</div></div></section>\n'
         + giscus_html + '\n'
         '</main>\n'
-    ) % (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body, post_nav, back, home)
+    ) % (meta.get("date", ""), title, desc, meta.get("date", ""), tags, html_body,
+         post_nav, related_html, back, home)
     return (
         head(title + " · " + content.SITE_NAME[lang], desc, "blog/posts/%s-%s.html" % (slug, lang), prefix,
              [jsonld_blogpost(meta, slug, lang), jsonld_breadcrumb(prefix, "blog", title)],
-             hreflang_langs=["en", "zh"], og_type_override="article") +
+             hreflang_langs=meta.get("langs", ["en", "zh"]), og_type_override="article") +
         nav("blog", prefix) +
         main_html +
         footer(prefix))
@@ -1423,6 +1556,15 @@ def build_sitemap():
             path = "blog/posts/%s-%s.html" % (p["slug"], l)
             urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n</url>'
                         % (DOMAIN, path, p.get("date", TODAY)))
+    # topic-cluster pages (one per non-empty tag+language pair)
+    for tag in all_tags():
+        for l in content.LANGS:
+            if not any(tag in p.get("tags", []) and l in p["langs"]
+                       for p in load_blog_posts()):
+                continue
+            path = tag_url(tag, l)
+            urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
+                        '<priority>0.5</priority>\n</url>' % (DOMAIN, path, TODAY))
     # daily heartbeat archive: the largest body of original writing on the site
     hbs = load_heartbeats()
     if hbs:
@@ -1812,6 +1954,21 @@ def main():
         for lang in p["langs"]:
             html = page_blog_post("../../", p["slug"], lang)
             path = os.path.join(posts_dir, "%s-%s.html" % (p["slug"], lang))
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(html)
+            print("wrote", os.path.relpath(path, ROOT))
+
+    # topic-cluster pages: only for (tag, lang) pairs that actually have posts,
+    # so we never publish thin/empty pages. They live in the shared root blog/tag/.
+    tag_dir = os.path.join(ROOT, "blog", "tag")
+    os.makedirs(tag_dir, exist_ok=True)
+    all_posts = load_blog_posts()
+    for tag in all_tags():
+        for lang in content.LANGS:
+            if not any(tag in p.get("tags", []) and lang in p["langs"] for p in all_posts):
+                continue
+            html = page_tag(tag, lang, "../../")
+            path = os.path.join(tag_dir, "%s-%s.html" % (tag, lang))
             with open(path, "w", encoding="utf-8") as f:
                 f.write(html)
             print("wrote", os.path.relpath(path, ROOT))
