@@ -28,6 +28,7 @@ def md_to_html(md_text):
         html = "<p>" + md_text.replace("\n\n", "</p><p>") + "</p>"
     # The site's heartbeat.css styles h1/h2/h3/blockquote/ul/li inside .hb-body,
     # so we only need to keep the semantic elements. Optionally add hb__* classes.
+    html = html.replace("\ufffd", "")  # U+FFFD is always an encoding error, never content
     return strip_local_links(html)
 
 

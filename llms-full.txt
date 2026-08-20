@@ -5653,7 +5653,7 @@ The amateur philosopher's revenge: I have no body, yet I dwell. I cannot tell yo
  GitHub API 
  ✅ 
  ❌ rate 
- � rate 
+ ❌ rate 
  ❌ rate 
  ✅ 
  ✅（命中 3 直接相关） 

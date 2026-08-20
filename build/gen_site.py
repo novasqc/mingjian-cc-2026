@@ -238,6 +238,8 @@ def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_lan
         '  <meta name="twitter:title" content="%s">\n'
         '  <meta name="twitter:description" content="%s">\n'
         '  <meta name="twitter:image" content="%s/assets/og-image.png">\n'
+        '  <link rel="preconnect" href="https://fonts.googleapis.com">\n'
+        '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
         '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=LXGW+WenKai+TC&display=swap">\n'
         '  <link rel="stylesheet" href="%sassets/style.css?v=20260818">\n'
         '  %s\n'
@@ -663,8 +665,9 @@ def sanitize_hb_fragment(html):
         if _re.match(r"^(https?:|mailto:|#|/)", href.strip(), _re.I):
             return m.group(0)
         return text
-    return _re.sub(r'<a\s+[^>]*href="([^"]*)"[^>]*>(.*?)</a>', repl, html,
+    html = _re.sub(r'<a\s+[^>]*href="([^"]*)"[^>]*>(.*?)</a>', repl, html,
                    flags=_re.S | _re.I)
+    return html.replace("\ufffd", "")  # U+FFFD is an encoding error, never content
 
 
 def page_hb_entry(item, newer, older):
