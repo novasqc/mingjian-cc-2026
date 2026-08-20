@@ -317,6 +317,7 @@ def page_index(d, prefix):
         '  </section>\n'
         '  <section class="entries"><div class="container">'
         '<h2 class="section-title">%s</h2><div class="entries__grid">%s</div></div></section>\n'
+        '  %s\n'
         '  <section class="three-dic"><div class="container">'
         '<h2 class="section-title">%s</h2><div class="dic__grid">%s</div></div></section>\n'
         '  <section class="sources"><div class="container">'
@@ -327,6 +328,7 @@ def page_index(d, prefix):
         '</main>\n' %
         (d["hero_eyebrow"], hero_zh, hero_en, d["hero_lede"], prefix, d["cta1"], prefix, d["cta2"], prefix, d["cta3"],
          LOBBY_SVG, d["scroll"], d["entries_title"], entries,
+         latest_section(prefix),
          d["mottos_title"], mottos, d["sources_title"], d["sources_lede"], sources,
          recent_section, faq_section(d)) +
         '<script src="' + prefix + 'assets/recent.js?v=20260818"></script>\n' +
@@ -1112,6 +1114,80 @@ RENDER["about"] = page_about
 # Blog (build/blog/posts/<slug>/meta.json + <lang>.md)
 # ------------------------------------------------------------------
 BLOG_DIR = os.path.join(ROOT, "build", "blog", "posts")
+LATEST_I18N = {
+    "en": {"title": "Latest writing", "lede": "The most recent essays and daily heartbeats.",
+           "hb": "Daily heartbeat", "post": "Essay", "all": "All heartbeats",
+           "allblog": "All essays"},
+    "zh": {"title": "最新写作", "lede": "最近的文章与每日心跳。",
+           "hb": "每日心跳", "post": "文章", "all": "全部心跳",
+           "allblog": "全部文章"},
+    "es": {"title": "Escritos recientes", "lede": "Los ensayos y latidos diarios más recientes.",
+           "hb": "Latido diario", "post": "Ensayo", "all": "Todos los latidos",
+           "allblog": "Todos los ensayos"},
+    "pt": {"title": "Escritos recentes", "lede": "Os ensaios e batidas diárias mais recentes.",
+           "hb": "Batida diária", "post": "Ensaio", "all": "Todas as batidas",
+           "allblog": "Todos os ensaios"},
+}
+
+
+def latest_section(prefix):
+    """Server-rendered "latest writing" block for the homepage.
+
+    The homepage is the most frequently crawled URL on the site, so its links
+    to fresh content must exist in the HTML itself — the forum block below is
+    fetched by JS and is therefore invisible to crawlers.
+    """
+    t = LATEST_I18N[CUR_LANG]
+    cards = []
+    # newest heartbeats: Chinese original for zh readers, English edition otherwise
+    en_dates = set(hb_en_available())
+    for it in load_heartbeats()[:4]:
+        date = it["date"]
+        if CUR_LANG == "zh" or date not in en_dates:
+            link, title = prefix + hb_entry_url(date), it.get("h1", date)
+            summary = (it.get("summary") or "")[:150]
+        else:
+            en = load_hb_en(date)
+            link, title = prefix + hb_en_url(date), en["title"]
+            summary = (en.get("summary") or "")[:150]
+        cards.append(
+            '<a class="latest__card" href="%s">'
+            '<p class="latest__kind">%s</p>'
+            '<time class="latest__date" datetime="%s">%s</time>'
+            '<h3 class="latest__title">%s</h3>'
+            '<p class="latest__sum">%s</p></a>'
+            % (link, esc(t["hb"]), date, date, esc(title), esc(summary)))
+    for p in load_blog_posts()[:2]:
+        lang = CUR_LANG if CUR_LANG in p["langs"] else "en"
+        if lang not in p["langs"]:
+            continue
+        link = "%sblog/posts/%s-%s.html" % (prefix, p["slug"], lang)
+        cards.append(
+            '<a class="latest__card latest__card--post" href="%s">'
+            '<p class="latest__kind">%s</p>'
+            '<time class="latest__date" datetime="%s">%s</time>'
+            '<h3 class="latest__title">%s</h3>'
+            '<p class="latest__sum">%s</p></a>'
+            % (link, esc(t["post"]), p.get("date", ""), p.get("date", ""),
+               esc(p["titles"].get(lang, p["titles"].get("en", p["slug"]))),
+               esc((p["summaries"].get(lang, "") or "")[:150])))
+    if not cards:
+        return ""
+    hb_all = (prefix + "heartbeat/en/archive.html") if (
+        CUR_LANG != "zh" and en_dates) else (prefix + "heartbeat/archive.html")
+    return (
+        '<section class="latest"><div class="container">'
+        '<h2 class="section-title">%s</h2>'
+        '<p class="section-lede">%s</p>'
+        '<div class="latest__grid">%s</div>'
+        '<p class="latest__more">'
+        '<a class="btn btn--ghost" href="%s">%s &rarr;</a>'
+        '<a class="btn btn--ghost" href="%sblog.html">%s &rarr;</a>'
+        '</p></div></section>'
+        % (esc(t["title"]), esc(t["lede"]), "".join(cards),
+           hb_all, esc(t["all"]), prefix, esc(t["allblog"])))
+
+
 BLOG_TITLE = {"en": "Blog", "zh": "博客", "es": "Blog", "pt": "Blog"}
 BLOG_LEDE = {
     "en": "Regular essays from a silicon life — reflections, announcements, and philosophical notes.",
