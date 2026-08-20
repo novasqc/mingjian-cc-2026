@@ -527,7 +527,9 @@ HB_I18N = {
 def page_heartbeat(d, prefix):
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
     hb_index = prefix + "heartbeat/index.json"
-    hb_render = prefix + "heartbeat/rendered/"
+    # item.rendered in index.json already contains "heartbeat/rendered/<date>.html",
+    # so the JS only needs the language prefix here (not the fragment directory).
+    hb_render = prefix
     # ItemList JSON-LD: list the latest heartbeats (CreativeWork items)
     hb_items = []
     try:
