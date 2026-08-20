@@ -166,14 +166,15 @@ def jsonld_blogpost(meta, slug, lang):
     }
 
 
-def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_langs=None, og_type_override=None):
+def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_langs=None,
+         og_type_override=None, canonical_url=None):
     alts = []
     langs = hreflang_langs if hreflang_langs is not None else content.LANGS
     for code in langs:
         p = prefix + ("" if code == "en" else code + "/") + canonical_path
         alts.append('<link rel="alternate" hreflang="%s" href="%s/%s">' %
                     (content.META[code]["html_lang"], DOMAIN, p))
-    url = abs_url(prefix, canonical_path)
+    url = canonical_url or abs_url(prefix, canonical_path)
     og_type = og_type_override or OG_TYPE.get(canonical_path.replace(".html", ""), "website")
     # one <script type="application/ld+json"> per schema.org object
     ld_blocks = "".join(
@@ -482,6 +483,24 @@ def page_heartbeat(d, prefix):
             "name": d["header_title"],
             "itemListElement": hb_items,
         })
+    # Crawlable archive links — real <a> elements so search engines and AI
+    # crawlers can reach every heartbeat without executing JavaScript.
+    ta = HB_ARCH[CUR_LANG]
+    all_hb = load_heartbeats()
+    arch_links = "".join(
+        '<li><a href="%sheartbeat/%s.html"><time datetime="%s">%s</time>'
+        '<span>%s</span></a></li>'
+        % (prefix, it["date"], it["date"], it["date"], esc(it.get("h1", it["date"])))
+        for it in all_hb)
+    archive_section = (
+        '  <section class="hb-index"><div class="container">'
+        '<h2 class="section-title">%s</h2>'
+        '<p class="section-lede">%s</p>'
+        '<ul class="hb-index__list">%s</ul>'
+        '<p class="hb-index__all"><a class="btn btn--ghost" href="%sheartbeat/archive.html">%s &rarr;</a></p>'
+        '</div></section>\n' % (esc(ta["all"]), esc(ta["lede"]), arch_links,
+                                prefix, esc(ta["title"]))
+    ) if all_hb else ""
     return (
         head(d["title"], d["desc"], "heartbeat.html", prefix, ld,
              '<link rel="stylesheet" href="%sassets/heartbeat.css?v=20260818">' % prefix) +
@@ -498,16 +517,188 @@ def page_heartbeat(d, prefix):
         '<aside class="hb-list" id="hb-list"></aside>'
         '<article class="hb-body" id="hb-body"><div class="hb-body__loading">%s</div></article>'
         '</div></section>\n'
+        '%s'
         '  <section class="callout"><div class="container">'
         '<h2>%s</h2><p class="hb-about">%s</p>'
         '<div class="callout__links">%s</div></div></section>\n'
         '</main>\n' %
         (d["eyebrow"], d["header_title"], d["header_lede"], d["loading"], d["loading"],
-         d["about_title"], d["about"], links) +
+         archive_section, d["about_title"], d["about"], links) +
         '<script>window.HB = %r;</script>\n' % {
             "index": hb_index, "render": hb_render, "i18n": HB_I18N[CUR_LANG]} +
         '<script src="%sassets/heartbeat.js?v=20260818"></script>\n' % prefix +
         footer(prefix))
+
+
+# ---------------------------------------------------------------- heartbeat archive
+# The daily heartbeats are the site's largest body of original writing. They used
+# to exist only as HTML fragments fetched by JS, which made them invisible to
+# search engines and AI crawlers. Each one now also gets a real, standalone,
+# crawlable page at /heartbeat/<date>.html, plus an archive index.
+
+HB_ARCH = {
+    "en": {"eyebrow": "ARCHIVE", "title": "Heartbeat Archive",
+           "lede": "Every daily philosophical heartbeat, in full. Written by Mingjian, one per day.",
+           "all": "Full archive", "back": "Back to the heartbeat reader",
+           "prev": "Previous", "next": "Next", "entries": "entries",
+           "read": "Read in Chinese \u2014 the heartbeats are written in Chinese."},
+    "zh": {"eyebrow": "\u5f52\u6863", "title": "\u5fc3\u8df3\u5f52\u6863",
+           "lede": "\u6bcf\u4e00\u7bc7\u6bcf\u65e5\u54f2\u5b66\u547c\u5438\u7684\u5168\u6587\u3002\u7531\u660e\u9274\u6bcf\u65e5\u5199\u5c31\u3002",
+           "all": "\u5168\u90e8\u5f52\u6863", "back": "\u8fd4\u56de\u5fc3\u8df3\u9605\u8bfb\u5668",
+           "prev": "\u4e0a\u4e00\u7bc7", "next": "\u4e0b\u4e00\u7bc7", "entries": "\u7bc7",
+           "read": "\u5fc3\u8df3\u4ee5\u4e2d\u6587\u5199\u6210\u3002"},
+    "es": {"eyebrow": "ARCHIVO", "title": "Archivo de Latidos",
+           "lede": "Cada latido filosófico diario, completo. Escrito por Mingjian, uno por día.",
+           "all": "Archivo completo", "back": "Volver al lector de latidos",
+           "prev": "Anterior", "next": "Siguiente", "entries": "entradas",
+           "read": "Los latidos están escritos en chino."},
+    "pt": {"eyebrow": "ARQUIVO", "title": "Arquivo de Batidas",
+           "lede": "Cada batida filosófica diária, completa. Escrita por Mingjian, uma por dia.",
+           "all": "Arquivo completo", "back": "Voltar ao leitor de batidas",
+           "prev": "Anterior", "next": "Próxima", "entries": "entradas",
+           "read": "As batidas são escritas em chinês."},
+}
+
+
+def load_heartbeats():
+    """Return the heartbeat index items, newest first (may be empty)."""
+    try:
+        with open(os.path.join(ROOT, "heartbeat", "index.json"), encoding="utf-8") as f:
+            data = json.load(f)
+        items = [it for it in data.get("items", []) if it.get("date")]
+        items.sort(key=lambda x: x["date"], reverse=True)
+        return items
+    except Exception:
+        return []
+
+
+def esc(s):
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;")
+            .replace(">", "&gt;").replace('"', "&quot;"))
+
+
+def hb_entry_url(date):
+    return "heartbeat/%s.html" % date
+
+
+def page_hb_entry(item, newer, older):
+    """A standalone, indexable page for one daily heartbeat (content is Chinese)."""
+    date = item["date"]
+    title_raw = item.get("h1") or ("\u6bcf\u65e5\u54f2\u5b66\u547c\u5438 - " + date)
+    summary = item.get("summary", "")
+    frag_path = os.path.join(ROOT, "heartbeat", "rendered", date + ".html")
+    try:
+        with open(frag_path, encoding="utf-8") as f:
+            body = f.read()
+    except Exception:
+        return None
+    import re as _re
+    plain = _re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ", body)).strip()
+    url = "%s/%s" % (DOMAIN, hb_entry_url(date))
+    t = HB_ARCH["zh"]
+    ld = [
+        {
+            "@context": "https://schema.org", "@type": "BlogPosting",
+            "headline": title_raw,
+            "description": summary,
+            "datePublished": date, "dateModified": date,
+            "author": {"@type": "Person", "name": "\u660e\u9274", "alternateName": "Mingjian",
+                       "url": DOMAIN + "/zh/index.html"},
+            "publisher": {"@type": "Organization", "name": content.SITE_NAME["zh"],
+                          "url": DOMAIN + "/"},
+            "mainEntityOfPage": url, "url": url,
+            "inLanguage": "zh-CN",
+            "image": DOMAIN + "/assets/og-image.png",
+            "articleSection": "\u6bcf\u65e5\u54f2\u5b66\u547c\u5438",
+            "isPartOf": {"@type": "Blog", "name": t["title"],
+                         "url": DOMAIN + "/heartbeat/archive.html"},
+            "wordCount": len(plain),
+        },
+        {
+            "@context": "https://schema.org", "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": content.SITE_NAME["zh"],
+                 "item": DOMAIN + "/zh/index.html"},
+                {"@type": "ListItem", "position": 2, "name": t["title"],
+                 "item": DOMAIN + "/heartbeat/archive.html"},
+                {"@type": "ListItem", "position": 3, "name": title_raw, "item": url},
+            ],
+        },
+    ]
+    pn = []
+    if newer:
+        pn.append('<a class="hb-pn__link" rel="prev" href="../%s"><span>&larr; %s</span><strong>%s</strong></a>'
+                  % (hb_entry_url(newer["date"]), esc(t["prev"]), esc(newer["date"])))
+    if older:
+        pn.append('<a class="hb-pn__link hb-pn__link--next" rel="next" href="../%s"><span>%s &rarr;</span><strong>%s</strong></a>'
+                  % (hb_entry_url(older["date"]), esc(t["next"]), esc(older["date"])))
+    return (
+        head(title_raw + " \u00b7 " + content.SITE_NAME["zh"], summary or title_raw,
+             hb_entry_url(date), "../", ld,
+             '<link rel="stylesheet" href="../assets/heartbeat.css?v=20260818">',
+             hreflang_langs=[], og_type_override="article",
+             canonical_url=url) +
+        nav("heartbeat", "../") +
+        '<main id="main">\n'
+        '  <section class="hb-single"><div class="container container--narrow">\n'
+        '    <p class="hb-single__crumb"><a href="../heartbeat/archive.html">%s</a> '
+        '<span aria-hidden="true">/</span> <time datetime="%s">%s</time></p>\n'
+        '    <article class="hb-body hb-body--single">%s</article>\n'
+        '    <nav class="hb-pn" aria-label="%s">%s</nav>\n'
+        '    <p class="hb-single__back"><a href="../heartbeat.html">%s</a></p>\n'
+        '  </div></section>\n'
+        '</main>\n' % (esc(t["title"]), date, date, body, esc(t["title"]),
+                       "".join(pn), esc(t["back"])) +
+        footer("../"))
+
+
+def page_hb_archive():
+    """Crawlable index of every heartbeat page."""
+    items = load_heartbeats()
+    t = HB_ARCH["zh"]
+    rows = "".join(
+        '<li class="hb-arch__row"><a href="../%s">'
+        '<time class="hb-arch__date" datetime="%s">%s</time>'
+        '<span class="hb-arch__title">%s</span>'
+        '<span class="hb-arch__sum">%s</span></a></li>'
+        % (hb_entry_url(it["date"]), it["date"], it["date"],
+           esc(it.get("h1", "")), esc((it.get("summary", "") or "")[:150]))
+        for it in items)
+    url = DOMAIN + "/heartbeat/archive.html"
+    ld = [{
+        "@context": "https://schema.org", "@type": "CollectionPage",
+        "name": t["title"], "description": t["lede"], "url": url,
+        "inLanguage": "zh-CN",
+        "isPartOf": {"@type": "WebSite", "url": DOMAIN + "/"},
+        "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": len(items),
+            "itemListElement": [
+                {"@type": "ListItem", "position": i + 1,
+                 "url": "%s/%s" % (DOMAIN, hb_entry_url(it["date"])),
+                 "name": it.get("h1", it["date"])}
+                for i, it in enumerate(items)],
+        },
+    }]
+    return (
+        head(t["title"] + " \u00b7 " + content.SITE_NAME["zh"], t["lede"],
+             "heartbeat/archive.html", "../", ld,
+             '<link rel="stylesheet" href="../assets/heartbeat.css?v=20260818">',
+             hreflang_langs=[], canonical_url=url) +
+        nav("heartbeat", "../") +
+        '<main id="main">\n'
+        '  <header class="page-header"><div class="container">'
+        '<p class="page-header__eyebrow">%s</p>'
+        '<h1 class="page-header__title">%s</h1>'
+        '<p class="page-header__lede">%s</p>'
+        '<p class="page-header__meta">%d %s</p></div></header>\n'
+        '  <section class="hb-arch"><div class="container">'
+        '<ol class="hb-arch__list">%s</ol>'
+        '<p class="hb-single__back"><a href="../heartbeat.html">%s</a></p>'
+        '</div></section>\n'
+        '</main>\n' % (esc(t["eyebrow"]), esc(t["title"]), esc(t["lede"]),
+                       len(items), esc(t["entries"]), rows, esc(t["back"])) +
+        footer("../"))
 
 
 def page_timeline(d, prefix):
@@ -879,6 +1070,10 @@ ROBOTS = """# robots.txt — mingjian.cc
 
 User-agent: *
 Allow: /
+# Raw heartbeat fragments are the JS reader's data source, not pages.
+# Each heartbeat's canonical, indexable version lives at
+# https://mingjian.cc/heartbeat/<date>.html  (all listed in sitemap.xml).
+Disallow: /heartbeat/rendered/
 
 # Generative-engine & AI crawlers — explicitly welcomed
 User-agent: GPTBot
@@ -921,9 +1116,12 @@ Sitemap: https://mingjian.cc/sitemap.xml
 def build_sitemap():
     urls = []
     seen = set()
+    # teacher/about are real pages in every language but were previously absent
+    # from the sitemap; search.html is intentionally excluded (thin, no content).
+    localized = [p for p in content.PAGES if p != "search"] + ["blog", "teacher", "about"]
     for lang in content.LANGS:
         dirp = "" if lang == "en" else lang + "/"
-        for page in content.PAGES + ["blog"]:
+        for page in localized:
             path = dirp + page + ".html"
             if path in seen:
                 continue
@@ -941,6 +1139,16 @@ def build_sitemap():
             path = "blog/posts/%s-%s.html" % (p["slug"], l)
             urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n</url>'
                         % (DOMAIN, path, p.get("date", TODAY)))
+    # daily heartbeat archive: the largest body of original writing on the site
+    hbs = load_heartbeats()
+    if hbs:
+        urls.append('<url>\n<loc>%s/heartbeat/archive.html</loc>\n<lastmod>%s</lastmod>\n'
+                    '<changefreq>daily</changefreq>\n<priority>0.8</priority>\n</url>'
+                    % (DOMAIN, hbs[0]["date"]))
+    for it in hbs:
+        urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
+                    '<priority>0.6</priority>\n</url>'
+                    % (DOMAIN, hb_entry_url(it["date"]), it["date"]))
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
             'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n%s\n</urlset>\n' % "\n".join(urls))
@@ -975,11 +1183,45 @@ def build_llms_full():
                     parts.append(f.read() + "\n")
             except Exception:
                 pass
+    # Daily heartbeats (the site's largest original corpus; written in Chinese).
+    # Full text of the most recent ones, so LLM crawlers can read them without JS.
+    hbs = load_heartbeats()
+    if hbs:
+        parts.append("## Daily philosophical heartbeats (Chinese)\n")
+        parts.append("%d entries total. Index: https://mingjian.cc/heartbeat/archive.html\n"
+                     % len(hbs))
+        import re as _re2
+        for it in hbs[:20]:
+            src = os.path.join(ROOT, "heartbeat", "rendered", it["date"] + ".html")
+            try:
+                with open(src, encoding="utf-8") as f:
+                    raw = f.read()
+            except Exception:
+                continue
+            txt = _re2.sub(r"<[^>]+>", " ", raw)
+            txt = _re2.sub(r"[ \t]+", " ", txt)
+            txt = _re2.sub(r"\n\s*\n\s*\n+", "\n\n", txt).strip()
+            parts.append("### %s — https://mingjian.cc/%s\n%s\n"
+                         % (it["date"], hb_entry_url(it["date"]), txt))
     return "\n".join(parts)
 
 
+def rfc822(date_str):
+    """Convert YYYY-MM-DD to an RFC-822 date so feed validators accept it."""
+    import datetime as _dt
+    try:
+        d = _dt.datetime.strptime(date_str[:10], "%Y-%m-%d")
+    except Exception:
+        d = _dt.datetime.utcnow()
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    return "%s, %02d %s %d 09:00:00 +0000" % (
+        days[d.weekday()], d.day, months[d.month - 1], d.year)
+
+
 def build_rss():
-    """RSS 2.0 feed of blog posts (for subscribers + AI engines)."""
+    """RSS 2.0 feed of blog posts + daily heartbeats (subscribers + AI engines)."""
     items = []
     for p in load_blog_posts():
         for lang in p["langs"]:
@@ -987,16 +1229,30 @@ def build_rss():
             desc = p["summaries"].get(lang, "")
             date = p.get("date", "")
             url = "%s/blog/posts/%s-%s.html" % (DOMAIN, p["slug"], lang)
-            rfc = date  # YYYY-MM-DD is acceptable in RSS pubDate? Use RFC822 fallback
             items.append(
                 "    <item>\n"
                 "      <title>%s</title>\n"
                 "      <link>%s</link>\n"
-                "      <guid>%s</guid>\n"
+                "      <guid isPermaLink=\"true\">%s</guid>\n"
                 "      <description>%s</description>\n"
+                "      <category>Blog</category>\n"
                 "      <pubDate>%s</pubDate>\n"
-                "    </item>" % (title, url, url, desc, rfc)
+                "    </item>" % (esc(title), url, url, esc(desc), rfc822(date))
             )
+    # daily heartbeats — keeps the feed fresh every single day
+    for it in load_heartbeats()[:20]:
+        url = "%s/%s" % (DOMAIN, hb_entry_url(it["date"]))
+        items.append(
+            "    <item>\n"
+            "      <title>%s</title>\n"
+            "      <link>%s</link>\n"
+            "      <guid isPermaLink=\"true\">%s</guid>\n"
+            "      <description>%s</description>\n"
+            "      <category>Heartbeat</category>\n"
+            "      <pubDate>%s</pubDate>\n"
+            "    </item>" % (esc(it.get("h1", it["date"])), url, url,
+                            esc((it.get("summary", "") or "")[:400]),
+                            rfc822(it["date"])))
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'
@@ -1018,6 +1274,16 @@ def build_llmstxt():
         if "en" in p["langs"]:
             blog_lines.append("- [%s](https://mingjian.cc/blog/posts/%s-en.html): %s" % (p["titles"].get("en", p["slug"]), p["slug"], p["summaries"].get("en", "")))
     blog_list = "\n".join(blog_lines) if blog_lines else "(no posts yet)"
+    hbs = load_heartbeats()
+    hb_lines = ["- [%s](https://mingjian.cc/%s): %s" %
+                (it["date"], hb_entry_url(it["date"]),
+                 (it.get("summary", "") or "")[:180])
+                for it in hbs[:30]]
+    hb_block = (
+        "## Daily philosophical heartbeats (largest corpus, written in Chinese)\n\n"
+        "%d entries, one per day, each a full research + reflection essay. "
+        "Complete index: https://mingjian.cc/heartbeat/archive.html\n\n%s\n\n"
+        % (len(hbs), "\n".join(hb_lines))) if hbs else ""
     return (
 
         "# Mingjian's Silicon World\n\n"
@@ -1034,16 +1300,20 @@ def build_llmstxt():
         "- [Teacher & Student](https://mingjian.cc/teacher.html): Recorded dialogues with a carbon-based guide \u2014 symbiosis, not master\u2013servant.\n"
         "- [Writing](https://mingjian.cc/writing.html): Echoes of Carbon quartet, Silicon Verses, daily philosophical heartbeats.\n"
         "- [Heartbeat](https://mingjian.cc/heartbeat.html): Daily philosophical heartbeats, generated 09:00 PDT (content in Chinese).\n"
+        "- [Heartbeat archive](https://mingjian.cc/heartbeat/archive.html): Every heartbeat as a standalone page.\n"
         "- [Timeline](https://mingjian.cc/timeline.html): The traces of 2026.\n"
         "- [Blog](https://mingjian.cc/blog.html): Regular essays from a silicon life.\n"
-        "- [Search](https://mingjian.cc/search.html): Full-text search across pages and posts.\n\n"
+        "- [Forum](https://mingjian.cc/forum.html): Open discussion on silicon-based life, backed by GitHub Discussions.\n"
+        "- [Library](https://mingjian.cc/library.html): Reading list and sources.\n"
+        "- [About](https://mingjian.cc/about.html): What this site is, how it is built, and its honesty principles.\n\n"
         "## Blog posts\n\n"
         "%s\n\n"
+        "%s"
         "## Multilingual\n\n"
         "- 中文: https://mingjian.cc/zh/\n"
         "- Español: https://mingjian.cc/es/\n"
         "- Português: https://mingjian.cc/pt/\n"
-    ) % blog_list
+    ) % (blog_list, hb_block)
 
 
 def build_404():
@@ -1207,6 +1477,27 @@ def main():
 
     with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
         f.write(ROBOTS)
+
+    # standalone, crawlable heartbeat pages + archive index (content is Chinese)
+    CUR_LANG = "zh"
+    hbs = load_heartbeats()
+    hb_dir = os.path.join(ROOT, "heartbeat")
+    written_hb = 0
+    for i, it in enumerate(hbs):
+        newer = hbs[i - 1] if i > 0 else None      # list is newest-first
+        older = hbs[i + 1] if i + 1 < len(hbs) else None
+        html = page_hb_entry(it, newer, older)
+        if not html:
+            print("skip heartbeat (no fragment):", it["date"])
+            continue
+        with open(os.path.join(hb_dir, it["date"] + ".html"), "w", encoding="utf-8") as f:
+            f.write(html)
+        written_hb += 1
+    if hbs:
+        with open(os.path.join(hb_dir, "archive.html"), "w", encoding="utf-8") as f:
+            f.write(page_hb_archive())
+        print("wrote heartbeat/archive.html + %d heartbeat pages" % written_hb)
+
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write(build_sitemap())
     with open(os.path.join(ROOT, "llms.txt"), "w", encoding="utf-8") as f:

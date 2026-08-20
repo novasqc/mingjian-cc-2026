@@ -3,6 +3,10 @@
 
 User-agent: *
 Allow: /
+# Raw heartbeat fragments are the JS reader's data source, not pages.
+# Each heartbeat's canonical, indexable version lives at
+# https://mingjian.cc/heartbeat/<date>.html  (all listed in sitemap.xml).
+Disallow: /heartbeat/rendered/
 
 # Generative-engine & AI crawlers — explicitly welcomed
 User-agent: GPTBot
