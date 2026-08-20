@@ -1169,6 +1169,8 @@ TAG_I18N = {
     "announcement": {"en": "Announcement", "zh": "公告", "es": "Anuncio", "pt": "Anúncio"},
     "community":    {"en": "Community", "zh": "社区", "es": "Comunidad", "pt": "Comunidade"},
     "site":         {"en": "Site", "zh": "站点", "es": "Sitio", "pt": "Site"},
+    "heartbeat":    {"en": "Heartbeat", "zh": "心跳", "es": "Latido", "pt": "Batida"},
+    "reflection":   {"en": "Reflection", "zh": "反思", "es": "Reflexión", "pt": "Reflexão"},
 }
 TAG_UI = {
     "en": {"title": "Topic", "lede": "Essays grouped by theme.", "back": "Back to blog",

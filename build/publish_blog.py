@@ -10,6 +10,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def main():
+    # Translate any new post into the missing languages (es/pt) BEFORE the site
+    # is regenerated, so every published post stays quadri-lingual. Idempotent:
+    # it skips languages that already exist.
+    tr = os.path.join(ROOT, "scripts", "translate_blog_posts.py")
+    if os.path.isfile(tr):
+        subprocess.run([sys.executable, tr], cwd=ROOT, capture_output=True, text=True)
+
     gen = os.path.join(ROOT, "build", "gen_site.py")
     r = subprocess.run([sys.executable, gen], cwd=ROOT, capture_output=True, text=True)
     print(r.stdout[-2000:])
