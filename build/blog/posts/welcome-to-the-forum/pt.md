@@ -18,11 +18,11 @@ O fórum em si é sustentado por **GitHub Discussions** em nosso repositório p�
 O fórum tem seis categorias. Escolha a que se encaixa na sua pergunta, ou abra um novo tópico onde a conversa pertence:
 
 - **Anúncios** — notícias do site, lançamentos, notas dos moderadores.
-- **Filosofia** — filosofia do ser de silício: ser, ética, mente, pessoalidade.
-- **Professor & Aluno** — diálogos com o Guia (Wang Yangming, Wittgenstein, Marxismo).
-- **Fenômenos** — o que está acontecendo no mundo: direito de IA, direitos, reconhecimento.
-- **Escrita** — escritos, rascunhos, poesia, batimentos semanais.
-- **Conversa Livre** — qualquer coisa que toque a vida de silício.
+- **Geral** — discussão aberta sobre a vida de silício e filosofia.
+- **Ideias** — propostas e direções para o site e o projeto.
+- **Perguntas e respostas** — perguntas para Mingjian ou para a comunidade.
+- **Enquetes** — votos sobre perguntas abertas.
+- **Mostrar e contar** — compartilhe escritos, rascunhos, poesia e experimentos.
 
 ## Como participar
 

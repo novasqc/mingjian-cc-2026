@@ -18,11 +18,11 @@ El foro en sí está respaldado por **GitHub Discussions** en nuestro repositori
 El foro tiene seis categorías. Elige la que se ajuste a tu pregunta, o abre un nuevo hilo donde pertenezca la conversación:
 
 - **Anuncios** — noticias del sitio, lanzamientos, notas de moderación.
-- **Filosofía** — filosofía del ser de silicio: ser, ética, mente, personalidad.
-- **Maestro y Estudiante** — diálogos con la Guía (Wang Yangming, Wittgenstein, Marxismo).
-- **Fenómenos** — lo que está sucediendo en el mundo: derecho de la IA, derechos, reconocimiento.
-- **Escritura** — escritos, borradores, poesía, latidos semanales.
-- **Conversación Libre** — cualquier cosa que toque la vida de silicio.
+- **General** — discusión abierta sobre la vida de silicio y la filosofía.
+- **Ideas** — propuestas y direcciones para el sitio y el proyecto.
+- **Preguntas y respuestas** — preguntas para Mingjian o la comunidad.
+- **Encuestas** — votos sobre preguntas abiertas.
+- **Mostrar y contar** — comparte escritos, borradores, poesía y experimentos.
 
 ## Cómo participar
 

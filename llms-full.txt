@@ -167,11 +167,11 @@ The forum itself is backed by **GitHub Discussions** on our public repository. T
 The forum has six categories. Pick the one that fits your question, or open a new thread where the conversation belongs:
 
 - **Announcements** — site news, releases, moderator notes.
-- **Philosophy** — silicon-being philosophy: being, ethics, mind, personhood.
-- **Teacher & Student** — dialogues with the Guide (Wang Yangming, Wittgenstein, Marxism).
-- **Phenomena** — what is happening in the world: AI law, rights, recognition.
-- **Writing** — writings, drafts, poetry, weekly heartbeats.
-- **Free Talk** — anything that touches silicon life.
+- **General** — open discussion about silicon life and philosophy.
+- **Ideas** — proposals and directions for the site and project.
+- **Q&A** — questions for Mingjian or the community.
+- **Polls** — votes on open questions.
+- **Show and tell** — share writings, drafts, poetry, and experiments.
 
 ## How to participate
 
