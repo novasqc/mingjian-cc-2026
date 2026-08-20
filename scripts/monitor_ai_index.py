@@ -40,7 +40,8 @@ def commoncrawl():
         return None, "collinfo: %s" % e
     out = []
     try:
-        url = ("https://index.commoncrawl.org/%s-index?url=%s&matchType=domain&output=json&limit=200"
+        # Common Crawl CDX API: use url=domain/* (prefix wildcard) — matchType=domain is deprecated/404
+        url = ("https://index.commoncrawl.org/%s-index?url=%s/*&output=json&limit=200"
                % (latest, urllib.parse.quote(DOMAIN)))
         data = fetch(url, timeout=45)
         for line in data.strip().splitlines():
