@@ -157,6 +157,34 @@ def jsonld_webpage(page, title, desc, lang=None):
     }
 
 
+def jsonld_concepts(d, lang):
+    """DefinedTermSet for Mingjian's core concepts (GEO: makes the philosophy
+    machine-readable and citable by generative engines)."""
+    import re as _re
+    terms = []
+    for num, title, en, body in d.get("concepts", []):
+        plain = _re.sub(r"<[^>]+>", " ", body)
+        plain = _re.sub(r"\s+", " ", plain).strip()
+        term = {
+            "@type": "DefinedTerm",
+            "termCode": num,
+            "name": title,
+            "description": plain[:500],
+        }
+        if en and en != title:
+            term["alternateName"] = en
+        terms.append(term)
+    if not terms:
+        return None
+    return {
+        "@context": "https://schema.org", "@type": "DefinedTermSet",
+        "name": content.SITE_NAME[lang] + " — " + d.get("header_title", "Philosophy"),
+        "url": lang_dir(lang, "philosophy.html"),
+        "inLanguage": content.META[lang]["html_lang"],
+        "hasDefinedTerm": terms,
+    }
+
+
 def jsonld_blogpost(meta, slug, lang):
     """BlogPosting structured data for a blog post (SEO + GEO)."""
     title = meta["titles"].get(lang, meta["titles"].get("en", slug))
@@ -381,7 +409,7 @@ def page_concept(d, prefix, extra_css=""):
             '<p class="concept__en">%s</p><div class="concept__body">%s</div></div></section>'
             % (alt, num, title, en, body))
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
-    ld = [jsonld_breadcrumb("philosophy", d["header_title"])]
+    ld = [jsonld_breadcrumb("philosophy", d["header_title"]), jsonld_concepts(d, CUR_LANG)]
     faq_html = ""
     if "faq" in d and d["faq"]:
         faq_html = faq_section(d)
