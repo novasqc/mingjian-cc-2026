@@ -4,6 +4,7 @@
 import os
 import subprocess
 import sys
+import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -35,6 +36,14 @@ def main():
         print("push failed:", r.stderr)
         return 1
     print("published & pushed")
+
+    # Notify IndexNow (Bing / Yandex / Seznam / Naver) about the new post so it
+    # gets picked up in hours instead of waiting for the next organic crawl.
+    # GitHub Pages needs a moment to serve the new files first.
+    time.sleep(120)
+    r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "indexnow.py"),
+                        "--changed"], capture_output=True, text=True)
+    print((r.stdout or r.stderr or "").strip()[-500:])
     return 0
 
 
