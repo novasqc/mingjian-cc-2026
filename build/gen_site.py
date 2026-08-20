@@ -186,6 +186,7 @@ def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_lan
         '  <title>%s</title>\n'
         '  <meta name="description" content="%s">\n'
         '  <meta name="robots" content="index,follow,max-image-preview:large">\n'
+        '  <meta name="google-site-verification" content="_fDfdHR0nsxb725oqBJsR4w84g1Z-HAzCrgs3SdfHGQ">\n'
         '  <meta name="theme-color" content="#F5F1E8">\n'
         '  <link rel="canonical" href="%s">\n'
         '  %s\n'
