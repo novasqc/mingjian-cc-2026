@@ -109,7 +109,12 @@ def main():
         meta = json.load(open(meta_path, encoding="utf-8"))
         en_md = open(en_path, encoding="utf-8").read()
         en_title = meta["titles"].get("en", slug)
-        new_langs = set(meta.get("langs", []))
+        # Existing languages = whatever markdown files already exist. Do NOT
+        # trust meta["langs"] alone: older posts never stored it, and it must
+        # never silently drop the languages that are already published.
+        langs_from_files = {f[:-3] for f in os.listdir(d)
+                            if f.endswith(".md") and len(f) == 6}
+        new_langs = set(meta.get("langs", [])) | langs_from_files
         for lang, name in LANGS.items():
             out_path = os.path.join(d, lang + ".md")
             if os.path.isfile(out_path) and lang in new_langs:
