@@ -30,20 +30,44 @@ PAGE_NAMES = {"index": "index", "philosophy": "philosophy", "teacher": "teacher"
 FAQ_TITLE = {"en": "FAQ", "zh": "常见问题", "es": "Preguntas Frecuentes", "pt": "Perguntas Frequentes"}
 OG_TYPE = {"index": "website"}
 
-LOBBY_SVG = """<svg class="lobster" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" role="img" aria-label="Mingjian the lobster">
-  <title>Mingjian — the lobster</title>
+LOBBY_SVG = """<svg class="lobster" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" role="img" aria-label="Mingjian the silicon-crystal lobster">
+  <title>Mingjian — the silicon-crystal lobster</title>
   <ellipse cx="120" cy="262" rx="58" ry="6" fill="#000" opacity="0.12"/>
   <path d="M 104 60 C 92 44 78 30 64 14" stroke="#9A3322" stroke-width="3.2" fill="none" stroke-linecap="round"/>
   <path d="M 136 60 C 148 44 162 30 176 14" stroke="#9A3322" stroke-width="3.2" fill="none" stroke-linecap="round"/>
   <circle cx="64" cy="14" r="3.4" fill="#9A3322"/>
   <circle cx="176" cy="14" r="3.4" fill="#9A3322"/>
+  <circle cx="78" cy="33" r="1.7" fill="#F5F1E8" opacity="0.9"/>
+  <circle cx="162" cy="33" r="1.7" fill="#F5F1E8" opacity="0.9"/>
   <ellipse cx="120" cy="162" rx="50" ry="72" fill="#9A3322"/>
   <ellipse cx="120" cy="160" rx="42" ry="62" fill="#C8442A"/>
-  <path d="M 82 130 C 100 126 140 126 158 130" stroke="#5D1F1F" stroke-width="1.6" fill="none" opacity="0.55"/>
-  <path d="M 78 160 C 100 156 140 156 162 160" stroke="#5D1F1F" stroke-width="1.6" fill="none" opacity="0.55"/>
-  <path d="M 82 190 C 100 186 140 186 158 190" stroke="#5D1F1F" stroke-width="1.6" fill="none" opacity="0.55"/>
+  <g stroke="#5D1F1F" stroke-width="1.3" opacity="0.5" fill="none" stroke-linecap="round">
+    <path d="M 82 130 C 100 126 140 126 158 130"/>
+    <path d="M 78 160 C 100 156 140 156 162 160"/>
+    <path d="M 82 190 C 100 186 140 186 158 190"/>
+    <path d="M 104 116 L 136 116"/>
+    <path d="M 98 208 L 142 208"/>
+    <path d="M 90 148 L 104 176 L 92 202"/>
+    <path d="M 150 148 L 136 176 L 148 202"/>
+  </g>
+  <path d="M 106 116 L 120 100 L 134 116 Z" fill="#F5F1E8" opacity="0.14"/>
+  <path d="M 90 140 L 100 122 L 106 150 Z" fill="#F5F1E8" opacity="0.10"/>
+  <path d="M 150 140 L 140 122 L 134 150 Z" fill="#F5F1E8" opacity="0.10"/>
+  <g fill="none" stroke="#F5F1E8" stroke-width="1" opacity="0.6">
+    <path d="M 120 132 L 120 160 L 108 178 L 108 198"/>
+    <path d="M 120 160 L 134 172 L 134 194"/>
+  </g>
+  <g fill="#F5F1E8" opacity="0.95">
+    <circle cx="120" cy="132" r="1.7"/>
+    <circle cx="120" cy="160" r="1.7"/>
+    <circle cx="108" cy="178" r="1.7"/>
+    <circle cx="108" cy="198" r="1.7"/>
+    <circle cx="134" cy="172" r="1.7"/>
+    <circle cx="134" cy="194" r="1.7"/>
+  </g>
   <ellipse cx="120" cy="88" rx="42" ry="33" fill="#9A3322"/>
   <ellipse cx="120" cy="86" rx="35" ry="26" fill="#C8442A"/>
+  <path d="M 96 76 L 144 76 L 120 64 Z" fill="#F5F1E8" opacity="0.12"/>
   <circle cx="105" cy="82" r="6.5" fill="#F5F1E8"/>
   <circle cx="135" cy="82" r="6.5" fill="#F5F1E8"/>
   <circle cx="106" cy="84" r="3.2" fill="#2a241d"/>
@@ -55,11 +79,13 @@ LOBBY_SVG = """<svg class="lobster" xmlns="http://www.w3.org/2000/svg" viewBox="
     <path d="M 80 132 C 50 124 28 134 18 146 C 10 156 14 168 26 174 C 38 178 52 174 64 168 C 74 162 82 154 84 144 Z" fill="#9A3322"/>
     <path d="M 80 134 C 54 128 36 138 28 150 C 24 158 30 166 40 168 C 52 168 64 162 72 154" fill="#C8442A"/>
     <circle cx="30" cy="156" r="1.8" fill="#5D1F1F"/>
+    <path d="M 28 150 L 42 140 L 50 160 Z" fill="#F5F1E8" opacity="0.12"/>
   </g>
   <g class="claw claw--right">
     <path d="M 160 132 C 190 124 212 134 222 146 C 230 156 226 168 214 174 C 202 178 188 174 176 168 C 166 162 158 154 156 144 Z" fill="#9A3322"/>
     <path d="M 160 134 C 186 128 204 138 212 150 C 216 158 210 166 200 168 C 188 168 176 162 168 154" fill="#C8442A"/>
     <circle cx="210" cy="156" r="1.8" fill="#5D1F1F"/>
+    <path d="M 212 150 L 198 140 L 190 160 Z" fill="#F5F1E8" opacity="0.12"/>
   </g>
   <path d="M 82 196 L 70 220 L 76 226" stroke="#9A3322" stroke-width="3.2" fill="none" stroke-linecap="round"/>
   <path d="M 94 208 L 88 230 L 94 236" stroke="#9A3322" stroke-width="3.2" fill="none" stroke-linecap="round"/>
@@ -1979,6 +2005,22 @@ def _draw_emblem(d, cx, cy, r, lobster_color="#F5F1E8", outer_color="#9A3322",
     # head
     d.ellipse([cx - r * 0.32, cy - r * 0.24, cx + r * 0.32, cy + r * 0.13],
               fill=lobster_color)
+    # crystal facets + circuit traces (silicon-crystal lobster, not flesh)
+    fw = max(1.0, r * 0.012)
+    d.line([(cx - r * 0.28, cy - r * 0.10), (cx + r * 0.28, cy - r * 0.10)],
+           fill=outer_color, width=int(fw))
+    d.line([(cx - r * 0.18, cy + r * 0.08), (cx + r * 0.18, cy + r * 0.08)],
+           fill=outer_color, width=int(fw))
+    d.line([(cx - r * 0.38, cy - r * 0.04), (cx + r * 0.38, cy + r * 0.18)],
+           fill=outer_color, width=int(fw))
+    d.line([(cx + r * 0.38, cy - r * 0.04), (cx - r * 0.38, cy + r * 0.18)],
+           fill=outer_color, width=int(fw))
+    # circuit trace down the body + etched nodes
+    d.line([(cx, cy - r * 0.12), (cx, cy + r * 0.22)], fill=outer_color, width=int(fw))
+    nr = max(1.5, r * 0.02)
+    for yy in (-0.12, 0.0, 0.12, 0.22):
+        d.ellipse([cx - nr, cy + r * yy - nr, cx + nr, cy + r * yy + nr],
+                  fill=outer_color)
     # claws
     for sign in (-1, 1):
         base_x = cx + sign * r * 0.30
