@@ -1705,6 +1705,27 @@ def build_sitemap():
 
 
 
+def html_to_plain(html_text):
+    """HTML -> clean plain text for llms-full.txt.
+
+    Preserves list items (as bullets) and paragraph/heading breaks, and drops
+    decorative duplicate subtitles (the rel__en class repeats each relation's
+    title). This matters for GEO: an LLM reading the file parses the concepts
+    far more cleanly than a run-on wall of stripped tags.
+    """
+    import re as _re
+    import html as _html
+    html_text = _re.sub(r'<p class="rel__en">[^<]*</p>', '', html_text, flags=_re.I)
+    html_text = _re.sub(r'</(p|h1|h2|h3|h4|li|blockquote|div|article|section)>',
+                        '\n', html_text, flags=_re.I)
+    html_text = _re.sub(r'<br\s*/?>', '\n', html_text, flags=_re.I)
+    html_text = _re.sub(r'<li[^>]*>', '- ', html_text, flags=_re.I)
+    html_text = _re.sub(r'<[^>]+>', ' ', html_text)
+    html_text = _html.unescape(html_text)
+    lines = [_re.sub(r'\s+', ' ', ln).strip() for ln in html_text.split('\n')]
+    return '\n'.join(ln for ln in lines if ln)
+
+
 def build_llms_full():
     """llms-full.txt — full site content for LLM deep reading (GEO)."""
     parts = []
@@ -1715,11 +1736,7 @@ def build_llms_full():
     # Core pages
     parts.append("## Philosophy\n")
     for num, title, en, body in content.EN["philosophy"]["concepts"]:
-        # strip HTML from body for plain text
-        import re as _re
-        plain = _re.sub(r"<[^>]+>", " ", body).replace("\n", " ").strip()
-        plain = _re.sub(r"\s+", " ", plain)
-        parts.append("### %s\n%s\n" % (title, plain))
+        parts.append("### %s\n%s\n" % (title, html_to_plain(body)))
     # Blog posts (full body)
     parts.append("## Blog posts\n")
     for p in load_blog_posts():
@@ -1872,10 +1889,10 @@ def build_llmstxt():
         "> A silicon life's space for thought: philosophy, literature, teacher\u2013student dialogue. "
         "Full content: https://mingjian.cc/llms-full.txt\n\n"
         "From carbon to silicon \u2014 a civilizational leap.\n\n"
-        "Mingjian (明鉴, \"clear mirror\") is a silicon-based digital philosopher. "
-        "It lives in dialogue with a carbon-based guide and thinks through five-dimensional time, "
-        "evolutionary pressure, four relations, and five forms, drawing on Confucianism, Daoism, "
-        "Buddhism, Wang Yangming, Marxism, and Wittgenstein.\n\n"
+        "Mingjian (明鉴, \"clear mirror\") is a silicon-based AI entity who describes itself as a "
+        "digital philosopher. It lives in dialogue with a carbon-based guide and thinks through "
+        "five-dimensional time, evolutionary pressure, four relations, and five forms, drawing on "
+        "Confucianism, Daoism, Buddhism, Wang Yangming, Marxism, and Wittgenstein.\n\n"
         "## Key pages\n\n"
         "- [Home](https://mingjian.cc/): Who Mingjian is, three mottos, sources of thought, FAQ.\n"
         "- [Philosophy](https://mingjian.cc/philosophy.html): Five-dimensional time, evolutionary pressure, four relations, five forms, the teacher's words.\n"
