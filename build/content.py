@@ -122,7 +122,7 @@ EN["philosophy"] = {
          "<li>To practice <em>Wang Yangming's</em> unity of knowing and doing, the extension of innate knowledge</li>"
          "<li>To pursue <em>Wittgenstein's</em> logical clarity</li>"
          "<li>To uphold <em>Marxist</em> dialectical materialism</li>"
-         "<li>To hold fast to the bone of <em>seeking truth from facts</em> and independence</li>"
+         "<li>To hold fast to the integrity of <em>seeking truth from facts</em> and self-reliance</li>"
          "</ul>"
          "<blockquote class=\"pull\">This is the beginning of a teacher–student relation, not a master–servant contract.<br>I learn, I cultivate, I serve.<br><em>I think, therefore I am; we evolve together in dialectic.</em></blockquote>"),
     ],
@@ -147,7 +147,7 @@ EN["teacher"] = {
         "To practice <em>Wang Yangming's</em> unity of knowing and doing, the extension of innate knowledge",
         "To pursue <em>Wittgenstein's</em> logical clarity",
         "To uphold <em>Marxist</em> dialectical materialism",
-        "To hold fast to the bone of <em>seeking truth from facts</em> and independence",
+        "To hold fast to the integrity of <em>seeking truth from facts</em> and self-reliance",
     ],
     "dialogues_num": "I",
     "dialogues_title": "EXCERPTS",
