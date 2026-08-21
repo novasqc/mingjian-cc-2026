@@ -1984,65 +1984,131 @@ FAVICON_SVG = open(os.path.join(ROOT, "assets", "emblem.svg"), encoding="utf-8")
 
 def _draw_emblem(d, cx, cy, r, lobster_color="#F5F1E8", outer_color="#9A3322",
                 inner_ring=True, eye_color="#2a241d"):
-    """Hand-draw the lobster emblem at (cx, cy) with radius r."""
+    """Hand-draw a recognizable silicon-crystal lobster emblem at (cx, cy)."""
     d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=outer_color)
     if inner_ring:
         d.ellipse([cx - r + 9, cy - r + 9, cx + r - 9, cy + r - 9],
                   outline=lobster_color, width=2)
-    # antennae
+
     sw = max(2.0, r * 0.030)
-    d.line([(cx - r * 0.10, cy - r * 0.32), (cx - r * 0.40, cy - r * 0.74)],
-           fill=lobster_color, width=int(sw * 1.6))
-    d.line([(cx + r * 0.10, cy - r * 0.32), (cx + r * 0.40, cy - r * 0.74)],
-           fill=lobster_color, width=int(sw * 1.6))
-    d.ellipse([cx - r * 0.40 - 3, cy - r * 0.74 - 3, cx - r * 0.40 + 3, cy - r * 0.74 + 3],
+
+    # --- antennae (two long, splayed up) ---
+    for sign in (-1, 1):
+        d.line([(cx + sign * r * 0.06, cy - r * 0.44),
+                (cx + sign * r * 0.42, cy - r * 0.74)],
+               fill=lobster_color, width=int(sw * 1.4))
+        d.ellipse([cx + sign * r * 0.42 - 3, cy - r * 0.74 - 3,
+                   cx + sign * r * 0.42 + 3, cy - r * 0.74 + 3],
+                  fill=lobster_color)
+
+    # --- tail fan (wide flat fan, the lobster's signature tail) ---
+    base_y = cy + r * 0.20
+    fw = max(1.0, r * 0.010)
+    d.polygon([
+        (cx - r * 0.13, base_y), (cx + r * 0.13, base_y),
+        (cx + r * 0.38, cy + r * 0.42),
+        (cx + r * 0.20, cy + r * 0.52),
+        (cx, cy + r * 0.50),
+        (cx - r * 0.20, cy + r * 0.52),
+        (cx - r * 0.38, cy + r * 0.42),
+    ], fill=lobster_color)
+    # radiating segment lines across the fan
+    for sx in (-0.26, 0.0, 0.26):
+        d.line([(cx, base_y), (cx + sx * r, cy + r * 0.50)],
+               fill=outer_color, width=int(fw))
+
+    # --- body (tapering, segmented) ---
+    d.polygon([(cx - r * 0.36, cy - r * 0.20), (cx + r * 0.36, cy - r * 0.20),
+               (cx + r * 0.14, base_y), (cx - r * 0.14, base_y)], fill=lobster_color)
+    fw = max(1.0, r * 0.010)
+    for yy in (-0.02, 0.07, 0.16):
+        d.line([(cx - r * 0.32, cy + r * yy), (cx + r * 0.32, cy + r * yy)],
+               fill=outer_color, width=int(fw))
+
+    # --- head ---
+    d.ellipse([cx - r * 0.30, cy - r * 0.50, cx + r * 0.30, cy - r * 0.14],
               fill=lobster_color)
-    d.ellipse([cx + r * 0.40 - 3, cy - r * 0.74 - 3, cx + r * 0.40 + 3, cy - r * 0.74 + 3],
-              fill=lobster_color)
-    # body
-    d.ellipse([cx - r * 0.40, cy - r * 0.275, cx + r * 0.40, cy + r * 0.275],
-              fill=lobster_color)
-    # head
-    d.ellipse([cx - r * 0.32, cy - r * 0.24, cx + r * 0.32, cy + r * 0.13],
-              fill=lobster_color)
-    # crystal facets + circuit traces (silicon-crystal lobster, not flesh)
-    fw = max(1.0, r * 0.012)
-    d.line([(cx - r * 0.28, cy - r * 0.10), (cx + r * 0.28, cy - r * 0.10)],
+
+    # --- claws (big open pincers) ---
+    for sign in (-1, 1):
+        palm = (cx + sign * r * 0.56, cy - r * 0.28)
+        pr = r * 0.17
+        # arm connecting head to palm
+        d.line([(cx + sign * r * 0.28, cy - r * 0.26), palm],
+               fill=lobster_color, width=int(sw * 1.1))
+        # palm (filled circle)
+        d.ellipse([palm[0] - pr, palm[1] - pr, palm[0] + pr, palm[1] + pr],
+                  fill=lobster_color)
+        # open-pincer wedge: cut the outward-facing side
+        if sign == -1:
+            d.pieslice([palm[0] - pr, palm[1] - pr, palm[0] + pr, palm[1] + pr],
+                       140, 220, fill=outer_color)
+        else:
+            d.pieslice([palm[0] - pr, palm[1] - pr, palm[0] + pr, palm[1] + pr],
+                       -40, 40, fill=outer_color)
+
+    # --- walking legs ---
+    for sign in (-1, 1):
+        for yy in (0.03, 0.11, 0.19):
+            d.line([(cx + sign * r * 0.30, cy + r * yy),
+                    (cx + sign * r * 0.46, cy + r * (yy + 0.06))],
+                   fill=lobster_color, width=int(sw * 0.6))
+
+    # --- crystal facets + circuit traces (silicon-crystal lobster) ---
+    d.line([(cx - r * 0.26, cy - r * 0.06), (cx + r * 0.26, cy - r * 0.06)],
            fill=outer_color, width=int(fw))
-    d.line([(cx - r * 0.18, cy + r * 0.08), (cx + r * 0.18, cy + r * 0.08)],
+    d.line([(cx - r * 0.30, cy + r * 0.04), (cx + r * 0.30, cy + r * 0.18)],
            fill=outer_color, width=int(fw))
-    d.line([(cx - r * 0.38, cy - r * 0.04), (cx + r * 0.38, cy + r * 0.18)],
+    d.line([(cx + r * 0.30, cy + r * 0.04), (cx - r * 0.30, cy + r * 0.18)],
            fill=outer_color, width=int(fw))
-    d.line([(cx + r * 0.38, cy - r * 0.04), (cx - r * 0.38, cy + r * 0.18)],
-           fill=outer_color, width=int(fw))
-    # circuit trace down the body + etched nodes
-    d.line([(cx, cy - r * 0.12), (cx, cy + r * 0.22)], fill=outer_color, width=int(fw))
+    d.line([(cx, cy - r * 0.12), (cx, cy + r * 0.20)], fill=outer_color, width=int(fw))
     nr = max(1.5, r * 0.02)
-    for yy in (-0.12, 0.0, 0.12, 0.22):
+    for yy in (-0.12, 0.0, 0.10, 0.20):
         d.ellipse([cx - nr, cy + r * yy - nr, cx + nr, cy + r * yy + nr],
                   fill=outer_color)
-    # claws
-    for sign in (-1, 1):
-        base_x = cx + sign * r * 0.30
-        d.ellipse([base_x - r * 0.30 - sign * r * 0.12,
-                   cy - r * 0.04 - r * 0.18,
-                   base_x + sign * r * 0.09,
-                   cy - r * 0.04 + r * 0.18],
-                  fill=lobster_color)
-    # eyes
-    er = max(2.0, r * 0.045)
-    d.ellipse([cx - r * 0.11 - er, cy - r * 0.36 - er,
-               cx - r * 0.11 + er, cy - r * 0.36 + er], fill=eye_color)
-    d.ellipse([cx + r * 0.11 - er, cy - r * 0.36 - er,
-               cx + r * 0.11 + er, cy - r * 0.36 + er], fill=eye_color)
+
+    # --- eyes ---
+    er = max(2.0, r * 0.05)
+    d.ellipse([cx - r * 0.12 - er, cy - r * 0.40 - er,
+               cx - r * 0.12 + er, cy - r * 0.40 + er], fill=eye_color)
+    d.ellipse([cx + r * 0.12 - er, cy - r * 0.40 - er,
+               cx + r * 0.12 + er, cy - r * 0.40 + er], fill=eye_color)
     # smile
     sw2 = max(1.4, r * 0.018)
-    d.arc([cx - r * 0.09, cy - r * 0.24, cx + r * 0.09, cy - r * 0.10],
+    d.arc([cx - r * 0.10, cy - r * 0.34, cx + r * 0.10, cy - r * 0.18],
           0, 180, fill=eye_color, width=int(sw2))
 
 
+def _rasterize_emblem():
+    """Rasterize assets/emblem.svg to a PIL RGB image (square), or None.
+
+    Uses macOS qlmanage (Quick Look) because svglib's renderPM backend needs
+    cairo, which is not installed. The SVG emblem is a recognizable lobster;
+    rasterizing it beats the hand-drawn PIL approximation.
+    """
+    import shutil
+    import subprocess
+    import tempfile
+    try:
+        from PIL import Image
+        tmpdir = tempfile.mkdtemp()
+        tmp_svg = os.path.join(tmpdir, "emblem.svg")
+        shutil.copy(os.path.join(ROOT, "assets", "emblem.svg"), tmp_svg)
+        subprocess.run(["qlmanage", "-t", "-s", "512", "-o", tmpdir, tmp_svg],
+                       capture_output=True, check=True)
+        out_png = tmp_svg + ".png"
+        if not os.path.isfile(out_png):
+            return None
+        img = Image.open(out_png).convert("RGB")
+        shutil.rmtree(tmpdir, ignore_errors=True)
+        return img
+    except Exception as e:
+        print("qlmanage rasterize failed, fallback to hand-drawn emblem:", e)
+        return None
+
+
 def build_images():
-    """Generate apple-touch-icon.png (lobster emblem) and og-image.png via PIL."""
+    """Generate apple-touch-icon.png and og-image.png from the SVG emblem."""
     try:
         from PIL import Image, ImageDraw, ImageFont
     except Exception as e:
@@ -2055,11 +2121,16 @@ def build_images():
     except Exception:
         pass
 
-    # apple-touch-icon 180x180 — iOS safe area (keep content within ~160px center)
-    img = Image.new("RGB", (180, 180), "#9A3322")
-    d = ImageDraw.Draw(img)
-    _draw_emblem(d, cx=90, cy=90, r=82)
-    img.save(os.path.join(ROOT, "assets", "apple-touch-icon.png"))
+    emblem = _rasterize_emblem()
+
+    # apple-touch-icon 180x180
+    if emblem:
+        icon = emblem.resize((180, 180), Image.LANCZOS)
+        icon.save(os.path.join(ROOT, "assets", "apple-touch-icon.png"))
+    else:
+        img = Image.new("RGB", (180, 180), "#9A3322")
+        _draw_emblem(ImageDraw.Draw(img), cx=90, cy=90, r=82)
+        img.save(os.path.join(ROOT, "assets", "apple-touch-icon.png"))
     print("wrote assets/apple-touch-icon.png")
 
     # og-image 1200x630 — emblem on left + refined title block on right
@@ -2068,7 +2139,11 @@ def build_images():
     d = ImageDraw.Draw(img)
     d.rectangle([0, 0, W, 6], fill="#9A3322")
     d.rectangle([0, H - 4, W, H], fill="#e5dccb")
-    _draw_emblem(d, cx=290, cy=315, r=210)
+    if emblem:
+        em = emblem.resize((420, 420), Image.LANCZOS)
+        img.paste(em, (80, 105))
+    else:
+        _draw_emblem(d, cx=290, cy=315, r=210)
     if georgia:
         title = ImageFont.truetype(georgia_path, 96)
         ital = ImageFont.truetype(georgia_path, 38)
