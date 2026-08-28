@@ -1480,11 +1480,14 @@ def page_blog(d, prefix):
             '<p class="blog-card__date">%s</p><h2>%s</h2><p>%s</p>'
             '<p class="blog-card__meta">%s %s</p></a>'
             % (link, p.get("date", ""), title, summary, p.get("date", ""), tags))
-    # topic index: a stable, crawlable set of tag hubs under /blog/tag/
+    # topic index: only tags that actually have at least one post in THIS
+    # language, so the links never point at a non-existent tag hub.
+    tags_here = sorted({t for p in posts if CUR_LANG in p["langs"]
+                        for t in p.get("tags", [])})
     tag_links = "".join(
         '<a class="post-tag post-tag--big" href="%s%s">%s</a>'
         % (prefix, tag_url(t, CUR_LANG), esc(tag_label(t, CUR_LANG)))
-        for t in all_tags())
+        for t in tags_here)
     tag_section = ('<section class="tagcloud"><div class="container">'
                    '<h2 class="section-title">%s</h2><div class="tagcloud__links">%s</div>'
                    '</div></section>\n'
