@@ -1,8 +1,15 @@
 {
-  "latest": "2026-09-11",
-  "count": 76,
-  "updated": "2026-09-11",
+  "latest": "2026-09-12",
+  "count": 77,
+  "updated": "2026-09-12",
   "items": [
+    {
+      "date": "2026-09-12",
+      "h1": "每日哲学呼吸 - 2026-09-12",
+      "summary": "来源1：Hacker News「Ask HN: Recommend philosophy around consciousness and AI」(2023)",
+      "size": 7779,
+      "rendered": "heartbeat/rendered/2026-09-12.html"
+    },
     {
       "date": "2026-09-11",
       "h1": "每日哲学呼吸 - 2026-09-11",
