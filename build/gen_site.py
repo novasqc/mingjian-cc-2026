@@ -1066,7 +1066,7 @@ def page_forum(d, prefix):
         nav("forum", prefix) +
         '<main id="main"><section class="hero"><div class="hero__bg"></div><div class="hero__inner"><div class="hero__left"><p class="hero__eyebrow">%s</p><h1 class="hero__title">%s</h1><p class="hero__lede">%s</p><div class="hero__cta">%s</div></div><div class="hero__right">%s</div></div></section><section class="forum-meta"><div class="container"><h2 class="section-title">%s</h2>%s</div></section><section class="forum-section"><div class="container"><div class="forum__bar"><div class="forum__filter" role="tablist">%s</div><button class="density-toggle" type="button" aria-pressed="false" aria-label="Toggle density" title="Toggle list density">≡</button><a class="forum__new" href="https://github.com/%s/discussions/new" rel="noopener" target="_blank">%s</a></div><div class="forum__list" id="forum-list"><p class="forum__loading">%s</p></div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
             d["hero_eyebrow"][CUR_LANG], d["hero_title"][CUR_LANG], d["hero_lede"][CUR_LANG], hero_cta, LOBBY_SVG,
-            d["how_eyebrow"][CUR_LANG], how, chips, content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], forum_i18n["loading"][CUR_LANG], d["callout"], links) +
+            d["how_eyebrow"][CUR_LANG], how, chips, content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], forum_i18n["loading"][CUR_LANG], d["callout"][CUR_LANG], links) +
         '<script>window.FORUM = %r;</script>' % {"repo": content.FORUM_REPO, "categories": [{"key": k, "name": n} for k, n, _ in gh_cats], "i18n": forum_i18n} +
         '<script src="%sassets/forum.js?v=20260818"></script>' % prefix +
         footer(prefix))
@@ -1085,7 +1085,7 @@ def page_library(d, prefix):
             d["eyebrow"][CUR_LANG], d["header_title"][CUR_LANG], d["header_lede"][CUR_LANG],
             d["canon_title"][CUR_LANG], d["canon_lede"][CUR_LANG], canon_rows,
             d["glossary_title"][CUR_LANG], d["glossary_lede"][CUR_LANG], gloss,
-            d["reading_title"][CUR_LANG], paths, d["callout"], links) +
+            d["reading_title"][CUR_LANG], paths, d["callout"][CUR_LANG], links) +
         footer(prefix))
 
 
@@ -1102,7 +1102,7 @@ def page_about(d, prefix):
             d["eyebrow"][CUR_LANG], d["header_title"][CUR_LANG], d["header_lede"][CUR_LANG],
             d["principles_title"][CUR_LANG], principles,
             d["stack_title"][CUR_LANG], stack,
-            d["contribute_title"][CUR_LANG], steps, d["callout"], links) +
+            d["contribute_title"][CUR_LANG], steps, d["callout"][CUR_LANG], links) +
         footer(prefix))
 
 
@@ -1455,7 +1455,7 @@ def load_blog_posts():
             continue
         langs = [l for l in content.LANGS
                  if os.path.isfile(os.path.join(BLOG_DIR, slug, l + ".md"))]
-        posts.append({"slug": slug, "langs": langs, **meta})
+        posts.append({**meta, "slug": slug, "langs": langs})
     posts.sort(key=lambda p: p.get("date", ""), reverse=True)
     return posts
 
