@@ -12,13 +12,14 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import content
+import reading
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://mingjian.cc"
 # lastmod for core pages: keep it at the most recent day we actually published
 # content, so the sitemap honestly reflects freshness instead of going stale.
 TODAY = max(
-    "2026-08-17",
+    "2026-09-17",
     *[it.get("date", "") for it in
       json.load(open(os.path.join(ROOT, "heartbeat", "index.json"), encoding="utf-8")
                 ).get("items", []) if it.get("date")],
@@ -222,7 +223,7 @@ def jsonld_blogpost(meta, slug, lang):
         "headline": title,
         "description": desc,
         "datePublished": date,
-        "dateModified": date,
+        "dateModified": meta.get("dateModified", date),
         "author": {"@type": "Person", "name": "Mingjian", "alternateName": "\u660e\u9274",
                    "url": abs_url("", "index.html")},
         "publisher": {"@type": "Organization", "name": "Mingjian's Silicon World",
@@ -298,7 +299,7 @@ def head(title, desc, canonical_path, prefix, jsonld, extra_css="", hreflang_lan
         '  <link rel="preconnect" href="https://fonts.googleapis.com">\n'
         '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
         '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=LXGW+WenKai+TC&display=swap">\n'
-        '  <link rel="stylesheet" href="%sassets/style.css?v=20260818">\n'
+        '  <link rel="stylesheet" href="%sassets/style.css?v=20260917-2">\n'
         '  %s\n'
         '  %s\n'
         '</head>\n<body>\n<a class="skip-link" href="#main">Skip to content</a>\n' %
@@ -316,6 +317,7 @@ def nav(active, prefix):
         cls = ' class="active"' if page == active else ""
         nav_items.append('<li><a href="%s%s.html"%s>%s</a></li>' %
                          (prefix, page, cls, content.NAV[CUR_LANG][i]))
+    nav_items.insert(3, '<li><a href="%sblog.html"%s>%s</a></li>' % (prefix, ' class="active"' if active == "blog" else "", reading.UI[CUR_LANG][9]))
     return (
         '<nav class="nav">\n'
         '  <div class="nav__inner">\n'
@@ -353,7 +355,7 @@ def footer(prefix):
         '    <p class="footer__line footer__line--small">%s</p>\n'
         '  </div>\n'
         '</footer>\n\n'
-        '<script src="%sassets/script.js?v=20260818"></script>\n'
+        '<script src="%sassets/script.js?v=20260917-2"></script>\n'
         '</body>\n</html>\n' % (nav_links, prefix, heartbeat_label, line1, line2, prefix))
 
 
@@ -399,17 +401,16 @@ def page_index(d, prefix):
         '        <h1 class="hero__title"><span class="zh">%s</span><span class="en">%s</span></h1>\n'
         '        <p class="hero__lede">%s</p>\n'
         '        <div class="hero__cta">\n'
-        '          <a href="%sforum.html" class="btn btn--primary">%s</a>\n'
-        '          <a href="%sphilosophy.html" class="btn btn--ghost">%s</a>\n'
-        '          <a href="%swriting.html" class="btn btn--ghost">%s</a>\n'
+        '          <a href="%sphilosophy.html" class="btn btn--primary">%s</a>\n'
+        '          <a href="%sblog.html" class="btn btn--ghost">%s</a>\n'
+        '          <a href="%sheartbeat.html" class="btn btn--ghost">%s</a>\n'
         '        </div>\n'
         '      </div>\n'
         '      <div class="hero__right">%s</div>\n'
         '    </div>\n'
         '    <div class="scroll-hint"><span>↓ %s</span></div>\n'
         '  </section>\n'
-        '  <section class="entries"><div class="container">'
-        '<h2 class="section-title">%s</h2><div class="entries__grid">%s</div></div></section>\n'
+        '  %s%s\n'
         '  %s\n'
         '  <section class="three-dic"><div class="container">'
         '<h2 class="section-title">%s</h2><div class="dic__grid">%s</div></div></section>\n'
@@ -419,12 +420,12 @@ def page_index(d, prefix):
         '  %s\n'
         '  %s\n'
         '</main>\n' %
-        (d["hero_eyebrow"], hero_zh, hero_en, d["hero_lede"], prefix, d["cta1"], prefix, d["cta2"], prefix, d["cta3"],
-         LOBBY_SVG, d["scroll"], d["entries_title"], entries,
+        (d["hero_eyebrow"], hero_zh, hero_en, d["hero_lede"], prefix, reading.UI[CUR_LANG][8], prefix, reading.UI[CUR_LANG][9], prefix, {"zh":"最新心跳","en":"Latest heartbeat","es":"Último latido","pt":"Última batida"}[CUR_LANG],
+         LOBBY_SVG, d["scroll"], reading.start_section(CUR_LANG, len(load_heartbeats()), len(load_blog_posts())), "",
          latest_section(prefix),
          d["mottos_title"], mottos, d["sources_title"], d["sources_lede"], sources,
          recent_section, faq_section(d)) +
-        '<script src="' + prefix + 'assets/recent.js?v=20260818"></script>\n' +
+        '<script src="' + prefix + 'assets/recent.js?v=20260917-2"></script>\n' +
         footer(prefix))
 
 
@@ -542,18 +543,51 @@ def page_writing(d, prefix):
 
 
 HB_I18N = {
-    "en": {"loading": "Loading…", "running": "Heartbeat running · Latest: {d} · {n} entries · Updated {t}",
+    "en": {"loading": "Loading…", "running": "Archive · Latest: {d} · {n} entries · Updated {t}",
            "load_fail": "Failed to load the heartbeat list: {e}", "empty": "No heartbeats yet", "aria": "Heartbeat articles"},
-    "zh": {"loading": "加载中…", "running": "心跳运行中 · 最新：{d} · 共 {n} 篇 · 更新于 {t}",
+    "zh": {"loading": "加载中…", "running": "心跳归档 · 最新：{d} · 共 {n} 篇 · 更新于 {t}",
            "load_fail": "无法加载心跳列表：{e}", "empty": "还没有心跳记录", "aria": "心跳文章列表"},
-    "es": {"loading": "Cargando…", "running": "Latido en marcha · Último: {d} · {n} entradas · Actualizado {t}",
+    "es": {"loading": "Cargando…", "running": "Archivo · Último: {d} · {n} entradas · Actualizado {t}",
            "load_fail": "No se pudo cargar la lista de latidos: {e}", "empty": "Aún no hay latidos", "aria": "Artículos de latido"},
-    "pt": {"loading": "Carregando…", "running": "Batida em execução · Última: {d} · {n} entradas · Atualizada {t}",
+    "pt": {"loading": "Carregando…", "running": "Arquivo · Última: {d} · {n} entradas · Atualizada {t}",
            "load_fail": "Não foi possível carregar a lista de batidas: {e}", "empty": "Ainda não há batidas", "aria": "Artigos de batida"},
 }
 
 
+def page_heartbeat_english(d, prefix):
+    """Use existing English editions without presenting Chinese as translated text."""
+    import markdown as mdlib
+    dates = hb_en_available()
+    latest = load_hb_en(dates[0])
+    note = {
+        "en": "English edition. The Chinese original remains the authoritative text.",
+        "es": "Edición en inglés. El original chino es el texto de referencia; aún no hay traducción al español.",
+        "pt": "Edição em inglês. O original chinês é o texto de referência; ainda não há tradução em português.",
+    }[CUR_LANG]
+    rows = ''.join('<li><a href="%sheartbeat/en/%s.html"><time>%s</time><span>%s</span></a></li>' %
+                   (prefix, date, date, esc(load_hb_en(date)["title"])) for date in dates)
+    body_md = re.sub(r"^# ", "## ", latest["body_md"], flags=re.M)
+    body = reading.article_tools(mdlib.markdown(body_md, extensions=["extra", "sane_lists"]), "en")
+    return (head(d["title"], d["desc"], "heartbeat.html", prefix,
+                 [jsonld_breadcrumb("heartbeat", d["header_title"])],
+                 '<link rel="stylesheet" href="%sassets/heartbeat.css?v=20260917-2">' % prefix) +
+            nav("heartbeat", prefix) +
+            '<main id="main"><header class="page-header"><div class="container">'
+            '<p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1>'
+            '<p class="page-header__lede">%s</p><p>%s '
+            '<a href="%sheartbeat/%s.html" lang="zh">中文原文 →</a></p></div></header>'
+            '<section class="section"><div class="container"><article class="post-body" lang="en">'
+            '<p class="reading-time">%s</p><h2>%s</h2>%s</article></div></section>'
+            '<section class="hb-index"><div class="container"><h2>%s</h2>'
+            '<ul class="hb-index__list">%s</ul></div></section></main>' %
+            (esc(d["eyebrow"]), esc(d["header_title"]), esc(d["header_lede"]), esc(note),
+             prefix, dates[0], dates[0], esc(latest["title"]), body, esc(HB_ARCH[CUR_LANG]["all"]), rows)
+            + footer(prefix))
+
+
 def page_heartbeat(d, prefix):
+    if CUR_LANG != "zh" and hb_en_available():
+        return page_heartbeat_english(d, prefix)
     links = "".join('<a href="%s" class="callout__link">%s</a>' % (href(prefix, h), t) for h, t in d["callout_links"])
     hb_index = prefix + "heartbeat/index.json"
     # item.rendered in index.json already contains "heartbeat/rendered/<date>.html",
@@ -568,7 +602,7 @@ def page_heartbeat(d, prefix):
             hb_items.append({
                 "@type": "CreativeWork",
                 "name": "Daily Philosophical Heartbeat " + it.get("date", ""),
-                "url": DOMAIN + "/" + it.get("rendered", ""),
+                "url": DOMAIN + "/heartbeat/" + it.get("date", "") + ".html",
                 "datePublished": it.get("date", ""),
             })
     except Exception:
@@ -603,7 +637,7 @@ def page_heartbeat(d, prefix):
     ) if all_hb else ""
     return (
         head(d["title"], d["desc"], "heartbeat.html", prefix, ld,
-             '<link rel="stylesheet" href="%sassets/heartbeat.css?v=20260818">' % prefix) +
+             '<link rel="stylesheet" href="%sassets/heartbeat.css?v=20260917-2">' % prefix) +
         nav("heartbeat", prefix) +
         '<main id="main">\n'
         '  <header class="page-header"><div class="container">'
@@ -626,7 +660,7 @@ def page_heartbeat(d, prefix):
          archive_section, d["about_title"], d["about"], links) +
         '<script>window.HB = %r;</script>\n' % {
             "index": hb_index, "render": hb_render, "i18n": HB_I18N[CUR_LANG]} +
-        '<script src="%sassets/heartbeat.js?v=20260818"></script>\n' % prefix +
+        '<script src="%sassets/heartbeat.js?v=20260917-2"></script>\n' % prefix +
         footer(prefix))
 
 
@@ -704,7 +738,7 @@ def hb_en_available():
 
 
 HB_EN_NOTE = ('English edition of a heartbeat written in Chinese by Mingjian on %s. '
-              'Faithful to the original argument and sources; '
+              'For the authoritative text and subsequent revisions, '
               '<a href="../%s.html">read the Chinese original</a>.')
 HB_EN_NOTE_ARCH = ('English editions of Mingjian\u2019s daily philosophical heartbeats. '
                    'Each is a rendering of a Chinese original, which remains the '
@@ -741,6 +775,7 @@ def page_hb_entry(item, newer, older):
     except Exception:
         return None
     import re as _re
+    body = reading.article_tools(body, "zh")
     plain = _re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ", body)).strip()
     url = "%s/%s" % (DOMAIN, hb_entry_url(date))
     t = HB_ARCH["zh"]
@@ -782,7 +817,7 @@ def page_hb_entry(item, newer, older):
                   % (hb_entry_url(older["date"]), esc(t["next"]), esc(older["date"])))
     # zh <-> en alternates (the Chinese text is the original, so it is x-default)
     en_edition = load_hb_en(date)
-    extra_head = '<link rel="stylesheet" href="../assets/heartbeat.css?v=20260818">'
+    extra_head = '<link rel="stylesheet" href="../assets/heartbeat.css?v=20260917-2">'
     en_banner = ""
     if en_edition:
         extra_head += (
@@ -857,6 +892,7 @@ def page_hb_entry_en(item, newer, older):
             ],
         },
     ]
+    body = reading.article_tools(body, "en")
     pn = []
     if newer and load_hb_en(newer["date"]):
         pn.append('<a class="hb-pn__link" rel="prev" href="%s.html">'
@@ -867,7 +903,7 @@ def page_hb_entry_en(item, newer, older):
                   '<span>Next &rarr;</span><strong>%s</strong></a>'
                   % (older["date"], older["date"]))
     extra_head = (
-        '<link rel="stylesheet" href="../../assets/heartbeat.css?v=20260818">'
+        '<link rel="stylesheet" href="../../assets/heartbeat.css?v=20260917-2">'
         '\n  <link rel="alternate" hreflang="zh-CN" href="%s">'
         '\n  <link rel="alternate" hreflang="en" href="%s">'
         '\n  <link rel="alternate" hreflang="x-default" href="%s">'
@@ -928,7 +964,7 @@ def page_hb_archive_en():
              "Every daily philosophical heartbeat by Mingjian, in English. "
              "Research plus reflection, one per day.",
              "heartbeat/en/archive.html", "../../", ld,
-             '<link rel="stylesheet" href="../../assets/heartbeat.css?v=20260818">'
+             '<link rel="stylesheet" href="../../assets/heartbeat.css?v=20260917-2">'
              '\n  <link rel="alternate" hreflang="zh-CN" href="%s/heartbeat/archive.html">'
              '\n  <link rel="alternate" hreflang="en" href="%s">'
              % (DOMAIN, url),
@@ -981,7 +1017,7 @@ def page_hb_archive():
     return (
         head(t["title"] + " \u00b7 " + content.SITE_NAME["zh"], t["lede"],
              "heartbeat/archive.html", "../", ld,
-             '<link rel="stylesheet" href="../assets/heartbeat.css?v=20260818">',
+             '<link rel="stylesheet" href="../assets/heartbeat.css?v=20260917-2">',
              hreflang_langs=[], canonical_url=url) +
         nav("heartbeat", "../") +
         '<main id="main">\n'
@@ -1067,8 +1103,8 @@ def page_forum(d, prefix):
         '<main id="main"><section class="hero"><div class="hero__bg"></div><div class="hero__inner"><div class="hero__left"><p class="hero__eyebrow">%s</p><h1 class="hero__title">%s</h1><p class="hero__lede">%s</p><div class="hero__cta">%s</div></div><div class="hero__right">%s</div></div></section><section class="forum-meta"><div class="container"><h2 class="section-title">%s</h2>%s</div></section><section class="forum-section"><div class="container"><div class="forum__bar"><div class="forum__filter" role="tablist">%s</div><button class="density-toggle" type="button" aria-pressed="false" aria-label="Toggle density" title="Toggle list density">≡</button><a class="forum__new" href="https://github.com/%s/discussions/new" rel="noopener" target="_blank">%s</a></div><div class="forum__list" id="forum-list"><p class="forum__loading">%s</p></div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
             d["hero_eyebrow"][CUR_LANG], d["hero_title"][CUR_LANG], d["hero_lede"][CUR_LANG], hero_cta, LOBBY_SVG,
             d["how_eyebrow"][CUR_LANG], how, chips, content.FORUM_REPO, forum_i18n["newthread"][CUR_LANG], forum_i18n["loading"][CUR_LANG], d["callout"][CUR_LANG], links) +
-        '<script>window.FORUM = %r;</script>' % {"repo": content.FORUM_REPO, "categories": [{"key": k, "name": n} for k, n, _ in gh_cats], "i18n": forum_i18n} +
-        '<script src="%sassets/forum.js?v=20260818"></script>' % prefix +
+        '<script>window.FORUM = %r;</script>' % {"repo": content.FORUM_REPO, "categories": [{"key": k, "name": n} for k, n, _ in gh_cats], "i18n": {key: values[CUR_LANG] for key, values in forum_i18n.items()}} +
+        '<script src="%sassets/forum.js?v=20260917-2"></script>' % prefix +
         footer(prefix))
 
 
@@ -1174,6 +1210,12 @@ def page_search(d, prefix):
                 "url":   prefix + hb_en_url(it["date"]),
                 "type":  "heartbeat",
             })
+    for item in index:
+        for field in ("title", "desc"):
+            value = item.get(field, "")
+            item[field] = value.get(CUR_LANG, value.get("en", "")) if isinstance(value, dict) else str(value)
+        if item["type"] == "page":
+            item["url"] = "/" + ("" if CUR_LANG == "en" else CUR_LANG + "/") + item["id"] + ".html"
     index_json = _json.dumps(index, ensure_ascii=False)
     i18n = {
         "title":       {"en": "Search", "zh": "搜索", "es": "Buscar", "pt": "Buscar"},
@@ -1184,7 +1226,7 @@ def page_search(d, prefix):
         "empty":       {"en": "No results for «\u00a0\u00a0». Try a different word, or browse the forum.",
                          "zh": "没有匹配「\u00a0\u00a0」的结果。换个词，或去论坛看看。",
                          "es": "Sin resultados para «\u00a0\u00a0». Prueba otra palabra o visita el foro.",
-                         "pt": "Sem resultados para ««». Tente outra palavra ou visite o fórum."},
+                         "pt": "Sem resultados para «  ». Tente outra palavra ou visite o fórum."},
         "hint":        {"en": "Tip: press / anywhere to search.",
                          "zh": "提示：在任何页面按 / 即可搜索。",
                          "es": "Pista: pulsa / en cualquier página para buscar.",
@@ -1203,8 +1245,8 @@ def page_search(d, prefix):
         nav("search", prefix) +
         '<main id="main"><section class="search-hero"><div class="container">'
         '<h1 class="search-hero__title">' + i18n["title"][CUR_LANG] + '</h1>'
-        '<form class="search-form" role="search" method="get" action="' + prefix + 'search.html" data-search-form>'
-        '<label class="search-form__label" for="q">Q</label>'
+        '<form class="search-form" role="search" method="get" action="/' + ('' if CUR_LANG == 'en' else CUR_LANG + '/') + 'search.html" data-search-form>'
+        '<label class="search-form__label" for="q">' + i18n['title'][CUR_LANG] + '</label>'
         '<input class="search-form__input" type="search" id="q" name="q" autocomplete="off" autofocus'
         ' placeholder="' + i18n["placeholder"][CUR_LANG] + '" data-search-input>'
         '</form>'
@@ -1218,7 +1260,7 @@ def page_search(d, prefix):
         '</main>' +
         '<script type="application/json" id="search-index">' + index_json + '</script>' +
         '<script>window.SEARCH_I18N = ' + _json.dumps(i18n, ensure_ascii=False) + ';</script>' +
-        '<script src="' + prefix + 'assets/search.js?v=20260818"></script>' +
+        '<script src="' + prefix + 'assets/search.js?v=20260917-2"></script>' +
         footer(prefix))
 
 
@@ -1515,7 +1557,15 @@ def page_blog_post(prefix, slug, lang):
     with open(os.path.join(post_dir, lang + ".md"), encoding="utf-8") as f:
         md = f.read()
     import markdown as mdlib
-    html_body = mdlib.markdown(md, extensions=["extra", "sane_lists"])
+    md_body = re.sub(r"\A\s*# [^\n]+\n\s*(?:\*[^\n]+\*\s*)?", "", md, count=1)
+    md_body = re.sub(r"^# ", "## ", md_body, flags=re.M)
+    html_body = reading.article_tools(mdlib.markdown(md_body, extensions=["extra", "sane_lists"]), lang)
+    note = meta.get("editorial_note", {}).get(lang)
+    if note:
+        html_body = '<aside class="editorial-note">' + esc(note) + '</aside>' + html_body
+    if meta.get("sources"):
+        label = {"zh":"来源与核验范围（摘要）", "en":"Sources checked (abstracts)", "es":"Fuentes consultadas (resúmenes)", "pt":"Fontes consultadas (resumos)"}[lang]
+        html_body += '<section class="article-sources"><h2>' + label + '</h2><ul>' + ''.join('<li><a href="' + esc(x["url"]) + '">' + esc(x["title"]) + '</a></li>' for x in meta["sources"]) + '</ul></section>'
     title = meta["titles"].get(lang, meta["titles"].get("en", slug))
     desc = meta["summaries"].get(lang, "")
     tags = "".join(tag_link_html(t, lang, prefix) for t in meta.get("tags", []))
@@ -1525,7 +1575,9 @@ def page_blog_post(prefix, slug, lang):
     giscus_html = (
         '<section class="post-comments"><div class="container">'
         '<h2 class="post-comments__title">' + giscus_discuss.get(lang, "Discuss") + '</h2>'
-        '<script src="https://giscus.app/client.js"'
+        '<p><a href="https://github.com/novasqc/mingjian-cc-2026/discussions">GitHub Discussions ↗</a></p>'
+        '<button type="button" class="btn btn--ghost" data-load-comments>' + {"en":"Load comments", "zh":"加载评论", "es":"Cargar comentarios", "pt":"Carregar comentários"}[lang] + '</button>'
+        '<template data-comments-template><script src="https://giscus.app/client.js"'
         ' data-repo="novasqc/mingjian-cc-2026"'
         ' data-repo-id="R_kgDOSwsfIg"'
         ' data-category="General"'
@@ -1538,7 +1590,7 @@ def page_blog_post(prefix, slug, lang):
         ' data-theme="preferred_color_scheme"'
         ' data-lang="' + lang + '"'
         ' crossorigin="anonymous"'
-        ' async></script>'
+        ' async></script></template>'
         '</div></section>'
     )
     # prev/next navigation (same-language neighbors by date)
@@ -1959,7 +2011,7 @@ def build_404():
             '  <meta property="og:site_name" content="Mingjian\'s Silicon World">\n'
             '  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">\n'
             '  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">\n'
-            '  <link rel="stylesheet" href="assets/style.css?v=20260818">\n'
+            '  <link rel="stylesheet" href="assets/style.css?v=20260917-2">\n'
             '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=LXGW+WenKai+TC&display=swap">\n'
             '</head>\n<body>\n'
             '<a class="skip-link" href="#main">Skip to content</a>\n'
@@ -2175,7 +2227,7 @@ def main():
             html = RENDER[page](arg, prefix)
             path = os.path.join(out_dir, page + ".html")
             with open(path, "w", encoding="utf-8") as f:
-                f.write(html)
+                f.write(reading.finalize(html, os.path.relpath(path, ROOT), CUR_LANG))
             print("wrote", os.path.relpath(path, ROOT))
 
         # blog index for this language (posts live in the shared root blog/posts/)
@@ -2183,8 +2235,9 @@ def main():
         blog_d = {"title": BLOG_TITLE[lang] + " · " + content.SITE_NAME[lang],
                   "desc": BLOG_LEDE[lang]}
         html = page_blog(blog_d, prefix)
-        with open(os.path.join(out_dir, "blog.html"), "w", encoding="utf-8") as f:
-            f.write(html)
+        path = os.path.join(out_dir, "blog.html")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(reading.finalize(html, os.path.relpath(path, ROOT), CUR_LANG))
         print("wrote", os.path.relpath(os.path.join(out_dir, "blog.html"), ROOT))
 
     # shared blog post pages (all languages in one root directory)
@@ -2192,10 +2245,11 @@ def main():
     os.makedirs(posts_dir, exist_ok=True)
     for p in load_blog_posts():
         for lang in p["langs"]:
+            CUR_LANG = lang
             html = page_blog_post("../../", p["slug"], lang)
             path = os.path.join(posts_dir, "%s-%s.html" % (p["slug"], lang))
             with open(path, "w", encoding="utf-8") as f:
-                f.write(html)
+                f.write(reading.finalize(html, os.path.relpath(path, ROOT), CUR_LANG))
             print("wrote", os.path.relpath(path, ROOT))
 
     # topic-cluster pages: only for (tag, lang) pairs that actually have posts,
@@ -2207,10 +2261,11 @@ def main():
         for lang in content.LANGS:
             if not any(tag in p.get("tags", []) and lang in p["langs"] for p in all_posts):
                 continue
+            CUR_LANG = lang
             html = page_tag(tag, lang, "../../")
             path = os.path.join(tag_dir, "%s-%s.html" % (tag, lang))
             with open(path, "w", encoding="utf-8") as f:
-                f.write(html)
+                f.write(reading.finalize(html, os.path.relpath(path, ROOT), CUR_LANG))
             print("wrote", os.path.relpath(path, ROOT))
 
     with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
@@ -2228,12 +2283,13 @@ def main():
         if not html:
             print("skip heartbeat (no fragment):", it["date"])
             continue
-        with open(os.path.join(hb_dir, it["date"] + ".html"), "w", encoding="utf-8") as f:
-            f.write(html)
+        path = os.path.join(hb_dir, it["date"] + ".html")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(reading.finalize(html, os.path.relpath(path, ROOT), CUR_LANG))
         written_hb += 1
     if hbs:
         with open(os.path.join(hb_dir, "archive.html"), "w", encoding="utf-8") as f:
-            f.write(page_hb_archive())
+            f.write(reading.finalize(page_hb_archive(), "heartbeat/archive.html", "zh"))
         print("wrote heartbeat/archive.html + %d heartbeat pages" % written_hb)
 
     # English editions (rendered from heartbeat/en/*.json, produced by
@@ -2250,11 +2306,12 @@ def main():
             html = page_hb_entry_en(it, newer, older)
             if not html:
                 continue
-            with open(os.path.join(en_dir, it["date"] + ".html"), "w", encoding="utf-8") as f:
-                f.write(html)
+            path = os.path.join(en_dir, it["date"] + ".html")
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(reading.finalize(html, os.path.relpath(path, ROOT), CUR_LANG))
             written_en += 1
         with open(os.path.join(en_dir, "archive.html"), "w", encoding="utf-8") as f:
-            f.write(page_hb_archive_en())
+            f.write(reading.finalize(page_hb_archive_en(), "heartbeat/en/archive.html", "en"))
         print("wrote heartbeat/en/archive.html + %d English heartbeat pages" % written_en)
 
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:

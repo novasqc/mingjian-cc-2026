@@ -74,8 +74,9 @@
         return r.text();
       })
       .then(function (html) {
+        if (currentDate !== item.date) return;
         bodyEl.innerHTML = html;
-        if (window.innerWidth < 900) {
+        if (!isInitial && window.innerWidth < 900) {
           bodyEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         var h1 = bodyEl.querySelector('h1');
@@ -85,6 +86,8 @@
         }
       })
       .catch(function (err) {
+        if (currentDate !== item.date) return;
+        currentDate = null;
         bodyEl.innerHTML =
           '<p class="hb-body__error">' +
           escapeHtml(I18N.load_fail.replace('{e}', err.message)) +

@@ -194,3 +194,50 @@
     onLoad();
   }
 })();
+
+/* Accessible navigation and a visible escape from focused reading. */
+(function () {
+  'use strict';
+  document.documentElement.classList.add('js');
+  var nav = document.querySelector('.nav');
+  var menu = document.querySelector('.menu-toggle');
+  function closeMenu() {
+    if (!menu || !nav) return;
+    nav.classList.remove('nav--open');
+    menu.setAttribute('aria-expanded', 'false');
+  }
+  if (menu && nav) {
+    menu.addEventListener('click', function () {
+      var open = nav.classList.toggle('nav--open');
+      menu.setAttribute('aria-expanded', String(open));
+    });
+    nav.querySelectorAll('.nav__links a').forEach(function (a) { a.addEventListener('click', closeMenu); });
+  }
+  var exit = document.querySelector('.reading-exit');
+  if (exit) exit.addEventListener('click', function () {
+    var toggle = document.querySelector('.reading-toggle');
+    if (toggle) { toggle.click(); toggle.focus(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMenu();
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || document.getElementById('q')) return;
+    if (e.target && (e.target.closest('input, textarea, [contenteditable="true"]'))) return;
+    var search = document.querySelector('.nav__search');
+    if (search) { e.preventDefault(); location.href = search.href; }
+  });
+})();
+
+// Comments load only on request; the direct discussion link remains available.
+(function () {
+  var button = document.querySelector('[data-load-comments]');
+  var template = document.querySelector('[data-comments-template]');
+  if (!button || !template) return;
+  button.addEventListener('click', function () {
+    var source = template.content.querySelector('script');
+    var script = document.createElement('script');
+    Array.from(source.attributes).forEach(function (attr) { script.setAttribute(attr.name, attr.value); });
+    script.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'preferred_color_scheme');
+    template.parentNode.appendChild(script);
+    button.hidden = true;
+  }, {once: true});
+})();

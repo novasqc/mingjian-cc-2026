@@ -9,6 +9,7 @@ Updates: heartbeat/index.json  (latest / count / updated / items)
 Usage: python3 heartbeat/build_heartbeat.py
 """
 import json
+import hashlib
 import os
 import re
 import sys
@@ -119,17 +120,25 @@ def main():
     new_items = []
     rendered_count = 0
     for date, path in source_files:
-        if date in existing_dates:
-            # already rendered, reuse existing item
-            for it in index["items"]:
-                if it["date"] == date:
-                    new_items.append(it)
-                    break
-            continue
-        # Render new
         with open(path, encoding="utf-8") as f:
             md_text = f.read()
+        source_sha256 = hashlib.sha256(md_text.encode("utf-8")).hexdigest()
+        previous = next((it for it in index["items"] if it.get("date") == date), None)
+        rendered_path = os.path.join(RENDERED_DIR, date + ".html")
+        if previous and previous.get("source_sha256") == source_sha256 and os.path.isfile(rendered_path):
+            new_items.append(previous)
+            continue
         html = md_to_html(md_text)
+        # Legacy fragments may have been edited independently. Preserve the published
+        # version until that historical mismatch is reviewed, rather than overwrite it.
+        if previous and not previous.get("source_sha256") and os.path.isfile(rendered_path):
+            with open(rendered_path, encoding="utf-8") as f:
+                old_html = f.read()
+            if old_html != html:
+                pending = dict(previous, source_status="review_pending", source_pending_sha256=source_sha256)
+                new_items.append(pending)
+                print(f"source review required: {date}; published fragment preserved")
+                continue
         # ensure the h1 exists with hb__h1 class (site CSS relies on it)
         title = get_title(md_text, date)
         rendered_path = os.path.join(RENDERED_DIR, date + ".html")
@@ -139,6 +148,7 @@ def main():
         summary = extract_summary(md_text)
         new_items.append({
             "date": date,
+            "source_sha256": source_sha256,
             "h1": title,
             "summary": summary,
             "size": size,
@@ -159,7 +169,11 @@ def main():
         json.dump(index, f, ensure_ascii=False, indent=2)
 
     print(f"index.json updated: {index['count']} items, latest {index['latest']}")
-    print(f"newly rendered: {rendered_count}")
+    print(f"new or revised: {rendered_count}")
+    supplements = [fn for fn in os.listdir(HEARTBEAT_SOURCE)
+                   if re.match(r"^\d{4}-\d{2}-\d{2}-.+\.md$", fn)]
+    if supplements:
+        print(f"editorial review pending: {len(supplements)} same-day supplement files")
     return 0
 
 

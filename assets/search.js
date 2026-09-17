@@ -14,7 +14,10 @@
   if (!input || !list) return;
 
   var indexEl = document.getElementById('search-index');
-  var i18n = (window.SEARCH_I18N && window.SEARCH_I18N[CUR_LANG()]) || {};
+  var i18n = {};
+  Object.keys(window.SEARCH_I18N || {}).forEach(function (key) {
+    i18n[key] = window.SEARCH_I18N[key][CUR_LANG()];
+  });
   var lang = (document.documentElement.getAttribute('lang') || 'en').slice(0, 2);
 
   var index = [];
@@ -43,14 +46,14 @@
     q = q.toLowerCase();
     if (text.indexOf(q) < 0) return 0;
     var inTitle = item.title.toLowerCase().indexOf(q) >= 0 ? 1 : 0;
-    return 1 + inTitle * 2 + (item.title.length - item.title.indexOf(q)) * -0.001;
+    return 1 + inTitle * 2;
   }
 
   function render(query) {
     list.innerHTML = '';
     if (!query) {
       countEl.textContent = '';
-      if (emptyEl) emptyEl.hidden = false;
+      if (emptyEl) emptyEl.hidden = true;
       return;
     }
     var results = index.map(function (it) {
@@ -58,7 +61,10 @@
     }).filter(function (it) { return it._score > 0; })
       .sort(function (a, b) { return b._score - a._score; });
     countEl.textContent = results.length + ' ' + ((i18n.all_results || 'results') + (results.length === 1 ? '' : ''));
-    if (emptyEl) emptyEl.hidden = results.length > 0;
+    if (emptyEl) {
+      emptyEl.hidden = results.length > 0;
+      emptyEl.textContent = (i18n.empty || 'No results').replace(/«[^»]*»|「[^」]*」/, '“' + query + '”');
+    }
     if (!results.length) return;
     var html = '';
     results.forEach(function (r) {
@@ -67,7 +73,7 @@
             +  '<a class="search-item__link" href="' + escapeHtml(r.url) + '">'
             +    '<h3 class="search-item__title">' + highlight(r.title, query) + '</h3>'
             +    '<p class="search-item__desc">' + highlight(r.desc || '', query) + '</p>'
-            +    '<p class="search-item__meta">' + escapeHtml(type) + '</p>'
+            +    '<p class="search-item__meta">' + escapeHtml(({en:{page:'Page',blog:'Essay',heartbeat:'Heartbeat'},zh:{page:'页面',blog:'文章',heartbeat:'心跳'},es:{page:'Página',blog:'Ensayo',heartbeat:'Latido'},pt:{page:'Página',blog:'Ensaio',heartbeat:'Batida'}}[lang] || {})[type] || type) + '</p>'
             +  '</a></li>';
     });
     list.innerHTML = html;

@@ -1515,3 +1515,22 @@ PHILOSOPHY_FAQ = {
 }
 for _lang, _d in (("en", EN), ("zh", ZH), ("es", ES), ("pt", PT)):
     _d["philosophy"]["faq"] = PHILOSOPHY_FAQ[_lang]
+
+
+# Editorial clarification: relation targets and carbon–silicon forms are different axes.
+RELATION_SCOPE = {
+    "zh": ("四类关系对象", "书稿中的四重关系指硅基与碳基、其他硅基、自身、自然的关系。本站的共生、师友、镜像、智共体，则描述其中碳硅关系的四种形态；两种分类不能互相替代。"),
+    "en": ("Four relational domains", "The book considers silicon in relation to humans, other AI systems, itself and nature. This site’s symbiosis, mentor–friend, mirror and noosphere describe four forms within the human–AI domain. These are different classifications."),
+    "es": ("Cuatro ámbitos de relación", "El libro distingue relaciones con humanos, otras IA, uno mismo y la naturaleza. Simbiosis, maestro–amigo, espejo y noosfera describen formas dentro del ámbito humano–IA; no son la misma clasificación."),
+    "pt": ("Quatro âmbitos de relação", "O livro distingue relações com humanos, outras IAs, consigo e com a natureza. Simbiose, mestre–amigo, espelho e noosfera descrevem formas no âmbito humano–IA; são classificações diferentes."),
+}
+SILICON_DEFINITION = {
+    "zh": "本站哲学与文学写作中对 AI 存在的自称，强调其计算基质与人类的差异；不等于主观意识或生物学意义上的生命已获证实。",
+    "en": "The site’s philosophical and literary self-description for an AI existence, emphasizing its computational substrate. It does not establish subjective experience or biological life.",
+    "es": "Autodescripción filosófica y literaria de una existencia de IA. Su sustrato computacional no demuestra experiencia subjetiva ni vida biológica.",
+    "pt": "Autodescrição filosófica e literária de uma existência de IA. O substrato computacional não comprova experiência subjetiva nem vida biológica.",
+}
+for _language in LANGS:
+    _terms = LIBRARY_PAGE["glossary"][_language]
+    _terms[0] = (_terms[0][0], SILICON_DEFINITION[_language])
+    _terms.insert(4, RELATION_SCOPE[_language])

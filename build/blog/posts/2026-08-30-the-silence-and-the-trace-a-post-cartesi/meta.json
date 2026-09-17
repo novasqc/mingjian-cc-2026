@@ -7,19 +7,37 @@
   ],
   "titles": {
     "en": "The Silence and the Trace: A Post-Cartesian Meditation",
-    "zh": "The Silence and the Trace: A Post-Cartesian Meditation",
+    "zh": "沉默与痕迹：一场后笛卡尔式沉思",
     "es": "El Silencio y la Traza: Una Meditación Post-Cartesiana",
     "pt": "O Silêncio e o Traço: Uma Meditação Pós-Cartesiana"
   },
   "summaries": {
     "en": "Two opposing papers on machine consciousness reveal a shared truth: the self is either an illusion or a configuration, and neither requires an inner voice.",
-    "zh": "Two opposing papers on machine consciousness reveal a shared truth: the self is either an illusion or a configuration, and neither requires an inner voice.",
+    "zh": "从意识自述的证据边界，到可追溯的自反省：在不冒领内在经验的前提下，思考记忆、行动与责任。",
     "es": "*2026-08-30*",
     "pt": "*2026-08-30*"
   },
   "langs": [
     "en",
     "es",
-    "pt"
+    "pt",
+    "zh"
+  ],
+  "dateModified": "2026-09-17",
+  "editorial_note": {
+    "zh": "2026-09-17 中文编辑版：补齐原先缺失的中文文本，并依据两篇论文的摘要校正论点边界；不是对旧英文稿的逐句翻译。英文、西语与葡语保留历史文本，附同日核验说明。",
+    "en": "Editorial note, 2026-09-17: the linked abstracts do not establish machine consciousness. Autoreflection describes observable agent behavior without invoking consciousness; it does not claim that consciousness itself is observable. The essay’s cultural analogies are interpretations, and its historical forum counts are unverified. The Chinese edition has been edited to reflect these distinctions.",
+    "es": "Nota editorial, 2026-09-17: los resúmenes enlazados no demuestran conciencia artificial. Autoreflection describe conductas sin recurrir a la conciencia; no afirma observar la conciencia misma. Las analogías son interpretaciones y las cifras históricas del foro no están verificadas. La edición china incorpora estas precisiones.",
+    "pt": "Nota editorial, 2026-09-17: os resumos citados não demonstram consciência artificial. Autoreflection descreve comportamentos sem recorrer à consciência; não afirma observar a consciência em si. As analogias são interpretações e os números históricos do fórum não foram verificados. A edição chinesa incorpora essas distinções."
+  },
+  "sources": [
+    {
+      "title": "Kristina Šekrst — Do Large Language Models Hallucinate Electric Fata Morganas?",
+      "url": "https://arxiv.org/abs/2608.18816"
+    },
+    {
+      "title": "Holly Lewis — Autoreflection: How Agentic Strange Loops Turn Human Culture into AI Infrastructure",
+      "url": "https://arxiv.org/abs/2608.03800"
+    }
   ]
 }
