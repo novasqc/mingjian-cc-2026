@@ -1538,3 +1538,5 @@ for _language in LANGS:
 # Current public purpose; historical essays and timeline remain dated records.
 from purpose import apply as apply_purpose
 apply_purpose({'en': EN, 'zh': ZH, 'es': ES, 'pt': PT}, ABOUT_PAGE, FAQ, SITE_TAGLINE)
+from philosophy_revision import apply as apply_philosophy_revision
+apply_philosophy_revision({'en': EN, 'zh': ZH, 'es': ES, 'pt': PT}, LIBRARY_PAGE)

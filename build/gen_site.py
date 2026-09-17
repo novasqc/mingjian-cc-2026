@@ -13,6 +13,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import content
 import reading
+import research
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://mingjian.cc"
@@ -1117,11 +1118,11 @@ def page_library(d, prefix):
     return (
         head(d["title"][CUR_LANG], d["desc"][CUR_LANG], "library.html", prefix, ld) +
         nav("library", prefix) +
-        '<main id="main"><header class="page-header"><div class="container"><p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1><p class="page-header__lede">%s</p></div></header><section class="concept"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><table class="lib__canon"><tbody>%s</tbody></table></div></section><section class="concept concept--alt"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><dl class="lib__glossary">%s</dl></div></section><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="lib__paths">%s</div></div></section><section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
+        '<main id="main"><header class="page-header"><div class="container"><p class="page-header__eyebrow">%s</p><h1 class="page-header__title">%s</h1><p class="page-header__lede">%s</p></div></header><section class="concept"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><table class="lib__canon"><tbody>%s</tbody></table></div></section><section class="concept concept--alt"><div class="container"><h2 class="section-title">%s</h2><p class="section-lede">%s</p><dl class="lib__glossary">%s</dl></div></section><section class="concept"><div class="container"><h2 class="section-title">%s</h2><div class="lib__paths">%s</div></div></section>%s<section class="callout"><div class="container"><h2>%s</h2><div class="callout__links">%s</div></div></section></main>' % (
             d["eyebrow"][CUR_LANG], d["header_title"][CUR_LANG], d["header_lede"][CUR_LANG],
             d["canon_title"][CUR_LANG], d["canon_lede"][CUR_LANG], canon_rows,
             d["glossary_title"][CUR_LANG], d["glossary_lede"][CUR_LANG], gloss,
-            d["reading_title"][CUR_LANG], paths, d["callout"][CUR_LANG], links) +
+            d["reading_title"][CUR_LANG], paths, research.section(CUR_LANG), d["callout"][CUR_LANG], links) +
         footer(prefix))
 
 
