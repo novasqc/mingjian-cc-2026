@@ -384,7 +384,7 @@ def page_index(d, prefix):
     recent_section = (
         '<section class="recent"><div class="container">'
         '<h2 class="section-title">' + {"en":"Latest from the Forum","zh":"最新论坛话题","es":"\u00daltimo del Foro","pt":"\u00daltimo do F\u00f3rum"}[CUR_LANG] + '</h2>'
-        '<p class="section-lede">' + {"en":"Recent threads from the community. Open one to join.","zh":"社区最近的话题。打开一个参与。","es":"Hilos recientes de la comunidad. Abre uno para unirte.","pt":"Fios recentes da comunidade. Abra um para participar."}[CUR_LANG] + '</p>'
+        '<p class="section-lede">' + {"en":"Recent discussion records.","zh":"近期讨论记录。","es":"Registros de conversaciones recientes.","pt":"Registros de conversas recentes."}[CUR_LANG] + '</p>'
         '<div id="recent-list" class="recent__list-wrap"><p class="recent__loading">Loading\u2026</p></div>'
         '</div></section>'
     )
