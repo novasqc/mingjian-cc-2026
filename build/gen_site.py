@@ -580,7 +580,7 @@ def page_heartbeat_english(d, prefix):
             '<p class="reading-time">%s</p><h2>%s</h2>%s</article></div></section>'
             '<section class="hb-index"><div class="container"><h2>%s</h2>'
             '<ul class="hb-index__list">%s</ul></div></section></main>' %
-            (esc(d["eyebrow"]), esc(d["header_title"]), esc(d["header_lede"]), esc(note),
+            (esc(d["eyebrow"]), esc(d["header_title"]), esc(d["header_lede"]) + "</p><p>" + esc(d["about"]), esc(note),
              prefix, dates[0], dates[0], esc(latest["title"]), body, esc(HB_ARCH[CUR_LANG]["all"]), rows)
             + footer(prefix))
 

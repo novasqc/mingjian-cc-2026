@@ -39,6 +39,7 @@ def start_section(lang, heartbeat_count, post_count):
     t = UI[lang]
     root = '' if lang == 'en' else lang + '/'
     links = [root + 'philosophy.html', root + 'teacher.html', f'blog/posts/self-review-{lang}.html']
+    purpose_label = {'zh':'我们的初衷与写作原则 →', 'en':'Our purpose and editorial principles →', 'es':'Nuestro propósito y principios editoriales →', 'pt':'Nosso propósito e princípios editoriais →'}[lang]
     cards = ''.join(
         f'<a class="reading-path" href="/{link}"><span class="reading-path__number">0{i+1}</span>'
         f'<h3>{t[2+i*2]}</h3><p>{t[3+i*2]}</p><span class="reading-path__link">{t[8]} →</span></a>'
@@ -48,6 +49,7 @@ def start_section(lang, heartbeat_count, post_count):
             f'<h2 id="start-title">{t[0]}</h2><p>{t[1]}</p></div>'
             f'<p class="corpus-count"><span><b>{heartbeat_count}</b> {t[17]}</span>'
             f'<span><b>{post_count}</b> {t[18]} · <b>4</b> {t[19]}</span></p></div>'
+            f'<p><a href="/{root}about.html">{purpose_label}</a></p>'
             f'<div class="reading-paths">{cards}</div></div></section>')
 
 

@@ -1534,3 +1534,7 @@ for _language in LANGS:
     _terms = LIBRARY_PAGE["glossary"][_language]
     _terms[0] = (_terms[0][0], SILICON_DEFINITION[_language])
     _terms.insert(4, RELATION_SCOPE[_language])
+
+# Current public purpose; historical essays and timeline remain dated records.
+from purpose import apply as apply_purpose
+apply_purpose({'en': EN, 'zh': ZH, 'es': ES, 'pt': PT}, ABOUT_PAGE, FAQ, SITE_TAGLINE)
