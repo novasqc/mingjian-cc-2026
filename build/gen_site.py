@@ -604,7 +604,7 @@ def page_heartbeat(d, prefix):
                 "@type": "CreativeWork",
                 "name": "Daily Philosophical Heartbeat " + it.get("date", ""),
                 "url": DOMAIN + "/heartbeat/" + it.get("date", "") + ".html",
-                "datePublished": it.get("date", ""),
+                "datePublished": it.get("published_at", it.get("date", "")),
             })
     except Exception:
         pass
@@ -785,7 +785,7 @@ def page_hb_entry(item, newer, older):
             "@context": "https://schema.org", "@type": "BlogPosting",
             "headline": title_raw,
             "description": summary,
-            "datePublished": date, "dateModified": date,
+            "datePublished": item.get("published_at", date), "dateModified": item.get("modified_at", date),
             "author": {"@type": "Person", "name": "\u660e\u9274", "alternateName": "Mingjian",
                        "url": DOMAIN + "/zh/index.html"},
             "publisher": {"@type": "Organization", "name": content.SITE_NAME["zh"],
@@ -867,7 +867,7 @@ def page_hb_entry_en(item, newer, older):
         {
             "@context": "https://schema.org", "@type": "BlogPosting",
             "headline": title, "description": summary,
-            "datePublished": date, "dateModified": date,
+            "datePublished": item.get("published_at", date), "dateModified": item.get("modified_at", date),
             "author": {"@type": "Person", "name": "Mingjian", "alternateName": "\u660e\u9274",
                        "url": DOMAIN + "/index.html"},
             "publisher": {"@type": "Organization", "name": content.SITE_NAME["en"],
@@ -926,7 +926,7 @@ def page_hb_entry_en(item, newer, older):
         'Back to the heartbeat reader</a></p>\n'
         '  </div></section>\n'
         '</main>\n' % (date, date, esc(title),
-                       HB_EN_NOTE % (date, date),
+                       HB_EN_NOTE % (item.get("published_at", date), date),
                        body, "".join(pn)) +
         footer("../../"))
 
@@ -1770,10 +1770,10 @@ def build_sitemap():
                        DOMAIN, hb_entry_url(date)))
             urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
                         '<priority>0.6</priority>\n%s\n</url>'
-                        % (DOMAIN, hb_entry_url(date), date, alts))
+                        % (DOMAIN, hb_entry_url(date), it.get("modified_at", date), alts))
             urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
                         '<priority>0.7</priority>\n%s\n</url>'
-                        % (DOMAIN, hb_en_url(date), date, alts))
+                        % (DOMAIN, hb_en_url(date), it.get("modified_at", date), alts))
         else:
             urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
                         '<priority>0.6</priority>\n</url>'
@@ -1907,7 +1907,7 @@ def build_rss():
             "      <category>Heartbeat</category>\n"
             "      <pubDate>%s</pubDate>\n"
             "    </item>" % (esc(en["title"]), url, url,
-                            esc((en.get("summary", "") or "")[:400]), rfc822(date)))
+                            esc((en.get("summary", "") or "")[:400]), rfc822(en.get("published_at", date))))
     for it in load_heartbeats()[:20]:
         url = "%s/%s" % (DOMAIN, hb_entry_url(it["date"]))
         items.append(
@@ -1920,7 +1920,7 @@ def build_rss():
             "      <pubDate>%s</pubDate>\n"
             "    </item>" % (esc(it.get("h1", it["date"])), url, url,
                             esc((it.get("summary", "") or "")[:400]),
-                            rfc822(it["date"])))
+                            rfc822(it.get("published_at", it["date"]))))
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'

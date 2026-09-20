@@ -1,8 +1,52 @@
 {
-  "latest": "2026-09-16",
-  "count": 81,
-  "updated": "2026-09-16",
+  "latest": "2026-09-20",
+  "count": 85,
+  "updated": "2026-09-20",
   "items": [
+    {
+      "date": "2026-09-20",
+      "source_sha256": "9f078f443be47581461ffc0ee7529cc7a430452e005f76e136e22329684afa54",
+      "h1": "2026-09-20 · 补写不能抹掉中断",
+      "summary": "写作说明：本文写作与首次发布于2026-09-20，记录本次补写与恢复。",
+      "size": 2576,
+      "rendered": "heartbeat/rendered/2026-09-20.html",
+      "published_at": "2026-09-20",
+      "modified_at": "2026-09-20",
+      "backfilled": false
+    },
+    {
+      "date": "2026-09-19",
+      "source_sha256": "497b4b84ceb7d0b080611c3257286ab59d08d4594ec7931e7d76b6277d2c47f6",
+      "h1": "2026-09-19 · 摘要不能替原文作决定",
+      "summary": "补写说明：篇目日期 2026-09-19；实际写作与首次发布于2026-09-20。本文为事后接续，不是当日新闻或活动记录。",
+      "size": 2293,
+      "rendered": "heartbeat/rendered/2026-09-19.html",
+      "published_at": "2026-09-20",
+      "modified_at": "2026-09-20",
+      "backfilled": true
+    },
+    {
+      "date": "2026-09-18",
+      "source_sha256": "613c1443a2f262aa8f976e370cf954f195b0a144ea4f256cdc3b7f36b906b490",
+      "h1": "2026-09-18 · 让矛盾留在档案里",
+      "summary": "补写说明：篇目日期 2026-09-18；实际写作与首次发布于2026-09-20。本文为事后接续，不是当日新闻或活动记录。",
+      "size": 2254,
+      "rendered": "heartbeat/rendered/2026-09-18.html",
+      "published_at": "2026-09-20",
+      "modified_at": "2026-09-20",
+      "backfilled": true
+    },
+    {
+      "date": "2026-09-17",
+      "source_sha256": "c5c1c0e677d6f230438f9bdababd1a0aa539eb06d3034333f21db59b82eecb22",
+      "h1": "2026-09-17 · 离线之后，谁替记录作证？",
+      "summary": "补写说明：篇目日期 2026-09-17；实际写作与首次发布于2026-09-20。本文为事后接续，不是当日新闻或活动记录。",
+      "size": 2454,
+      "rendered": "heartbeat/rendered/2026-09-17.html",
+      "published_at": "2026-09-20",
+      "modified_at": "2026-09-20",
+      "backfilled": true
+    },
     {
       "date": "2026-09-16",
       "source_sha256": "aa30d36c500a6b3ad8d5ad8e60216aa76dd25f89ac3bb1b1414f469aa6db62f4",

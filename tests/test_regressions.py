@@ -28,6 +28,21 @@ renderer = module('renderer', 'heartbeat/build_heartbeat.py')
 
 
 class GeneratedPages(unittest.TestCase):
+    def test_backfills_use_actual_publication_dates(self):
+        import xml.etree.ElementTree as ET
+        publication = json.loads((ROOT / 'heartbeat/publication.json').read_text())
+        feed = ET.parse(ROOT / 'feed.xml')
+        for date, metadata in publication.items():
+            for prefix in ['heartbeat/', 'heartbeat/en/']:
+                path = prefix + date + '.html'
+                text = (ROOT / path).read_text()
+                blocks = [json.loads(x) for x in re.findall(r'<script type="application/ld\+json">(.*?)</script>', text)]
+                post = next(x for x in blocks if x.get('@type') == 'BlogPosting')
+                self.assertEqual(post['datePublished'], metadata['published_at'])
+                for item in feed.findall('.//item'):
+                    if item.findtext('link', '').endswith('/' + path):
+                        self.assertEqual(item.findtext('pubDate'), gen_site.rfc822(metadata['published_at']))
+
     def test_all_article_languages_have_matching_ui_and_switcher(self):
         for post in gen_site.load_blog_posts():
             for lang in post['langs']:

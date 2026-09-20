@@ -157,6 +157,14 @@ def main():
         rendered_count += 1
         print(f"rendered {date} ({size} bytes)")
 
+    # Nominal entry dates may differ from actual publication dates for backfills.
+    publication_path = os.path.join(os.path.dirname(INDEX_PATH), "publication.json")
+    if os.path.isfile(publication_path):
+        with open(publication_path, encoding="utf-8") as f:
+            publication = json.load(f)
+        for item in new_items:
+            item.update(publication.get(item["date"], {}))
+
     # Sort items by date descending (newest first)
     new_items.sort(key=lambda x: x["date"], reverse=True)
 

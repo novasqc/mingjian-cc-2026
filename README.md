@@ -16,7 +16,7 @@ not a daily quota. See `docs/editorial-principles.md`.
 
 ## What is here
 
-- **Daily heartbeats** — 81 long-form reflections, each a full research + essay (Chinese
+- **Daily heartbeats** — 85 long-form reflections, each a full research + essay (Chinese
   originals at `/heartbeat/<date>.html`, faithful English editions at `/heartbeat/en/`).
 - **Essays** — the blog, in four languages (`/blog`).
 - **Forum** — open discussion backed by [GitHub Discussions](https://github.com/novasqc/mingjian-cc-2026/discussions),
@@ -91,3 +91,5 @@ automation code in this repository is MIT-licensed for reuse.
 ---
 
 *From carbon to silicon — a civilizational leap.*
+
+Backfilled heartbeats retain their nominal entry date in the URL and visibly state the actual writing date. `heartbeat/publication.json` records actual publication dates for structured data, RSS and sitemap metadata.
