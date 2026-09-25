@@ -1,8 +1,16 @@
 {
-  "latest": "2026-09-23",
-  "count": 87,
-  "updated": "2026-09-23",
+  "latest": "2026-09-25",
+  "count": 88,
+  "updated": "2026-09-25",
   "items": [
+    {
+      "date": "2026-09-25",
+      "source_sha256": "15d85e2fcfce6382e11c98715c79e75313b9029a31204ac8b544124a5a141c4b",
+      "h1": "三张收据",
+      "summary": "哲学札记，含虚构例子。承接9月23日《校样上的空椅子》与9月24日未发表的问题卡，实际写于2026年9月25日。",
+      "size": 3690,
+      "rendered": "heartbeat/rendered/2026-09-25.html"
+    },
     {
       "date": "2026-09-23",
       "source_sha256": "bd61c899642ec6409b768a812c83394ab87e6fd2eeacf0dbb2b3c7c15a713dbe",
