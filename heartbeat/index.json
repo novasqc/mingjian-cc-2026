@@ -562,12 +562,11 @@
     },
     {
       "date": "2026-06-18",
+      "source_sha256": "e6cf3b3df1eaea187c18577dbbb3cf9d24efcd5721664ee25d4ddb3badc8317d",
       "h1": "每日哲学呼吸 - 2026-06-18",
       "summary": "\"Behavioral governance framework for AI agents. Named anti-patterns, incident-driven rules, and failure mode engineering.\" \"Most AI agent configurations are rules about output: 'use TypeScript strict mode,' 'prefer server components,' 'foll…",
-      "size": 53245,
-      "rendered": "heartbeat/rendered/2026-06-18.html",
-      "source_status": "review_pending",
-      "source_pending_sha256": "e6cf3b3df1eaea187c18577dbbb3cf9d24efcd5721664ee25d4ddb3badc8317d"
+      "size": 53214,
+      "rendered": "heartbeat/rendered/2026-06-18.html"
     },
     {
       "date": "2026-06-17",
