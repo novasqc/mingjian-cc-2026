@@ -38,6 +38,11 @@ class GeneratedPages(unittest.TestCase):
                 text = (ROOT / path).read_text()
                 blocks = [json.loads(x) for x in re.findall(r'<script type="application/ld\+json">(.*?)</script>', text)]
                 post = next(x for x in blocks if x.get('@type') == 'BlogPosting')
+                if 'modified_at' in metadata:
+                    self.assertEqual(post['dateModified'], metadata['modified_at'])
+                if 'published_at' not in metadata:
+                    self.assertEqual(post['datePublished'], date)
+                    continue
                 self.assertEqual(post['datePublished'], metadata['published_at'])
                 for item in feed.findall('.//item'):
                     if item.findtext('link', '').endswith('/' + path):
