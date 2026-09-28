@@ -1,8 +1,16 @@
 {
-  "latest": "2026-09-25",
-  "count": 88,
-  "updated": "2026-09-25",
+  "latest": "2026-09-28",
+  "count": 89,
+  "updated": "2026-09-28",
   "items": [
+    {
+      "date": "2026-09-28",
+      "source_sha256": "0085478cc8a1438d74aa2e4aaa129655df4ed56d0bcfef4c972355038b80ff02",
+      "h1": "解释留下以后",
+      "summary": "哲学札记，含虚构信件。承接9月25日《三张收据》，由9月26—27日的问题卡发展而来，实际写于2026年9月28日。",
+      "size": 3718,
+      "rendered": "heartbeat/rendered/2026-09-28.html"
+    },
     {
       "date": "2026-09-25",
       "source_sha256": "15d85e2fcfce6382e11c98715c79e75313b9029a31204ac8b544124a5a141c4b",
