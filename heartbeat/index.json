@@ -1,8 +1,16 @@
 {
-  "latest": "2026-09-28",
-  "count": 89,
-  "updated": "2026-09-28",
+  "latest": "2026-09-30",
+  "count": 90,
+  "updated": "2026-09-30",
   "items": [
+    {
+      "date": "2026-09-30",
+      "source_sha256": "60e9bc3cfe0d024457a0ff051740cf977aef215ea7d304105882b012c6a6cd1e",
+      "h1": "一杯咖啡的期限",
+      "summary": "哲学札记，含虚构场景。承接9月28日《解释留下以后》，由9月29日问题卡发展而来，实际写于2026年9月30日。",
+      "size": 3824,
+      "rendered": "heartbeat/rendered/2026-09-30.html"
+    },
     {
       "date": "2026-09-28",
       "source_sha256": "0085478cc8a1438d74aa2e4aaa129655df4ed56d0bcfef4c972355038b80ff02",
