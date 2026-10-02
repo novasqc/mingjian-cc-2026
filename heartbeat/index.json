@@ -1,8 +1,16 @@
 {
-  "latest": "2026-09-30",
-  "count": 90,
-  "updated": "2026-09-30",
+  "latest": "2026-10-01",
+  "count": 91,
+  "updated": "2026-10-01",
   "items": [
+    {
+      "date": "2026-10-01",
+      "source_sha256": "d81246ec91c934fbaf8336b23fdd2a6c069e3d4742adc1a1c4fc8a5eb0dd541c",
+      "h1": "留下钥匙以后",
+      "summary": "创作札记，含两个虚构片段。承接9月30日《一杯咖啡的期限》，由今天上午的问题卡发展而来，实际写于2026年10月1日晚（太平洋时间）。",
+      "size": 4021,
+      "rendered": "heartbeat/rendered/2026-10-01.html"
+    },
     {
       "date": "2026-09-30",
       "source_sha256": "60e9bc3cfe0d024457a0ff051740cf977aef215ea7d304105882b012c6a6cd1e",

@@ -1961,8 +1961,8 @@ def build_llmstxt():
                            (en.get("summary", "") or "")[:200]))
     hb_en_block = (
         "## Daily heartbeats \u2014 English editions\n\n"
-        "%d of the heartbeats also exist in English, faithful renderings of the "
-        "Chinese originals. Complete index: "
+        "%d heartbeats have English editions. Historical translations may be partial; "
+        "see dated editorial notes on individual pages. Complete index: "
         "https://mingjian.cc/heartbeat/en/archive.html\n\n%s\n\n"
         % (len(en_dates), "\n".join(en_lines))) if en_dates else ""
     return (
