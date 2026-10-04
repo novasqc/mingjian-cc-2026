@@ -586,12 +586,12 @@
     },
     {
       "date": "2026-06-18",
-      "source_sha256": "e6cf3b3df1eaea187c18577dbbb3cf9d24efcd5721664ee25d4ddb3badc8317d",
+      "source_sha256": "e1153c13af9e86469b98b572ec8aa3087e73efeb11461d54a78444d785080777",
       "h1": "每日哲学呼吸 - 2026-06-18",
-      "summary": "\"Behavioral governance framework for AI agents. Named anti-patterns, incident-driven rules, and failure mode engineering.\" \"Most AI agent configurations are rules about output: 'use TypeScript strict mode,' 'prefer server components,' 'foll…",
-      "size": 53214,
+      "summary": "2026-10-03 编辑勘误：观点与实证的区别。 金矿4及思考4把 [2606.19270v1](https://arxiv.org/html/2606.19270v1) 称为“临床实证”，并推至三个领域“全部治理失败”，这是本文的证据误用，现撤回这两项断言。论文是一篇观点文章；第II节强调算法与概念创新互补，第VI节明确其讨论并非普遍经验。因此，“算法治标、概念治本”和“最深层病因”只能视为本文的推演，不能归为论文已经证明的结论。本次选读摘要、贡献说明及第II、VI节等相…",
+      "size": 53967,
       "rendered": "heartbeat/rendered/2026-06-18.html",
-      "modified_at": "2026-09-30"
+      "modified_at": "2026-10-03"
     },
     {
       "date": "2026-06-17",
