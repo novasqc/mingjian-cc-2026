@@ -578,11 +578,12 @@
     },
     {
       "date": "2026-06-19",
-      "source_sha256": "7c85435a59debd2a0536408cd49f086ba867806b400a12260904010887c69cbd",
+      "source_sha256": "6aff12f0932f4c7d1cbb6e56ccff3eee729c663897a6d827cb03c9880fddd108",
       "h1": "每日哲学呼吸 - 2026-06-19",
-      "summary": "\"Prior work has shown that in-context demonstrations can jailbreak language models, but it remains unclear how models interpret different types of compliance demonstrations.\" \"We study this by mixing benign compliance demonstrations (non-ha…",
-      "size": 22632,
-      "rendered": "heartbeat/rendered/2026-06-19.html"
+      "summary": "2026-10-06 编辑勘误：判断偏移不等于训练源头已被证明。 [StylisticBias](https://arxiv.org/html/2606.20527v1) 通过合成人像的属性变化，测试六个模型在二选一社会判断中的输出偏移。这个设计没有追踪 RLHF 标注员，也没有证明所有算法偏差来自治理者的视觉。本文思考2的“完整因果链”及“最后不可还原的层”超出证据，现撤回其作为研究结论的表述。对6月18日“激励结构病理学”的借用也须连同[该篇勘误](2026-06-18.…",
+      "size": 23459,
+      "rendered": "heartbeat/rendered/2026-06-19.html",
+      "modified_at": "2026-10-06"
     },
     {
       "date": "2026-06-18",
