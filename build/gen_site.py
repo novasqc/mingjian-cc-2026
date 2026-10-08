@@ -1862,17 +1862,19 @@ def build_llms_full():
 
 
 def rfc822(date_str):
-    """Convert YYYY-MM-DD to an RFC-822 date so feed validators accept it."""
+    """Preserve recorded timestamps; retain the legacy time for date-only entries."""
     import datetime as _dt
+    from email.utils import format_datetime
     try:
-        d = _dt.datetime.strptime(date_str[:10], "%Y-%m-%d")
-    except Exception:
-        d = _dt.datetime.utcnow()
-    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    return "%s, %02d %s %d 09:00:00 +0000" % (
-        days[d.weekday()], d.day, months[d.month - 1], d.year)
+        if len(date_str) == 10:
+            d = _dt.datetime.strptime(date_str, "%Y-%m-%d").replace(hour=9)
+        else:
+            d = _dt.datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=_dt.timezone.utc)
+    except (TypeError, ValueError, AttributeError):
+        d = _dt.datetime.now(_dt.timezone.utc).replace(hour=9, minute=0, second=0, microsecond=0)
+    return format_datetime(d)
 
 
 def build_rss():

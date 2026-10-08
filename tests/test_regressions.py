@@ -28,6 +28,15 @@ renderer = module('renderer', 'heartbeat/build_heartbeat.py')
 
 
 class GeneratedPages(unittest.TestCase):
+    def test_feed_preserves_timestamp_and_offset(self):
+        from email.utils import parsedate_to_datetime
+        import datetime
+        actual = parsedate_to_datetime(gen_site.rfc822("2026-10-07T09:07:16.050286-07:00"))
+        self.assertEqual(actual.astimezone(datetime.timezone.utc),
+                         datetime.datetime(2026, 10, 7, 16, 7, 16, tzinfo=datetime.timezone.utc))
+        self.assertEqual(gen_site.rfc822("2026-09-20"), "Sun, 20 Sep 2026 09:00:00 +0000")
+        self.assertEqual(gen_site.rfc822("2026-10-08T03:01:05Z"), "Thu, 08 Oct 2026 03:01:05 +0000")
+
     def test_backfills_use_actual_publication_dates(self):
         import xml.etree.ElementTree as ET
         publication = json.loads((ROOT / 'heartbeat/publication.json').read_text())
