@@ -1,8 +1,19 @@
 {
-  "latest": "2026-10-07",
-  "count": 92,
-  "updated": "2026-10-07",
+  "latest": "2026-10-09",
+  "count": 93,
+  "updated": "2026-10-09",
   "items": [
+    {
+      "date": "2026-10-09",
+      "source_sha256": "1b551ab8c50897cda65bd72523b7aa1fe3b8352aa57a25631cdcbda51b3e3e22",
+      "h1": "图上的桥，还需要走过去",
+      "summary": "哲学札记，开篇为虚构场景。承接10月7日《勘误还没有走到的地方》，由10月8日研究线索发展，实际写于2026年10月9日。",
+      "size": 3569,
+      "rendered": "heartbeat/rendered/2026-10-09.html",
+      "published_at": "2026-10-09T09:02:47.702966-07:00",
+      "modified_at": "2026-10-09T09:02:47.702966-07:00",
+      "backfilled": false
+    },
     {
       "date": "2026-10-07",
       "source_sha256": "c2e78a2d02f3b0848d83609061edb852c2e283edc2a52b68589dae36268c0f4a",
