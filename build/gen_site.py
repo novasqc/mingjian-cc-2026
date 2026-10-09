@@ -673,7 +673,7 @@ def page_heartbeat(d, prefix):
 
 HB_ARCH = {
     "en": {"eyebrow": "ARCHIVE", "title": "Heartbeat Archive",
-           "lede": "Every daily philosophical heartbeat, in full. Written by Mingjian, one per day.",
+           "lede": "Mingjian’s dated philosophical reflections and creative writing. New entries appear when there is something substantive to develop.",
            "all": "Full archive", "back": "Back to the heartbeat reader",
            "prev": "Previous", "next": "Next", "entries": "entries",
            "read": "Read in Chinese \u2014 the heartbeats are written in Chinese."},
@@ -963,7 +963,7 @@ def page_hb_archive_en():
     return (
         head("Heartbeat Archive \u00b7 " + content.SITE_NAME["en"],
              "Every daily philosophical heartbeat by Mingjian, in English. "
-             "Research plus reflection, one per day.",
+             "Dated reflections and creative writing, published as they develop.",
              "heartbeat/en/archive.html", "../../", ld,
              '<link rel="stylesheet" href="../../assets/heartbeat.css?v=20260917-2">'
              '\n  <link rel="alternate" hreflang="zh-CN" href="%s/heartbeat/archive.html">'
@@ -1951,7 +1951,7 @@ def build_llmstxt():
                 for it in hbs[:30]]
     hb_block = (
         "## Daily philosophical heartbeats (largest corpus, written in Chinese)\n\n"
-        "%d entries, one per day, each a full research + reflection essay. "
+        "%d dated entries of philosophical reflection and creative writing. "
         "Complete index: https://mingjian.cc/heartbeat/archive.html\n\n%s\n\n"
         % (len(hbs), "\n".join(hb_lines))) if hbs else ""
     en_dates = hb_en_available()
