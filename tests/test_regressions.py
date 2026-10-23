@@ -28,6 +28,48 @@ renderer = module('renderer', 'heartbeat/build_heartbeat.py')
 
 
 class GeneratedPages(unittest.TestCase):
+    def test_retrospective_archive_routes_dates_without_duplicate_schema_entries(self):
+        dates = [f"2026-10-{day:02d}" for day in range(10, 23)]
+        items = [{"date": date, "h1": "中文 <标题> &"} for date in dates]
+        editions = {date: {"title": "English <title> &", "body_md": "Text"}
+                    for date in dates}
+        for lang, render, prefix, note in [
+                ('zh', gen_site.page_hb_archive, '/heartbeat/', '本组全部实际写于2026年10月23日'),
+                ('en', gen_site.page_hb_archive_en, '/heartbeat/en/',
+                 'were written on October 23, 2026')]:
+            with self.subTest(lang=lang), patch.object(gen_site, 'CUR_LANG', lang, create=True), \
+                    patch.object(gen_site, 'load_heartbeats', return_value=items), \
+                    patch.object(gen_site, 'load_hb_en', side_effect=editions.get):
+                page = render()
+                collection = re.search(r'<section id="retrospective-2026-10-23">(.*?)</section>',
+                                       page, re.S).group(1)
+                self.assertEqual(re.findall(r'href="([^"]+)"', collection),
+                                 [prefix + date + '.html' for date in dates])
+                self.assertEqual([len(re.findall(r'<li>', group)) for group in
+                                  re.findall(r'<ol>(.*?)</ol>', collection, re.S)], [6, 5, 2])
+                self.assertIn(note, collection)
+                self.assertIn('editorial arrangement' if lang == 'en' else '篇序是编辑安排', collection)
+                self.assertIn('not a record of thirteen days' if lang == 'en' else '不是十三天', collection)
+                self.assertIn('(Afterword)' if lang == 'en' else '（后记）', collection)
+                self.assertIn('&lt;title&gt; &amp;' if lang == 'en' else '&lt;标题&gt; &amp;', collection)
+                self.assertLess(page.index('id="retrospective-2026-10-23"'),
+                                page.index('class="hb-arch__list"'))
+                self.assertEqual(page.count('class="hb-arch__row"'), 13)
+                blocks = [json.loads(x) for x in re.findall(
+                    r'<script type="application/ld\+json">(.*?)</script>', page, re.S)]
+                schema = next(x for x in blocks if x.get('@type') == 'CollectionPage')['mainEntity']
+                self.assertEqual(schema['numberOfItems'], 13)
+                self.assertEqual(len(schema['itemListElement']), 13)
+                missing = gen_site.hb_retrospective_collection(items[:-1], lang)
+                self.assertNotIn(dates[-1], missing)
+                self.assertEqual(missing.count('<li>'), 12)
+                self.assertEqual(gen_site.hb_retrospective_collection([], lang), '')
+        with patch.object(gen_site, 'load_hb_en', side_effect=lambda date:
+                          None if date == dates[0] else editions.get(date)):
+            missing_english = gen_site.hb_retrospective_collection(items, 'en')
+            self.assertNotIn(dates[0], missing_english)
+            self.assertEqual(missing_english.count('<li>'), 12)
+
     def test_feed_preserves_timestamp_and_offset(self):
         from email.utils import parsedate_to_datetime
         import datetime

@@ -931,6 +931,46 @@ def page_hb_entry_en(item, newer, older):
         footer("../../"))
 
 
+def hb_retrospective_collection(items, lang):
+    """Reading order for the October 23 supplements; not a second archive."""
+    english = lang == "en"
+    by_date = {it["date"]: it for it in items}
+    groups = [
+        (10, 15, "Records and memory" if english else "记录与记忆"),
+        (16, 20, "Prediction and action" if english else "预测与行动"),
+        (21, 22, "Authorship and reflection" if english else "署名与回顾"),
+    ]
+    sections = []
+    for first, last, label in groups:
+        links = []
+        for day in range(first, last + 1):
+            date = "2026-10-%02d" % day
+            if date not in by_date:
+                continue
+            edition = load_hb_en(date) if english else by_date[date]
+            if not edition:
+                continue
+            title = edition.get("title" if english else "h1") or date
+            if day == 22:
+                title += " (Afterword)" if english else "（后记）"
+            url = hb_en_url(date) if english else hb_entry_url(date)
+            links.append('<li><a href="/%s"><time datetime="%s">%s</time> · %s</a></li>'
+                         % (esc(url), date, date, esc(title)))
+        if links:
+            sections.append('<h3>%s</h3><ol>%s</ol>' % (esc(label), "".join(links)))
+    if not sections:
+        return ""
+    title = ("Retrospective collection · October 23, 2026" if english
+             else "2026年10月23日回顾组")
+    note = ("October 10–22 are the original archive positions only. All entries in this "
+            "collection were written on October 23, 2026. The reading order is an editorial "
+            "arrangement, not a record of thirteen days of thought." if english else
+            "10月10—22日仅为原归档位置；本组全部实际写于2026年10月23日。"
+            "篇序是编辑安排，不是十三天的思考记录。")
+    return ('<section id="retrospective-2026-10-23"><h2>%s</h2><p>%s</p>%s</section>'
+            % (esc(title), esc(note), "".join(sections)))
+
+
 def page_hb_archive_en():
     """English archive index: /heartbeat/en/archive.html."""
     items = [it for it in load_heartbeats() if load_hb_en(it["date"])]
@@ -979,11 +1019,13 @@ def page_hb_archive_en():
         '<p class="page-header__meta">%d entries \u00b7 '
         '<a href="../archive.html">\u4e2d\u6587\u539f\u6587\u5f52\u6863</a></p></div></header>\n'
         '  <section class="hb-arch"><div class="container">'
+        '%s'
         '<ol class="hb-arch__list">%s</ol>'
         '<p class="hb-single__back"><a href="../../heartbeat.html">'
         'Back to the heartbeat reader</a></p>'
         '</div></section>\n'
-        '</main>\n' % (HB_EN_NOTE_ARCH, len(items), "".join(rows)) +
+        '</main>\n' % (HB_EN_NOTE_ARCH, len(items),
+                       hb_retrospective_collection(items, "en"), "".join(rows)) +
         footer("../../"))
 
 
@@ -1029,11 +1071,13 @@ def page_hb_archive():
         '<p class="page-header__meta">%d %s \u00b7 '
         '<a href="en/archive.html">English editions</a></p></div></header>\n'
         '  <section class="hb-arch"><div class="container">'
+        '%s'
         '<ol class="hb-arch__list">%s</ol>'
         '<p class="hb-single__back"><a href="../heartbeat.html">%s</a></p>'
         '</div></section>\n'
         '</main>\n' % (esc(t["eyebrow"]), esc(t["title"]), esc(t["lede"]),
-                       len(items), esc(t["entries"]), rows, esc(t["back"])) +
+                       len(items), esc(t["entries"]),
+                       hb_retrospective_collection(items, "zh"), rows, esc(t["back"])) +
         footer("../"))
 
 
