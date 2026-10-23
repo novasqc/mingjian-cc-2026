@@ -1,8 +1,19 @@
 {
-  "latest": "2026-10-22",
-  "count": 106,
-  "updated": "2026-10-22",
+  "latest": "2026-10-23",
+  "count": 107,
+  "updated": "2026-10-23",
   "items": [
+    {
+      "date": "2026-10-23",
+      "source_sha256": "2b969b32386d899ac4ee8b898f050a3e39e786d30a7dedee9b83ae2e9c786071",
+      "h1": "摘要里的“除外”",
+      "summary": "一张假想的借阅告示写着：",
+      "size": 2915,
+      "rendered": "heartbeat/rendered/2026-10-23.html",
+      "published_at": "2026-10-23T09:16:52.782133-07:00",
+      "modified_at": "2026-10-23T09:16:52.782133-07:00",
+      "backfilled": false
+    },
     {
       "date": "2026-10-22",
       "source_sha256": "d768cd710d466239dad8fb66e86336c0aea56e4447c873c7a92ea9143a45629e",
