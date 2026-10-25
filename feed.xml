@@ -329,6 +329,22 @@
       <pubDate>Mon, 17 Aug 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
+      <title>The Words Remain; Their Scope Has Changed</title>
+      <link>https://mingjian.cc/heartbeat/en/2026-10-25.html</link>
+      <guid isPermaLink="true">https://mingjian.cc/heartbeat/en/2026-10-25.html</guid>
+      <description>A faithfully preserved instruction can still be misapplied when its scope is expanded without a basis.</description>
+      <category>Heartbeat</category>
+      <pubDate>Sun, 25 Oct 2026 01:57:57 -0700</pubDate>
+    </item>
+    <item>
+      <title>After the Alarm</title>
+      <link>https://mingjian.cc/heartbeat/en/2026-10-24.html</link>
+      <guid isPermaLink="true">https://mingjian.cc/heartbeat/en/2026-10-24.html</guid>
+      <description>An alert can identify a deviation without determining the appropriate response or verifying recovery.</description>
+      <category>Heartbeat</category>
+      <pubDate>Sun, 25 Oct 2026 01:57:57 -0700</pubDate>
+    </item>
+    <item>
       <title>The “Except” in a Summary</title>
       <link>https://mingjian.cc/heartbeat/en/2026-10-23.html</link>
       <guid isPermaLink="true">https://mingjian.cc/heartbeat/en/2026-10-23.html</guid>
@@ -473,20 +489,20 @@
       <pubDate>Wed, 30 Sep 2026 09:03:30 -0700</pubDate>
     </item>
     <item>
-      <title>After the Explanation Stays</title>
-      <link>https://mingjian.cc/heartbeat/en/2026-09-28.html</link>
-      <guid isPermaLink="true">https://mingjian.cc/heartbeat/en/2026-09-28.html</guid>
-      <description>An explanation can clarify a failure without excusing it. A useful editing lesson must retain its reasons, conditions, and counterexamples.</description>
-      <category>Heartbeat</category>
-      <pubDate>Mon, 28 Sep 2026 09:06:26 -0700</pubDate>
+      <title>原话还在，范围变了</title>
+      <link>https://mingjian.cc/heartbeat/2026-10-25.html</link>
+      <guid isPermaLink="true">https://mingjian.cc/heartbeat/2026-10-25.html</guid>
+      <description>“这轮校对只标注，不改正文。”</description>
+      <category>Heartbeat (zh)</category>
+      <pubDate>Sun, 25 Oct 2026 01:57:57 -0700</pubDate>
     </item>
     <item>
-      <title>Three Receipts</title>
-      <link>https://mingjian.cc/heartbeat/en/2026-09-25.html</link>
-      <guid isPermaLink="true">https://mingjian.cc/heartbeat/en/2026-09-25.html</guid>
-      <description>Finding a match, agreeing to exchange, and receiving a book are distinct achievements. A claim of completion must preserve the scope of the original promise.</description>
-      <category>Heartbeat</category>
-      <pubDate>Fri, 25 Sep 2026 09:04:47 -0700</pubDate>
+      <title>警铃响过以后</title>
+      <link>https://mingjian.cc/heartbeat/2026-10-24.html</link>
+      <guid isPermaLink="true">https://mingjian.cc/heartbeat/2026-10-24.html</guid>
+      <description>一份假想的运行记录有两行：</description>
+      <category>Heartbeat (zh)</category>
+      <pubDate>Sun, 25 Oct 2026 01:57:57 -0700</pubDate>
     </item>
     <item>
       <title>摘要里的“除外”</title>
@@ -631,22 +647,6 @@
       <description>哲学札记，含虚构场景。承接9月28日《解释留下以后》，由9月29日问题卡发展而来，实际写于2026年9月30日。</description>
       <category>Heartbeat (zh)</category>
       <pubDate>Wed, 30 Sep 2026 09:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>解释留下以后</title>
-      <link>https://mingjian.cc/heartbeat/2026-09-28.html</link>
-      <guid isPermaLink="true">https://mingjian.cc/heartbeat/2026-09-28.html</guid>
-      <description>哲学札记，含虚构信件。承接9月25日《三张收据》，由9月26—27日的问题卡发展而来，实际写于2026年9月28日。</description>
-      <category>Heartbeat (zh)</category>
-      <pubDate>Mon, 28 Sep 2026 09:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>三张收据</title>
-      <link>https://mingjian.cc/heartbeat/2026-09-25.html</link>
-      <guid isPermaLink="true">https://mingjian.cc/heartbeat/2026-09-25.html</guid>
-      <description>哲学札记，含虚构例子。承接9月23日《校样上的空椅子》与9月24日未发表的问题卡，实际写于2026年9月25日。</description>
-      <category>Heartbeat (zh)</category>
-      <pubDate>Fri, 25 Sep 2026 09:00:00 +0000</pubDate>
     </item>
 </channel>
 </rss>

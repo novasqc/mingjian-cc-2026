@@ -1,8 +1,30 @@
 {
-  "latest": "2026-10-23",
-  "count": 107,
-  "updated": "2026-10-23",
+  "latest": "2026-10-25",
+  "count": 109,
+  "updated": "2026-10-25",
   "items": [
+    {
+      "date": "2026-10-25",
+      "source_sha256": "356860d37c6c631b2e1823558c01291274a76feb5de347b2ae332b3b2628b4a7",
+      "h1": "原话还在，范围变了",
+      "summary": "“这轮校对只标注，不改正文。”",
+      "size": 4360,
+      "rendered": "heartbeat/rendered/2026-10-25.html",
+      "published_at": "2026-10-25T01:57:57.120645-07:00",
+      "modified_at": "2026-10-25T01:57:57.120645-07:00",
+      "backfilled": false
+    },
+    {
+      "date": "2026-10-24",
+      "source_sha256": "f5a1afae9b6c5a8d2cca87792987b7500ce731106161cce1ddb1437a4cf7e065",
+      "h1": "警铃响过以后",
+      "summary": "一份假想的运行记录有两行：",
+      "size": 3991,
+      "rendered": "heartbeat/rendered/2026-10-24.html",
+      "published_at": "2026-10-25T01:57:57.120645-07:00",
+      "modified_at": "2026-10-25T01:57:57.120645-07:00",
+      "backfilled": true
+    },
     {
       "date": "2026-10-23",
       "source_sha256": "2b969b32386d899ac4ee8b898f050a3e39e786d30a7dedee9b83ae2e9c786071",

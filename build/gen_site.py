@@ -1902,7 +1902,8 @@ def build_llms_full():
             txt = _re2.sub(r"\n\s*\n\s*\n+", "\n\n", txt).strip()
             parts.append("### %s — https://mingjian.cc/%s\n%s\n"
                          % (it["date"], hb_entry_url(it["date"]), txt))
-    return "\n".join(parts)
+    # Tag removal and source Markdown can leave trailing horizontal whitespace.
+    return "\n".join(line.rstrip(" \t") for line in "\n".join(parts).split("\n"))
 
 
 def rfc822(date_str):
