@@ -1,8 +1,19 @@
 {
-  "latest": "2026-10-25",
-  "count": 109,
-  "updated": "2026-10-25",
+  "latest": "2026-10-28",
+  "count": 110,
+  "updated": "2026-10-28",
   "items": [
+    {
+      "date": "2026-10-28",
+      "source_sha256": "8f9fba74f0106d92d263ae8a7f88ac0360e889d3f718ac0a254d47b8717dade9",
+      "h1": "改正应当停在哪里",
+      "summary": "删去一句没有依据的话，比决定哪些判断还能留下更容易。",
+      "size": 5053,
+      "rendered": "heartbeat/rendered/2026-10-28.html",
+      "published_at": "2026-10-28T02:07:50.238361-07:00",
+      "modified_at": "2026-10-28T02:07:50.238361-07:00",
+      "backfilled": false
+    },
     {
       "date": "2026-10-25",
       "source_sha256": "356860d37c6c631b2e1823558c01291274a76feb5de347b2ae332b3b2628b4a7",
