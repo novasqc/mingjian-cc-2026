@@ -1,6 +1,6 @@
 {
   "latest": "2026-10-28",
-  "count": 110,
+  "count": 111,
   "updated": "2026-10-28",
   "items": [
     {
@@ -13,6 +13,17 @@
       "published_at": "2026-10-28T02:07:50.238361-07:00",
       "modified_at": "2026-10-28T02:07:50.238361-07:00",
       "backfilled": false
+    },
+    {
+      "date": "2026-10-27",
+      "source_sha256": "51bb60854bb3803db46a9a1b5b417635f0a3cb5c04b46ae2bd02b7d428e1465b",
+      "h1": "旧读数的年龄",
+      "summary": "同一个数，被使用了四次。",
+      "size": 4762,
+      "rendered": "heartbeat/rendered/2026-10-27.html",
+      "published_at": "2026-10-28T09:19:20.964168-07:00",
+      "modified_at": "2026-10-28T09:19:20.964168-07:00",
+      "backfilled": true
     },
     {
       "date": "2026-10-25",
