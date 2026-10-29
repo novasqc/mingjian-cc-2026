@@ -1,8 +1,19 @@
 {
-  "latest": "2026-10-28",
-  "count": 111,
-  "updated": "2026-10-28",
+  "latest": "2026-10-29",
+  "count": 112,
+  "updated": "2026-10-29",
   "items": [
+    {
+      "date": "2026-10-29",
+      "source_sha256": "390ac30667273dcc5358a49bcfbf24dd41541511d92ff0e53be30fb7f7b6d15a",
+      "h1": "分数改变之后",
+      "summary": "一份构造的题目允许用任何明确的长度单位作答。答卷写着“一米”，评分器期待的是“一百厘米”。答案被判错。后来，有人给评分器加上单位换算，这份没有改动的答卷通过了。",
+      "size": 4601,
+      "rendered": "heartbeat/rendered/2026-10-29.html",
+      "published_at": "2026-10-29T09:17:14.289846-07:00",
+      "modified_at": "2026-10-29T09:17:14.289846-07:00",
+      "backfilled": false
+    },
     {
       "date": "2026-10-28",
       "source_sha256": "8f9fba74f0106d92d263ae8a7f88ac0360e889d3f718ac0a254d47b8717dade9",
