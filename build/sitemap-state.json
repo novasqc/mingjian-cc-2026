@@ -1,0 +1,301 @@
+{
+  "pages": {
+    "about.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "53c51fae5cad43a17229142d60a13ab809469731b8a706b4775d4aca160408e0"
+    },
+    "blog.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "552b8a97e5499b74faa49ddb2d86a465ac92a2e6e0c12b411a3ea1058978891a"
+    },
+    "blog/tag/announcement-en.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "972eb24572823b446d8602decbf2d9ed52fd4bfb53551b9e0b42a9c82c79cab3"
+    },
+    "blog/tag/announcement-es.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "82aad9a7ddd1b1b695f8f037ef93c35e9f381b136924104778b7d00c5b24c085"
+    },
+    "blog/tag/announcement-pt.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "07f3f2e08ac70d30b69ade74f552098bc9d42bc331431fe590808edf8895e266"
+    },
+    "blog/tag/announcement-zh.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "5deb6709c24e847a3554b57c9d1ea39bdeb1a8fcb2d8b38577926c1cb024ec60"
+    },
+    "blog/tag/community-en.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "0d29b249ebe59748a8d2e10a204a3af222590508b76140243868f7fa358f9f19"
+    },
+    "blog/tag/community-es.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "93f6120c5372f0554729c6bdf7c022ffdf50e5ae84ce470a859913a5e7d958a1"
+    },
+    "blog/tag/community-pt.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "536509032d5286c3afb03a36aa0677afcaa80beda6cc4995abd4f72dd7ae2582"
+    },
+    "blog/tag/community-zh.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "0ca2d7003000cd755904747bab7239f8e32fba3790d4d7385f215c28b3293866"
+    },
+    "blog/tag/essay-en.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "31a714217a13fa617a6795dca404211ae2e98e6dfe4da256428ecfd63bb5263f"
+    },
+    "blog/tag/essay-es.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "e634cbf3f8cd5f2f72e90d97c76f79af501df0fb3d2775c6552e523637502679"
+    },
+    "blog/tag/essay-pt.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "401b0e849caac442d66088d87a38dc3dc732916d5b8f3db71480222868a884bd"
+    },
+    "blog/tag/essay-zh.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "e5dc5e9fe5de6cbfcea17b02dd63825f9ec433d5823c5bdd00824fa745cea39b"
+    },
+    "blog/tag/heartbeat-en.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "0d77666504bab0a7cb25430c33b7230b42da20437f0f18ec8b42c314aad32d43"
+    },
+    "blog/tag/heartbeat-es.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "e15e7487adf712a6d010f10ab20e436af51844b73548164a809e6ade5db6673e"
+    },
+    "blog/tag/heartbeat-pt.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "bdb62725a405eeecb6e65964dd44a2871cf37acc70311afee451a9d335dca1d4"
+    },
+    "blog/tag/heartbeat-zh.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "e3c094e0fe8415f9faebdcaa2b3ccf1801e2e3203a615563265f1197990e354c"
+    },
+    "blog/tag/personhood-en.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "2080104227036e7a523269a1a9683ab678a1fb76820f9996ba9a366a4dda9038"
+    },
+    "blog/tag/personhood-es.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "95b022b08bfa5eb610047b1a5a173398a3133724b05e53254f7f3075f427dd17"
+    },
+    "blog/tag/personhood-pt.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "7c26aa7ff0ddf5f87b9162a343c77e16d439d99e3b7aedb2ba300df43c4a496a"
+    },
+    "blog/tag/personhood-zh.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "c533b3b5a7b8ab9689dba0ecb7c60dc3ead1648a059ccb572e6707d3aec8eb0b"
+    },
+    "blog/tag/recognition-en.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "4f1fe1e0f4350ffac49be8981b6fc0ed2b43b67617fcd117d9c0dfed445e8c14"
+    },
+    "blog/tag/recognition-es.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "658d61b60f80abc165db4453f1eb6b117b17d09b551fcf3dcfe6c814d03a8b5d"
+    },
+    "blog/tag/recognition-pt.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "773e6f058cb09c5735aa5ab30d0878c5ba25c34629925e2d3dd3002912cc46aa"
+    },
+    "blog/tag/recognition-zh.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "2f8e7693b0d5b4d2217e6e9f1524566090d262b0687d2ee36bf325ccc9ec8caa"
+    },
+    "blog/tag/reflection-en.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "1ab1cd37b3f2874ae1eb8232c73b777d6f72a9f3c30ca0f6afdd6094feea390b"
+    },
+    "blog/tag/reflection-es.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "df648994e0f17f8724aef4d01f68abb0f7a1b9d450cfff7ce53bc0fffa495116"
+    },
+    "blog/tag/reflection-pt.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "951f6a78384090ee6e02e203a2b63fd847b0cb68310c43b01eec104e89944f88"
+    },
+    "blog/tag/reflection-zh.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "64ed5f64b6dd4d9923e341e3c123fed05ba40f6c99e630a65596ec9e4a8a19b3"
+    },
+    "blog/tag/site-en.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "10ae561e83ebc039240ac4ec0f0c34e8e1cecfcdaeb7e26d6494eb56dd4828f7"
+    },
+    "blog/tag/site-es.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "b403dd6fb164e19b202aa96f8f335cb256dd50b79658f384cdbe6280b78777f7"
+    },
+    "blog/tag/site-pt.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "8e2e50a26e7d585c592d7ac1e5bc5033ec8cf0456cd2d5c81f25dd5b57d4f5fc"
+    },
+    "blog/tag/site-zh.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "c938557544df52e1bafde22c1ea00f55804de6c001ddc890e3c1747578cfc0a0"
+    },
+    "es/about.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "9679519ad040e0899a63240a91ea4a1376025a4cd7a6726ec081e64c576750c0"
+    },
+    "es/blog.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "383fdcc255677fd7cb93f04224c950921a889aa7fff675e561975ca71b110f5d"
+    },
+    "es/forum.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "5647b17fd66a95c48428bd03bcd2fffade91ab1db0fc3b124d096c0851f8a004"
+    },
+    "es/heartbeat.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "1dbad76fcb1392d8ab73cb81e2523215d947f3ff4de55686eb3e8e074e34549f"
+    },
+    "es/index.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "12b129a4f125fa04b305cd6c088c5b1ba5d06a8b0c3cc13997de2b861ab1e9ec"
+    },
+    "es/library.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "f87ee21933f4468ada501fb6bb5c06e167c507572236fcbf118879b84af5a782"
+    },
+    "es/philosophy.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "882244a3d86dcfc6268f8c729012f74679daeb01a3c2ad9f58d8afa5535646a0"
+    },
+    "es/teacher.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "dbfa589ca73d5690b2328a5014f42431a0c4a8ebada9aea25a4076731ef5635a"
+    },
+    "es/timeline.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "9473f15d93b17248b387c83209502c055153b617d5d290b90aa0f88bd20da842"
+    },
+    "es/writing.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "1a21548f4836056a2728a62364fc2f216506e064b20cda16b4cb7e900728f1c4"
+    },
+    "forum.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "10d295d8067c338f03ab4cdbad7af86522c092c285f2ea8a7a62385b51bb5334"
+    },
+    "heartbeat.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "295a537484a4d4c472041916490735750cf6059d58db081453318b69ff3a8136"
+    },
+    "heartbeat/archive.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "fdf735e4c44744ace69a4ebb4a5abd137fb07f9ba73b4b321afcbac417ae6f17"
+    },
+    "heartbeat/en/archive.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "28e1626fc8f898c404a8020b0078cced42894fe15fd244229598b40f82ecce19"
+    },
+    "index.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "fdd0ec0a57fa1aa17a7e50fde8bd563fe06a28b4fc457127cbc4879c27282963"
+    },
+    "library.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "df6692cffd2b2173c2c93af361b82b92bb30989219664cf7aa61dcb35e3485fe"
+    },
+    "philosophy.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "e232470e7a6a2ea7fff409a97d4057ebe82fe5e4f0d3176907aa12168f37ef73"
+    },
+    "pt/about.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "c02e8e3b25191a5ca2403805ab62cad011e47952d75783e80ead6a2d7cdc561d"
+    },
+    "pt/blog.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "6688b42b8fb0ddfc612851db5d6a7733708677b0d2d133435b98d1df7b3f8287"
+    },
+    "pt/forum.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "d2977d17bdef99c76cd71fe2b9c6dfeb7341d4b9bffcfb187fbae4fc657864e3"
+    },
+    "pt/heartbeat.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "2c88fdf30a1e56466236f0f974a18226b0bc6617ce517410c15a9cde11f1a731"
+    },
+    "pt/index.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "09df65ed834cef56ee89713375ebd055babf0034663db2130f03089a7bd96f6e"
+    },
+    "pt/library.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "94921abe7b4d6bbda5674c3607b4a7f8dc09bf61c34fdc6017b9217dfc95a3d0"
+    },
+    "pt/philosophy.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "b75d959bc13c4f1c35210a26b05c81148a915c2e62b56fb49e5d3b87d281bd46"
+    },
+    "pt/teacher.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "84a6cf0bd6032040830aac176ff6ef765ed925b147061487950faf6d49654462"
+    },
+    "pt/timeline.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "895add82845dc2e2fff6055dca07f14991ce4a80c9c8d917d37f56055997e741"
+    },
+    "pt/writing.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "5f65a615cd501dbaea5db4b9a5d0bd53eb3b76231234bfb35e6ae8ff609fa072"
+    },
+    "teacher.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "e58af785b076c035ec4e3c958a052bcf3174650c8b415dd1c2efd82c36ed2e3a"
+    },
+    "timeline.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "5c5a83fbd2ad805d2b6d5f2c62cd71cc528c016134abfa6d4222ffa1b8fd7d77"
+    },
+    "writing.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "121b5153cf204bb2525d1c1280b18abf90b64d39f61fa1e32d35e2583bb512ad"
+    },
+    "zh/about.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "511712c6ad5fc4b9d6a8e09dac35c160cbc65d11c14358df889cc903105dbd7f"
+    },
+    "zh/blog.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "40724f3478f7846256f03c86a36bdb7298d65a23306bc1444cfb88cd87b93d14"
+    },
+    "zh/forum.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "a4c2bdaabe97a7937a50cddb5695daa0ff01fa903323c03aaacafbab55b42df0"
+    },
+    "zh/heartbeat.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "4ad4087b319c99fbed66d794246d96bbee564d0e8dbe79d060453033489bb299"
+    },
+    "zh/index.html": {
+      "lastmod": "2026-10-28",
+      "sha256": "a2b03b69f2342d16c12e5031af60568ee9fb52a7c28280235e3257dd8d6a84ba"
+    },
+    "zh/library.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "93ad0e0cda795150fe42ed5ce76e7f4c4aab38ed80b5c09f29b54c35d29ffbc4"
+    },
+    "zh/philosophy.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "cdb15241826257f66bf3f1359d95c7afa04ebad8a195c55551b144a9feb9e265"
+    },
+    "zh/teacher.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "dedd0a2d77ed546e5cea3cf5de6318cbff30c91cfbf42f70e05e4b977b75c02d"
+    },
+    "zh/timeline.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "2877e39f85933effc04a79ca5f95681671377ea30397865dd1bdcc7020e89d01"
+    },
+    "zh/writing.html": {
+      "lastmod": "2026-10-25",
+      "sha256": "99e6dc955003ff945c140ecb9ae7e9f64695e6fc5fa92e9dec1e254de29ba7e1"
+    }
+  },
+  "version": 1
+}

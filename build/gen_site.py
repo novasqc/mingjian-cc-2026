@@ -14,17 +14,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import content
 import reading
 import research
+from sitemap_lastmod import PageLastmods, lastmod_xml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://mingjian.cc"
-# lastmod for core pages: keep it at the most recent day we actually published
-# content, so the sitemap honestly reflects freshness instead of going stale.
-TODAY = max(
-    "2026-09-17",
-    *[it.get("date", "") for it in
-      json.load(open(os.path.join(ROOT, "heartbeat", "index.json"), encoding="utf-8")
-                ).get("items", []) if it.get("date")],
-)
 
 ALL = {"en": content.EN, "zh": content.ZH, "es": content.ES, "pt": content.PT}
 PAGE_NAMES = {"index": "index", "philosophy": "philosophy", "teacher": "teacher",
@@ -1757,7 +1750,30 @@ Sitemap: https://mingjian.cc/sitemap.xml
 """
 
 
-def build_sitemap():
+def sitemap_static_paths():
+    """Pages whose dates depend on rendered content, not article metadata."""
+    paths = set()
+    localized = [p for p in content.PAGES if p != "search"] + ["blog", "teacher", "about"]
+    for lang in content.LANGS:
+        dirp = "" if lang == "en" else lang + "/"
+        paths.update(dirp + page + ".html" for page in localized)
+    posts = load_blog_posts()
+    for tag in all_tags():
+        for lang in content.LANGS:
+            if any(tag in p.get("tags", []) and lang in p["langs"] for p in posts):
+                paths.add(tag_url(tag, lang))
+    if load_heartbeats():
+        paths.add("heartbeat/archive.html")
+    if hb_en_available():
+        paths.add("heartbeat/en/archive.html")
+    return paths
+
+
+def build_sitemap(lastmods=None):
+    # Direct callers are read-only. main() captures and saves BEFORE rendering,
+    # so even a failed build cannot turn changed HTML into a false old baseline.
+    if lastmods is None:
+        lastmods = PageLastmods(ROOT, sitemap_static_paths(), DOMAIN)
     urls = []
     seen = set()
     # teacher/about are real pages in every language but were previously absent
@@ -1775,14 +1791,15 @@ def build_sitemap():
                 (content.META[c]["html_lang"], DOMAIN, ("" if c == "en" else c + "/"), page)
                 for c in content.LANGS)
             urls.append(
-                '<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n%s\n</url>'
-                % (DOMAIN, path, TODAY, alts))
+                '<url>\n<loc>%s/%s</loc>\n%s%s\n</url>'
+                % (DOMAIN, path, lastmod_xml(lastmods.resolve(path)), alts))
     # shared blog post pages (single location)
     for p in load_blog_posts():
         for l in p["langs"]:
             path = "blog/posts/%s-%s.html" % (p["slug"], l)
-            urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n</url>'
-                        % (DOMAIN, path, p.get("date", TODAY)))
+            modified = p.get("dateModified") or p.get("datePublished") or p.get("date")
+            urls.append('<url>\n<loc>%s/%s</loc>\n%s</url>'
+                        % (DOMAIN, path, lastmod_xml(modified)))
     # topic-cluster pages (one per non-empty tag+language pair)
     for tag in all_tags():
         for l in content.LANGS:
@@ -1790,21 +1807,24 @@ def build_sitemap():
                        for p in load_blog_posts()):
                 continue
             path = tag_url(tag, l)
-            urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
-                        '<priority>0.5</priority>\n</url>' % (DOMAIN, path, TODAY))
+            urls.append('<url>\n<loc>%s/%s</loc>\n%s'
+                        '<priority>0.5</priority>\n</url>'
+                        % (DOMAIN, path, lastmod_xml(lastmods.resolve(path))))
     # daily heartbeat archive: the largest body of original writing on the site
     hbs = load_heartbeats()
     if hbs:
-        urls.append('<url>\n<loc>%s/heartbeat/archive.html</loc>\n<lastmod>%s</lastmod>\n'
+        urls.append('<url>\n<loc>%s/heartbeat/archive.html</loc>\n%s'
                     '<changefreq>daily</changefreq>\n<priority>0.8</priority>\n</url>'
-                    % (DOMAIN, hbs[0]["date"]))
+                    % (DOMAIN, lastmod_xml(lastmods.resolve("heartbeat/archive.html"))))
     en_dates = set(hb_en_available())
     if en_dates:
-        urls.append('<url>\n<loc>%s/heartbeat/en/archive.html</loc>\n<lastmod>%s</lastmod>\n'
+        urls.append('<url>\n<loc>%s/heartbeat/en/archive.html</loc>\n%s'
                     '<changefreq>daily</changefreq>\n<priority>0.9</priority>\n</url>'
-                    % (DOMAIN, hbs[0]["date"]))
+                    % (DOMAIN, lastmod_xml(lastmods.resolve("heartbeat/en/archive.html"))))
     for it in hbs:
         date = it["date"]
+        # Navigation changes do not revise an article's editorial timestamp.
+        modified = it.get("modified_at") or it.get("published_at") or date
         if date in en_dates:
             # zh original and en edition are alternates of each other
             alts = ('<xhtml:link rel="alternate" hreflang="zh-CN" href="%s/%s"/>'
@@ -1814,14 +1834,14 @@ def build_sitemap():
                        DOMAIN, hb_entry_url(date)))
             urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
                         '<priority>0.6</priority>\n%s\n</url>'
-                        % (DOMAIN, hb_entry_url(date), it.get("modified_at", date), alts))
+                        % (DOMAIN, hb_entry_url(date), modified, alts))
             urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
                         '<priority>0.7</priority>\n%s\n</url>'
-                        % (DOMAIN, hb_en_url(date), it.get("modified_at", date), alts))
+                        % (DOMAIN, hb_en_url(date), modified, alts))
         else:
             urls.append('<url>\n<loc>%s/%s</loc>\n<lastmod>%s</lastmod>\n'
                         '<priority>0.6</priority>\n</url>'
-                        % (DOMAIN, hb_entry_url(date), date))
+                        % (DOMAIN, hb_entry_url(date), modified))
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
             'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n%s\n</urlset>\n' % "\n".join(urls))
@@ -2262,6 +2282,10 @@ def build_images():
 
 
 def main():
+    lastmods = PageLastmods(ROOT, sitemap_static_paths(), DOMAIN)
+    # Persist the baseline before the first HTML write. This also protects the
+    # first migration if rendering fails before sitemap.xml can be regenerated.
+    lastmods.save()
     for lang in content.LANGS:
         global CUR_LANG
         CUR_LANG = lang
@@ -2362,8 +2386,12 @@ def main():
             f.write(reading.finalize(page_hb_archive_en(), "heartbeat/en/archive.html", "en"))
         print("wrote heartbeat/en/archive.html + %d English heartbeat pages" % written_en)
 
+    sitemap = build_sitemap(lastmods)
+    # Save final fingerprints/dates first: a failure before writing the sitemap
+    # then leaves enough evidence for the next build to finish with these dates.
+    lastmods.save()
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
-        f.write(build_sitemap())
+        f.write(sitemap)
     with open(os.path.join(ROOT, "llms.txt"), "w", encoding="utf-8") as f:
         f.write(build_llmstxt())
     with open(os.path.join(ROOT, "feed.xml"), "w", encoding="utf-8") as f:
