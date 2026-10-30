@@ -919,7 +919,7 @@ def page_hb_entry_en(item, newer, older):
         'Back to the heartbeat reader</a></p>\n'
         '  </div></section>\n'
         '</main>\n' % (date, date, esc(title),
-                       HB_EN_NOTE % (item.get("published_at", date), date),
+                       HB_EN_NOTE % (esc(en.get("source_written_date") or item.get("published_at", date)), date),
                        body, "".join(pn)) +
         footer("../../"))
 
