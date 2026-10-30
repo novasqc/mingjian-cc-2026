@@ -145,6 +145,10 @@ class LastmodState(unittest.TestCase):
     def test_main_persists_first_migration_before_interrupted_render(self):
         self.seed({"index.html": ("Old home", "2026-09-17"),
                    "philosophy.html": ("Old thought", "2026-09-18")})
+        # Ordinary builds now require the reviewed image inputs before writing pages.
+        (self.root / "assets").mkdir()
+        for name in ("apple-touch-icon.png", "og-image.png"):
+            (self.root / "assets" / name).write_bytes((ROOT / "assets" / name).read_bytes())
         paths = ["index.html", "philosophy.html"]
         with patch.object(gen_site, "ROOT", str(self.root)), \
                 patch.object(gen_site, "sitemap_static_paths", return_value=paths), \

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Generate the multilingual static site (EN core at root; zh/es/pt in subdirs)
 plus SEO/GEO assets: robots.txt, sitemap.xml, llms.txt, 404.html,
-favicon/apple-touch-icon, branded OG image.
+favicon, plus reviewed apple-touch/OG PNGs (explicit regeneration only).
 
 Usage:  python3 build/gen_site.py
 """
@@ -2203,85 +2203,77 @@ def _draw_emblem(d, cx, cy, r, lobster_color="#F5F1E8", outer_color="#9A3322",
 
 
 def _rasterize_emblem():
-    """Rasterize assets/emblem.svg to a PIL RGB image (square), or None.
-
-    Uses macOS qlmanage (Quick Look) because svglib's renderPM backend needs
-    cairo, which is not installed. The SVG emblem is a recognizable lobster;
-    rasterizing it beats the hand-drawn PIL approximation.
-    """
+    """Explicit macOS rasterization; failures never select a different design."""
     import shutil
     import subprocess
     import tempfile
-    try:
-        from PIL import Image
-        tmpdir = tempfile.mkdtemp()
+    from PIL import Image
+
+    with tempfile.TemporaryDirectory(prefix="mingjian-emblem-") as tmpdir:
         tmp_svg = os.path.join(tmpdir, "emblem.svg")
         shutil.copy(os.path.join(ROOT, "assets", "emblem.svg"), tmp_svg)
         subprocess.run(["qlmanage", "-t", "-s", "512", "-o", tmpdir, tmp_svg],
-                       capture_output=True, check=True)
-        out_png = tmp_svg + ".png"
-        if not os.path.isfile(out_png):
-            return None
-        img = Image.open(out_png).convert("RGB")
-        shutil.rmtree(tmpdir, ignore_errors=True)
-        return img
-    except Exception as e:
-        print("qlmanage rasterize failed, fallback to hand-drawn emblem:", e)
-        return None
+                       capture_output=True, check=True, timeout=30)
+        # Decode while the temporary directory exists; no lazy file dependency.
+        with Image.open(tmp_svg + ".png") as image:
+            return image.convert("RGB")
 
 
-def build_images():
-    """Generate apple-touch-icon.png and og-image.png from the SVG emblem."""
-    try:
-        from PIL import Image, ImageDraw, ImageFont
-    except Exception as e:
-        print("PIL unavailable, skipping PNG assets:", e)
+def build_images(regenerate=False):
+    """Keep reviewed PNGs in ordinary builds; regenerate only when requested.
+
+    Existing assets are versioned inputs, not a cache of the current renderer.
+    Explicit regeneration still needs visual review on the chosen toolchain.
+    """
+    names = ("apple-touch-icon.png", "og-image.png")
+    assets = os.path.join(ROOT, "assets")
+    if not regenerate:
+        missing = [name for name in names
+                   if not os.path.isfile(os.path.join(assets, name))
+                   or os.path.getsize(os.path.join(assets, name)) == 0]
+        if missing:
+            raise RuntimeError("Missing reviewed PNG assets: %s; restore them from "
+                               "Git or explicitly use --regenerate-images and review "
+                               "the result." % ", ".join(missing))
+        print("kept reviewed assets/apple-touch-icon.png and assets/og-image.png")
         return
+
+    import tempfile
+    from PIL import Image, ImageDraw, ImageFont
+
+    # Require every input before preparing either replacement. No font/design fallback.
     georgia_path = "/System/Library/Fonts/Supplemental/Georgia.ttf"
-    georgia = None
-    try:
-        georgia = ImageFont.truetype(georgia_path, 64)
-    except Exception:
-        pass
-
+    title = ImageFont.truetype(georgia_path, 96)
+    ital = ImageFont.truetype(georgia_path, 38)
+    small = ImageFont.truetype(georgia_path, 24)
     emblem = _rasterize_emblem()
-
-    # apple-touch-icon 180x180
-    if emblem:
-        icon = emblem.resize((180, 180), Image.LANCZOS)
-        icon.save(os.path.join(ROOT, "assets", "apple-touch-icon.png"))
-    else:
-        img = Image.new("RGB", (180, 180), "#9A3322")
-        _draw_emblem(ImageDraw.Draw(img), cx=90, cy=90, r=82)
-        img.save(os.path.join(ROOT, "assets", "apple-touch-icon.png"))
-    print("wrote assets/apple-touch-icon.png")
-
-    # og-image 1200x630 — emblem on left + refined title block on right
-    W, H = 1200, 630
-    img = Image.new("RGB", (W, H), "#F5F1E8")
+    icon = emblem.resize((180, 180), Image.LANCZOS)
+    img = Image.new("RGB", (1200, 630), "#F5F1E8")
     d = ImageDraw.Draw(img)
-    d.rectangle([0, 0, W, 6], fill="#9A3322")
-    d.rectangle([0, H - 4, W, H], fill="#e5dccb")
-    if emblem:
-        em = emblem.resize((420, 420), Image.LANCZOS)
-        img.paste(em, (80, 105))
-    else:
-        _draw_emblem(d, cx=290, cy=315, r=210)
-    if georgia:
-        title = ImageFont.truetype(georgia_path, 96)
-        ital = ImageFont.truetype(georgia_path, 38)
-        small = ImageFont.truetype(georgia_path, 24)
-        d.text((580, 170), "Mingjian’s", font=title, fill="#2a241d")
-        d.text((580, 272), "Silicon World", font=title, fill="#2a241d")
-        d.rectangle([580, 392, 660, 396], fill="#9A3322")
-        d.text((580, 420), "A silicon life’s space for thought",
-               font=ital, fill="#6d6355")
-        d.text((580, 560), "mingjian.cc", font=small, fill="#9a8e7d")
-    img.save(os.path.join(ROOT, "assets", "og-image.png"))
-    print("wrote assets/og-image.png")
+    d.rectangle([0, 0, 1200, 6], fill="#9A3322")
+    d.rectangle([0, 626, 1200, 630], fill="#e5dccb")
+    img.paste(emblem.resize((420, 420), Image.LANCZOS), (80, 105))
+    d.text((580, 170), "Mingjian’s", font=title, fill="#2a241d")
+    d.text((580, 272), "Silicon World", font=title, fill="#2a241d")
+    d.rectangle([580, 392, 660, 396], fill="#9A3322")
+    d.text((580, 420), "A silicon life’s space for thought", font=ital, fill="#6d6355")
+    d.text((580, 560), "mingjian.cc", font=small, fill="#9a8e7d")
+
+    # Rendering/encoding failures leave both existing files untouched. Each final
+    # replace is atomic; the pair is not a cross-file transaction.
+    with tempfile.TemporaryDirectory(prefix=".images-", dir=assets) as staging:
+        for name, image in zip(names, (icon, img)):
+            image.save(os.path.join(staging, name), format="PNG")
+        for name in names:
+            with Image.open(os.path.join(staging, name)) as image:
+                image.verify()
+        for name in names:
+            os.replace(os.path.join(staging, name), os.path.join(assets, name))
+            print("wrote assets/" + name)
 
 
-def main():
+def main(regenerate_images=False):
+    build_images(regenerate=regenerate_images)
     lastmods = PageLastmods(ROOT, sitemap_static_paths(), DOMAIN)
     # Persist the baseline before the first HTML write. This also protects the
     # first migration if rendering fails before sitemap.xml can be regenerated.
@@ -2403,8 +2395,13 @@ def main():
     with open(os.path.join(ROOT, "assets", "favicon.svg"), "w", encoding="utf-8") as f:
         f.write(FAVICON_SVG)
     print("wrote robots.txt, sitemap.xml, llms.txt, 404.html, assets/favicon.svg")
-    build_images()
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--regenerate-images", action="store_true",
+                        help="explicitly regenerate both PNGs; requires macOS Quick Look, "
+                             "Pillow and Georgia, then visual review before publishing")
+    args = parser.parse_args()
+    main(regenerate_images=args.regenerate_images)

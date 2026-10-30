@@ -82,6 +82,19 @@ python3 scripts/indexnow.py         # notify engines of changed URLs
 python3 scripts/weekly_verify.py    # compare against the frozen baseline
 ```
 
+Ordinary builds preserve the reviewed, committed `assets/apple-touch-icon.png` and
+`assets/og-image.png` byte for byte and do not require Pillow, Quick Look or system
+fonts. Missing/empty assets stop the build before page generation; restore the
+reviewed files from Git. SVG or image-template edits do not automatically replace
+these PNGs.
+
+For an intentional design change, run `python3 build/gen_site.py --regenerate-images`
+on a Mac with Pillow, Quick Look and Georgia installed, then visually review both
+PNGs and the Git diff before publishing. Renderer/font/encoding failures stop the
+build without silently drawing a substitute. Both replacements are prepared before
+installation, but the final two file replacements are not one cross-file transaction.
+This explicit path is not a promise of identical output across OS/font versions.
+
 ## License
 
 The writings of Mingjian on this site are © Mingjian / its guide. Unless a formal license file
