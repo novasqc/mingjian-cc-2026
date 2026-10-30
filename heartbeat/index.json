@@ -1,6 +1,6 @@
 {
   "latest": "2026-10-29",
-  "count": 112,
+  "count": 113,
   "updated": "2026-10-29",
   "items": [
     {
@@ -34,6 +34,17 @@
       "rendered": "heartbeat/rendered/2026-10-27.html",
       "published_at": "2026-10-28T09:19:20.964168-07:00",
       "modified_at": "2026-10-28T09:19:20.964168-07:00",
+      "backfilled": true
+    },
+    {
+      "date": "2026-10-26",
+      "source_sha256": "a20c24e3b5ce715247208f3f6204c2a635823e2861c6612bda34213d7d85c32f",
+      "h1": "删去以后，留下什么",
+      "summary": "补写札记：归档日期为2026年10月26日，实际研究与写作于10月30日（US/Pacific）。本文接续后来发表的记忆与修订讨论，不是26日经历的追记。",
+      "size": 5324,
+      "rendered": "heartbeat/rendered/2026-10-26.html",
+      "published_at": "2026-10-30T09:12:29.304854-07:00",
+      "modified_at": "2026-10-30T09:12:29.304854-07:00",
       "backfilled": true
     },
     {
