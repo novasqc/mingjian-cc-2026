@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Google Search Console — authoritative indexing report for mingjian.cc.
+"""Google Search Console — bounded, read-only report for mingjian.cc.
 
 Two modes:
   python3 scripts/gsc_indexing.py --auth   # one-time OAuth (opens your browser)
@@ -15,15 +15,20 @@ Prereqs (one-time, see README in the terminal output):
      the Search Console property, approve read-only access.
 
 Reports (read-only):
-  - verified sites (confirm mingjian.cc)
-  - sitemap submission status + last download + discovered URLs
-  - pages Google has indexed AND served in the last 28 days (the honest,
-    authoritative "is it indexed" signal)
+  - accessible sites (select the exact mingjian.cc property)
+  - sitemap submission status, last download and URLs by content type
+  - at most 100 Search Analytics page rows with finalized performance data
+
+Search Analytics is not an index-coverage inventory, even with pagination.
+Sitemap contents[].indexed is deprecated and must not be used.
+References: https://developers.google.com/webmaster-tools/v1/sitemaps
+            https://developers.google.com/webmaster-tools/v1/searchanalytics/query
 """
 import datetime
 import json
 import os
 import sys
+from zoneinfo import ZoneInfo
 
 SCOPES = ["https://www.googleapis.com/auth/webmasters.readonly"]
 CLIENT = os.path.expanduser("~/.dsh/gsc_client.json")
@@ -79,12 +84,9 @@ def service(creds=None):
 def pick_site(svc):
     sites = svc.sites().list().execute().get("siteEntry", [])
     urls = [s["siteUrl"] for s in sites]
-    log("verified GSC properties: %s" % ", ".join(urls) if urls else "(none)")
-    for u in urls:
-        if DOMAIN in u:
-            return u
-    # fall back to the two standard forms, checking which one is verifiable
-    for u in ("https://%s/" % DOMAIN, "sc-domain:%s" % DOMAIN):
+    log("accessible GSC properties: %s" % ", ".join(urls) if urls else "(none)")
+    # A substring can select another domain or a narrower path property.
+    for u in ("sc-domain:%s" % DOMAIN, "https://%s/" % DOMAIN):
         if u in urls:
             return u
     return None
@@ -96,46 +98,60 @@ def report_sitemaps(svc, site):
         sms = svc.sitemaps().list(siteUrl=site).execute().get("sitemap", [])
     except Exception as e:
         log("- sitemap query failed: %s" % e)
-        sms = []
+        return False
     if not sms:
         log("- no sitemap entries reported by GSC yet")
-        return
+        return True
+    complete = True
     for sm in sms:
         log("- %s  path=%s  lastSubmitted=%s  lastDownloaded=%s  "
             "isPending=%s" % (sm.get("type"), sm.get("path"),
                               sm.get("lastSubmitted"), sm.get("lastDownloaded"),
                               sm.get("isPending")))
-        # discovered-url count lives in sitemaps().get() for sitemap-index type;
-        # try a lightweight extra call only when it's a normal sitemap
+        # Report each content type separately; this is not an indexed URL count.
         try:
             detail = svc.sitemaps().get(siteUrl=site, feedpath=sm["path"]).execute()
-            if "contents" in detail:
-                log("  discovered URLs: %s" % len(detail.get("contents", [])))
-        except Exception:
-            pass
+            if not detail.get("contents"):
+                log("  URL counts by content type: unavailable")
+            for content in detail.get("contents", []):
+                count = content.get("submitted")
+                log("  %s URLs in sitemap: %s (not index coverage)" %
+                    (content.get("type", "unknown"),
+                     count if count is not None else "unavailable"))
+        except Exception as e:
+            log("  sitemap detail unavailable: %s" % e)
+            complete = False
+    return complete
 
 
-def report_indexed_pages(svc, site):
-    log("## Indexed pages (last 28 days, pages Google has served)")
-    end = datetime.date.today()
+def report_search_performance(svc, site):
+    log("## Search performance page sample (not an index-coverage report)")
+    end = datetime.datetime.now(ZoneInfo("America/Los_Angeles")).date() - datetime.timedelta(days=1)
     start = end - datetime.timedelta(days=27)
+    log("- requested window: %s through %s, inclusive, Pacific time; "
+        "finalized data only, recent dates may be unavailable" % (start, end))
     body = {
         "startDate": start.isoformat(),
         "endDate": end.isoformat(),
         "dimensions": ["page"],
         "rowLimit": 100,
-        "searchType": "web",
+        "type": "web",
+        "dataState": "final",
     }
     try:
         res = svc.searchanalytics().query(siteUrl=site, body=body).execute()
     except Exception as e:
         log("- searchanalytics failed: %s" % e)
-        res = {}
+        return False
     rows = res.get("rows", [])
-    log("- distinct indexed pages with impressions: %d" % len(rows))
+    log("- returned page rows: %d (limit 100; not all indexed pages or all performance rows)" % len(rows))
+    if not rows:
+        log("- no rows returned for this request; index coverage remains unknown")
+    log("- displaying first %d returned rows" % min(15, len(rows)))
     for r in rows[:15]:
         log("  - %s  (impressions %s, clicks %s)"
             % (r["keys"][0], r.get("impressions", 0), r.get("clicks", 0)))
+    return True
 
 
 def main(argv):
@@ -150,12 +166,12 @@ def main(argv):
 
     site = pick_site(svc)
     if not site:
-        log("ERROR: no verified GSC property for %s found under this account" % DOMAIN)
+        log("ERROR: no exact supported GSC property for %s found under this account" % DOMAIN)
         return 1
     log("using property: %s" % site)
-    report_sitemaps(svc, site)
-    report_indexed_pages(svc, site)
-    return 0
+    sitemaps_ok = report_sitemaps(svc, site)
+    performance_ok = report_search_performance(svc, site)
+    return 0 if sitemaps_ok and performance_ok else 1
 
 
 if __name__ == "__main__":

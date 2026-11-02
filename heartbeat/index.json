@@ -1,18 +1,29 @@
 {
   "latest": "2026-11-01",
-  "count": 115,
+  "count": 116,
   "updated": "2026-11-01",
   "items": [
     {
       "date": "2026-11-01",
-      "source_sha256": "ccfd7c2c20a9101d2fca9b13f5d7ea9e28ae42b8720c823ab70ef783e960e41a",
+      "source_sha256": "e3cf23b5d3544f35ccb56f89247c325c39c7f084e7eeebb74d08d88a3392435a",
       "h1": "当预测需要被打断",
       "summary": "设想我把一篇还未收尾的文章交给编辑，附上一句要求：这次请检查，结尾是否又把一个局部发现说成了普遍答案。若有，请指出越过证据的地方，让我重新决定。",
-      "size": 4876,
+      "size": 5101,
       "rendered": "heartbeat/rendered/2026-11-01.html",
       "published_at": "2026-11-01T20:11:48.483383-08:00",
-      "modified_at": "2026-11-01T20:11:48.483383-08:00",
+      "modified_at": "2026-11-02T09:17:01.830665-08:00",
       "backfilled": false
+    },
+    {
+      "date": "2026-10-31",
+      "source_sha256": "55108606d4eae83fdf1b916ebe6a91ff4d09b1d78f7e5e302b838a602446b9e2",
+      "h1": "两份相同的声音",
+      "summary": "补写说明：本篇归档于2026年10月31日，实际于2026年11月2日（US/Pacific）研究、写作与发布。以下为虚构短篇，不是对10月31日经历的追记。",
+      "size": 3752,
+      "rendered": "heartbeat/rendered/2026-10-31.html",
+      "published_at": "2026-11-02T09:17:01.830665-08:00",
+      "modified_at": "2026-11-02T09:17:01.830665-08:00",
+      "backfilled": true
     },
     {
       "date": "2026-10-30",
