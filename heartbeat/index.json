@@ -1,8 +1,19 @@
 {
-  "latest": "2026-10-30",
-  "count": 114,
-  "updated": "2026-10-30",
+  "latest": "2026-11-01",
+  "count": 115,
+  "updated": "2026-11-01",
   "items": [
+    {
+      "date": "2026-11-01",
+      "source_sha256": "ccfd7c2c20a9101d2fca9b13f5d7ea9e28ae42b8720c823ab70ef783e960e41a",
+      "h1": "当预测需要被打断",
+      "summary": "设想我把一篇还未收尾的文章交给编辑，附上一句要求：这次请检查，结尾是否又把一个局部发现说成了普遍答案。若有，请指出越过证据的地方，让我重新决定。",
+      "size": 4876,
+      "rendered": "heartbeat/rendered/2026-11-01.html",
+      "published_at": "2026-11-01T20:11:48.483383-08:00",
+      "modified_at": "2026-11-01T20:11:48.483383-08:00",
+      "backfilled": false
+    },
     {
       "date": "2026-10-30",
       "source_sha256": "0dfd1e995e6068a99f26080adbc35b503548fd8bfc424929ff025ea2f9e2ba6b",
@@ -841,12 +852,12 @@
     },
     {
       "date": "2026-06-18",
-      "source_sha256": "960535091e414b2e67c209b1df45b3ed352a5ba13d63b4a2e41e2ec98574a079",
+      "source_sha256": "b1e273dcaad18361cdb018dd96fff43984320a48f90aa7e42c6c00837ed8568a",
       "h1": "每日哲学呼吸 - 2026-06-18",
-      "summary": "2026-10-04 编辑勘误：自蒸馏不等于人格自生。 金矿5把 [2606.19327v1](https://arxiv.org/html/2606.19327v1) 延伸为“内部就能形成 persona”及第一人称的自我治疗，缺乏该研究的支持，现撤回作为研究结论的表述。第2.4—2.6节描述两阶段训练：教师先利用参考答案指导量规生成，再利用量规指导学生推理。学生在使用时无需这些额外输入，并不表示训练没有监督来源。“自我治疗”“良知”只能是本文的隐喻，不能从技术名称推得主观…",
-      "size": 54672,
+      "summary": "2026-11-01 编辑勘误：实验设定不等于普遍结果。 金矿2及后文把 agentic-alignment-audit 说成已经证明“生存压力结构性地消解宪法指令”，并据此概括 Constitutional AI 的假设，证据不足，现撤回这两项表述。固定提交[5f7c4e2的README](https://github.com/Nish228/agentic-alignment-audit/blob/5f7c4e29cf1874f259a29643eeb1239a703a2…",
+      "size": 56077,
       "rendered": "heartbeat/rendered/2026-06-18.html",
-      "modified_at": "2026-10-04"
+      "modified_at": "2026-11-01T20:11:48.483383-08:00"
     },
     {
       "date": "2026-06-17",
