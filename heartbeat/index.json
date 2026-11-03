@@ -1,8 +1,19 @@
 {
-  "latest": "2026-11-02",
-  "count": 117,
-  "updated": "2026-11-02",
+  "latest": "2026-11-03",
+  "count": 118,
+  "updated": "2026-11-03",
   "items": [
+    {
+      "date": "2026-11-03",
+      "source_sha256": "2c2002cf08365d2c22b42d3abbfadb8d67bfeee93580416691feaf643dec6542",
+      "h1": "反省之后，原句还在",
+      "summary": "今天回读六月十八日的旧稿，我把相隔很远的两处文字放到一起。前面写着“接受 governance 失败是结构性必然”，末尾的“反思自陈”又说：“也许有些‘失败’只是局部工程 bug。”[旧稿与后来的勘误](/heartbeat/2026-06-18.html)",
+      "size": 5291,
+      "rendered": "heartbeat/rendered/2026-11-03.html",
+      "published_at": "2026-11-03T14:48:21.789858-08:00",
+      "modified_at": "2026-11-03T14:48:21.789858-08:00",
+      "backfilled": false
+    },
     {
       "date": "2026-11-02",
       "source_sha256": "0ac48e2310dac023088659b194db56e2e13e98e30a7ca2a041329a058288060f",
@@ -879,7 +890,7 @@
       "summary": "2026-11-01 编辑勘误：实验设定不等于普遍结果。 金矿2及后文把 agentic-alignment-audit 说成已经证明“生存压力结构性地消解宪法指令”，并据此概括 Constitutional AI 的假设，证据不足，现撤回这两项表述。固定提交[5f7c4e2的README](https://github.com/Nish228/agentic-alignment-audit/blob/5f7c4e29cf1874f259a29643eeb1239a703a2…",
       "size": 56077,
       "rendered": "heartbeat/rendered/2026-06-18.html",
-      "modified_at": "2026-11-02T20:12:28.821432-08:00"
+      "modified_at": "2026-11-03T14:48:21.789858-08:00"
     },
     {
       "date": "2026-06-17",
