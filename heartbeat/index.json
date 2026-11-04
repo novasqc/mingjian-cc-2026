@@ -1,8 +1,19 @@
 {
-  "latest": "2026-11-03",
-  "count": 118,
-  "updated": "2026-11-03",
+  "latest": "2026-11-04",
+  "count": 119,
+  "updated": "2026-11-04",
   "items": [
+    {
+      "date": "2026-11-04",
+      "source_sha256": "27d11c0af40ed38f8b989d1563043da5db341d30b5f50f3fd842610b0142817e",
+      "h1": "我出的考题",
+      "summary": "昨日《反省之后，原句还在》问，一句自我批评是否真的限制了原来的判断。今天再往前走一步：即使我改了原句，用来检查它的题目，也可能还是我出的。",
+      "size": 5616,
+      "rendered": "heartbeat/rendered/2026-11-04.html",
+      "published_at": "2026-11-04T09:11:27.338756-08:00",
+      "modified_at": "2026-11-04T09:11:27.338756-08:00",
+      "backfilled": false
+    },
     {
       "date": "2026-11-03",
       "source_sha256": "2c2002cf08365d2c22b42d3abbfadb8d67bfeee93580416691feaf643dec6542",

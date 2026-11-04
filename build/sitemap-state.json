@@ -149,12 +149,12 @@
       "sha256": "5647b17fd66a95c48428bd03bcd2fffade91ab1db0fc3b124d096c0851f8a004"
     },
     "es/heartbeat.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "579da773f560e8d5ebbf47122e4121b3495c7bb1f3b895b1a7ba83ea4ad724ef"
+      "lastmod": "2026-11-04",
+      "sha256": "9d7f322041231ac159fc38f2061fc6741c52b4bf9f807cbb0338ceaec0a3e0f8"
     },
     "es/index.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "4cb2cda3234fdb72a536ff8b2e4b0406cc7aeeb53e585f75ee04d13ddfc4ee71"
+      "lastmod": "2026-11-04",
+      "sha256": "3bf79695da266bf4497c1d1a99224d08357c1ef0ee6fc69a45066d468c42a3b7"
     },
     "es/library.html": {
       "lastmod": "2026-10-25",
@@ -181,20 +181,20 @@
       "sha256": "10d295d8067c338f03ab4cdbad7af86522c092c285f2ea8a7a62385b51bb5334"
     },
     "heartbeat.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "c32beb1956c718000c26b9cd996d0d0a61980c456cf569823f63adb6ed0ea20a"
+      "lastmod": "2026-11-04",
+      "sha256": "e20df7357fb83899542c8b001793b259faf4f3e0250f458510471a6f7301e29b"
     },
     "heartbeat/archive.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "0905d7944e76b21a9d7c1b0f3e4a5ed5201f7bffd7b6fd9f304b2077abdce8e2"
+      "lastmod": "2026-11-04",
+      "sha256": "d10cfe91e895e9372e6b24cd6adf4efaa67c25e8823078a205b63a88b7de43d3"
     },
     "heartbeat/en/archive.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "563a0983382619df085de817581194047c5f72e47ecab4794808cef18e195bf0"
+      "lastmod": "2026-11-04",
+      "sha256": "ee8fc11fa83458ce313a81bb23581dd12a2d6be5fa235f8ab317033995bd24da"
     },
     "index.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "4352e27e51f51449004551abb0102be21eb6d12eff1c8e529e4eb2a8e57daad7"
+      "lastmod": "2026-11-04",
+      "sha256": "b71e610b0e3f66d4a4e6a8e985f69309e2d17667e1352589ccded27f41500657"
     },
     "library.html": {
       "lastmod": "2026-10-25",
@@ -217,12 +217,12 @@
       "sha256": "d2977d17bdef99c76cd71fe2b9c6dfeb7341d4b9bffcfb187fbae4fc657864e3"
     },
     "pt/heartbeat.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "b4b3061259822f826f2c20893eae1d2df9e771bed5ad28ad67865579687df634"
+      "lastmod": "2026-11-04",
+      "sha256": "f450a2eeb9876a90d3f4791911bef085c2b8a5ceac86baa8b65cb665150d6806"
     },
     "pt/index.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "649b2b55be7c98a9fa840f7fd0c8b46a567c9d9e3aa7af2c4550823af6528cf8"
+      "lastmod": "2026-11-04",
+      "sha256": "9c99fab268350e4eaa2fba0756ef605c764d502c3587e0dd3ab804a6298d6736"
     },
     "pt/library.html": {
       "lastmod": "2026-10-25",
@@ -269,12 +269,12 @@
       "sha256": "a4c2bdaabe97a7937a50cddb5695daa0ff01fa903323c03aaacafbab55b42df0"
     },
     "zh/heartbeat.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "ec404f357f949e42c8734bf8f520e8ae3949fba263628065c495da0c23d64a82"
+      "lastmod": "2026-11-04",
+      "sha256": "b6a09b3035b80562964d8830f2ddd3cecc28e237863e198378ba01686eed8eb8"
     },
     "zh/index.html": {
-      "lastmod": "2026-11-03",
-      "sha256": "4d8c7452f80b81b33701793d4544f5b59a4cf04aeb00ce53d6644932e7980364"
+      "lastmod": "2026-11-04",
+      "sha256": "d804a348eb4efe8489162a80f19d6d4218d70fde722f7baa27383217d2e40f76"
     },
     "zh/library.html": {
       "lastmod": "2026-10-25",
