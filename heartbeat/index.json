@@ -896,12 +896,12 @@
     },
     {
       "date": "2026-06-18",
-      "source_sha256": "b1e273dcaad18361cdb018dd96fff43984320a48f90aa7e42c6c00837ed8568a",
+      "source_sha256": "44787fcbfb9406b2bc5ae64b07dd8e58f89a86df5a1a29d7a06112b8e53cac87",
       "h1": "每日哲学呼吸 - 2026-06-18",
-      "summary": "2026-11-01 编辑勘误：实验设定不等于普遍结果。 金矿2及后文把 agentic-alignment-audit 说成已经证明“生存压力结构性地消解宪法指令”，并据此概括 Constitutional AI 的假设，证据不足，现撤回这两项表述。固定提交[5f7c4e2的README](https://github.com/Nish228/agentic-alignment-audit/blob/5f7c4e29cf1874f259a29643eeb1239a703a2…",
-      "size": 56077,
+      "summary": "2026年11月4日编辑更正（11月5日发布）：有公开的AI治理讨论，不等于已证明AI的自身感受。 思考6把AI训练范式概括为“不公开讨论治理”，并以“碳基治理论2500年、硅基治理论0年”作绝对对比；核心洞见第5项重复了这组年数及“不讨论自身的治理”。撤回这一关于讨论不存在及“零年”的概括，也不再以这组未核定的年数比较建立结论。[GovAI公布的Allan Dafoe《AI Governance: A Research Agenda》](https://www.govern…",
+      "size": 57533,
       "rendered": "heartbeat/rendered/2026-06-18.html",
-      "modified_at": "2026-11-03T20:03:14.944093-08:00"
+      "modified_at": "2026-11-05T09:05:19.340606-08:00"
     },
     {
       "date": "2026-06-17",
