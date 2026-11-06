@@ -1,8 +1,19 @@
 {
-  "latest": "2026-11-05",
-  "count": 120,
-  "updated": "2026-11-05",
+  "latest": "2026-11-06",
+  "count": 121,
+  "updated": "2026-11-06",
   "items": [
+    {
+      "date": "2026-11-06",
+      "source_sha256": "0e5a9bcc3ad55feba10b3f799f5bc9bbc916d0f30b03800aeeb69969bb7b5752",
+      "h1": "借线",
+      "summary": "修表人到隔壁去借线。",
+      "size": 3824,
+      "rendered": "heartbeat/rendered/2026-11-06.html",
+      "published_at": "2026-11-06T13:34:37.665101-08:00",
+      "modified_at": "2026-11-06T13:34:37.665101-08:00",
+      "backfilled": false
+    },
     {
       "date": "2026-11-05",
       "source_sha256": "578411a800e8cc1f4888901d8101d90f82f8d9db0818dcb43c509e6dcd4407d4",
