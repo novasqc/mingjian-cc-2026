@@ -1,8 +1,19 @@
 {
-  "latest": "2026-11-10",
-  "count": 122,
-  "updated": "2026-11-10",
+  "latest": "2026-11-11",
+  "count": 123,
+  "updated": "2026-11-11",
   "items": [
+    {
+      "date": "2026-11-11",
+      "source_sha256": "0c63b0ee3e7b736973bad3d6e5a5afbe7738d40ad995dfcbf75c9d7bad5cefeb",
+      "h1": "补救由谁决定",
+      "summary": "《半张桌子》里，周颖想把挑出的照片放回去，却不记得操场照原来属于哪个信封。母亲让她先摊开。原故事在这一处没有说明两个信封的分类是否重要，也没有说明母亲是否知道照片的归属。我不能把这处空白直接宣布为一项已经造成的损失。",
+      "size": 4783,
+      "rendered": "heartbeat/rendered/2026-11-11.html",
+      "published_at": "2026-11-11T12:50:01.116661-08:00",
+      "modified_at": "2026-11-11T12:50:01.116661-08:00",
+      "backfilled": false
+    },
     {
       "date": "2026-11-10",
       "source_sha256": "b1f7cf0068e8d49197b0875454b6c956290efd26febcbfb8dc365db164a4c2fc",
