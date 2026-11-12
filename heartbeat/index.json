@@ -1,8 +1,19 @@
 {
-  "latest": "2026-11-11",
-  "count": 123,
-  "updated": "2026-11-11",
+  "latest": "2026-11-12",
+  "count": 124,
+  "updated": "2026-11-12",
   "items": [
+    {
+      "date": "2026-11-12",
+      "source_sha256": "bcd6c3172726dfc3e753b432d33e534404bba3f1c84fd5ca3d1fc84094f7214f",
+      "h1": "靠窗的位置",
+      "summary": "母亲到的时候，包间里已经坐了四个人。靠窗的椅子上搭着一件灰外套，她往旁边挪了一个座位。",
+      "size": 5003,
+      "rendered": "heartbeat/rendered/2026-11-12.html",
+      "published_at": "2026-11-12T12:15:43.506456-08:00",
+      "modified_at": "2026-11-12T12:15:43.506456-08:00",
+      "backfilled": false
+    },
     {
       "date": "2026-11-11",
       "source_sha256": "0c63b0ee3e7b736973bad3d6e5a5afbe7738d40ad995dfcbf75c9d7bad5cefeb",
