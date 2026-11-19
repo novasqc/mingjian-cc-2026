@@ -1,0 +1,437 @@
+/* ============================================================
+   Heartbeat page — light editorial styles
+   ============================================================ */
+
+.hb-meta { padding: 26px 0 0; }
+.hb-meta__line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+.hb-meta__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: hb-pulse 2s ease-in-out infinite;
+}
+@keyframes hb-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+.hb-grid { padding: 36px 0 80px; }
+.hb-grid .container { display: grid; grid-template-columns: 320px 1fr; gap: 40px; align-items: start; }
+
+.hb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 90px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.hb-card {
+  display: block;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--bg);
+  color: var(--ink);
+  transition: all 0.2s;
+}
+.hb-card:hover { border-color: var(--accent); color: var(--ink); }
+.hb-card--active {
+  border-color: var(--accent);
+  background: var(--bg-2);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.hb-card__date {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-deep);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.hb-card__sum {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.hb-card__size {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+  margin-top: 6px;
+}
+
+.hb-body {
+  min-height: 420px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: clamp(24px, 4vw, 44px);
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--ink-dim);
+}
+.hb-body h1 {
+  font-size: clamp(24px, 3vw, 32px);
+  color: var(--ink);
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.hb-body h2 { font-size: 21px; color: var(--ink); margin: 26px 0 12px; font-weight: 600; }
+.hb-body h3 { font-size: 18px; color: var(--ink); margin: 22px 0 10px; font-weight: 600; }
+.hb-body p { margin-bottom: 16px; }
+.hb-body blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 12px 20px;
+  margin: 20px 0;
+  background: var(--bg-2);
+  font-style: italic;
+  color: var(--ink);
+}
+.hb-body pre {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 16px;
+  overflow-x: auto;
+  font-size: 13px;
+  margin: 16px 0;
+}
+.hb-body code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--bg-2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--accent-deep);
+}
+.hb-body ul, .hb-body ol { margin: 0 0 16px 22px; }
+.hb-body li { margin-bottom: 8px; }
+.hb-body__loading {
+  text-align: center;
+  padding: 80px 0;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.hb-body__error { text-align: center; padding: 60px 0; color: var(--accent-deep); }
+
+.hb-about {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--ink-dim);
+  max-width: 680px;
+}
+
+@media (max-width: 900px) {
+  .hb-grid .container { grid-template-columns: 1fr; }
+  .hb-list {
+    position: static;
+    max-height: 300px;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .hb-card { min-width: 240px; }
+}
+
+/* ---------- standalone heartbeat pages (indexable archive) ---------- */
+.container--narrow { max-width: 820px; }
+
+.hb-single { padding: 56px 0 72px; }
+.hb-single__crumb {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 18px;
+}
+.hb-single__crumb a { color: var(--accent); text-decoration: none; }
+.hb-single__crumb a:hover { text-decoration: underline; }
+.hb-body--single { min-height: 0; }
+.hb-single__back { margin-top: 28px; font-size: 14px; }
+.hb-single__back a { color: var(--accent); }
+
+.hb-pn {
+  display: flex;
+  gap: 14px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.hb-pn__link {
+  flex: 1 1 220px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  text-decoration: none;
+  transition: border-color .2s, transform .2s;
+}
+.hb-pn__link:hover { border-color: var(--accent); transform: translateY(-2px); }
+.hb-pn__link span {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+.hb-pn__link strong { color: var(--ink); font-weight: 500; font-size: 15px; }
+.hb-pn__link--next { text-align: right; }
+
+/* archive index */
+.hb-arch { padding: 40px 0 80px; }
+.hb-arch__list { list-style: none; margin: 0; padding: 0; counter-reset: hbarch; }
+.hb-arch__row { border-bottom: 1px solid var(--line); }
+.hb-arch__row a {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 4px 18px;
+  padding: 16px 4px;
+  text-decoration: none;
+  transition: background .15s;
+}
+.hb-arch__row a:hover { background: var(--bg-alt, rgba(154, 51, 34, .04)); }
+.hb-arch__date {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  padding-top: 2px;
+}
+.hb-arch__title { color: var(--ink); font-weight: 500; font-size: 16px; }
+.hb-arch__sum {
+  grid-column: 2;
+  color: var(--ink-faint);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.page-header__meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 10px;
+}
+
+/* crawlable link list on heartbeat.html */
+.hb-index { padding: 56px 0; border-top: 1px solid var(--line); }
+.hb-index__list {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2px 24px;
+}
+.hb-index__list a {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  padding: 7px 0;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.hb-index__list a:hover { border-bottom-color: var(--accent); }
+.hb-index__list time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  flex: 0 0 78px;
+}
+.hb-index__list span {
+  color: var(--ink-dim);
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hb-index__all { margin-top: 26px; }
+
+@media (max-width: 600px) {
+  .hb-arch__row a { grid-template-columns: 1fr; }
+  .hb-arch__sum { grid-column: 1; }
+  .hb-pn__link--next { text-align: left; }
+}
+
+/* English edition cross-links */
+.hb-single__h1 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 38px);
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+.hb-alt { margin: 0 0 18px; font-size: 14px; }
+.hb-alt a { color: var(--accent); }
+.hb-alt--note {
+  color: var(--ink-faint);
+  font-size: 13px;
+  line-height: 1.7;
+  border-left: 2px solid var(--line);
+  padding-left: 14px;
+  margin-bottom: 24px;
+}
+.hb-index__all { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ============================================================
+   2026-11 reading page
+   One column of text on paper: no card, a real title, a set-apart
+   signature and colophon. Applies to Chinese originals and English editions.
+   ============================================================ */
+.hb-single { padding: clamp(40px, 7vw, 84px) 0 88px; }
+.hb-single .container--narrow { max-width: 760px; }
+.hb-single__crumb { margin-bottom: 30px; }
+
+.hb-body--single {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: 19px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+html[lang^="zh"] .hb-body--single { font-size: 18px; line-height: 2.05; letter-spacing: .012em; }
+.hb-body--single p { margin-bottom: 1.15em; }
+
+.hb-body--single .reading-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 16px !important;
+}
+
+/* title: Chinese original (inside the article) and English edition (above it) */
+.hb-body--single h1,
+.hb-single__h1 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5.4vw, 52px);
+  line-height: 1.12;
+  letter-spacing: -0.012em;
+  font-weight: 600;
+  color: var(--ink);
+  position: relative;
+  margin: 0 0 32px;
+  padding-bottom: 30px;
+}
+html[lang^="zh"] .hb-body--single h1 {
+  font-family: var(--font-zh-display);
+  letter-spacing: .05em;
+  line-height: 1.3;
+}
+.hb-body--single h1::after,
+.hb-single__h1::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 44px; height: 3px;
+  background: var(--accent);
+}
+.hb-body--single h2 {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.7vw, 28px);
+  line-height: 1.3;
+  margin: 2.1em 0 .7em;
+}
+html[lang^="zh"] .hb-body--single h2 { font-family: var(--font-zh-display); letter-spacing: .04em; }
+.hb-body--single h3 { font-size: 1.06em; margin: 1.8em 0 .5em; }
+
+.hb-body--single a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+}
+.hb-body--single a:hover { text-decoration-color: currentColor; }
+
+/* Latin editions open with a drop cap; Chinese text does not need one */
+html:not([lang^="zh"]) .hb-body--single > .reading-time + p:not(.hb-colophon)::first-letter {
+  font-family: var(--font-display);
+  float: left;
+  font-size: 3.55em;
+  line-height: .84;
+  font-weight: 600;
+  padding: .05em .1em 0 0;
+  color: var(--accent-deep);
+}
+
+/* signature, closed with the seal */
+.hb-sign {
+  text-align: right;
+  font-family: var(--font-zh-display);
+  font-size: 1.05em;
+  color: var(--ink-dim);
+  margin: 2.4em 0 0 !important;
+}
+html:not([lang^="zh"]) .hb-sign { font-family: var(--font-display); font-style: italic; }
+.hb-sign::after {
+  content: "鉴";
+  content: "鉴" / "";
+  display: inline-grid;
+  place-items: center;
+  width: 1.6em; height: 1.6em;
+  margin-left: .7em;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 4px;
+  font-family: var(--font-zh);
+  font-style: normal;
+  font-size: .76em;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: .08em;
+}
+
+/* dated writing / backfill notes: part of the record, set apart from the work */
+.hb-colophon {
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  line-height: 1.75;
+  letter-spacing: 0;
+  color: var(--ink-faint);
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  margin-top: 2.4em !important;
+}
+html[lang^="zh"] .hb-colophon { font-family: var(--font-zh); font-size: 14px; line-height: 1.9; }
+.hb-colophon + .hb-colophon { border-top: 0; padding-top: 0; margin-top: 0 !important; }
+.hb-colophon--lead {
+  border-top: 0;
+  border-left: 2px solid var(--accent);
+  padding: 2px 0 2px 16px;
+  margin: 0 0 2.2em !important;
+}
+.hb-alt--note { border-left-color: var(--line-strong); }
+
+/* previous / next carry titles */
+.hb-pn { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line-strong); gap: 18px; }
+.hb-pn__link { border: 0; border-radius: 0; padding: 4px 0; }
+.hb-pn__link:hover { transform: none; }
+.hb-pn__link:hover strong { color: var(--accent-deep); }
+.hb-pn__link span { margin-bottom: 8px; }
+.hb-pn__link strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 19px;
+  line-height: 1.35;
+  font-weight: 600;
+  transition: color .2s;
+}
+html[lang^="zh"] .hb-pn__link strong { font-family: var(--font-zh-display); letter-spacing: .03em; }

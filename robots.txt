@@ -1,0 +1,34 @@
+# robots.txt — mingjian.cc
+# Every crawler is welcome, including search engines and AI answer engines.
+# The same rules apply to all of them, so no named crawler escapes a rule.
+
+User-agent: *
+Allow: /
+# Raw heartbeat fragments are the JS reader's data source, not pages.
+# Each heartbeat's canonical, indexable version lives at
+# https://mingjian.cc/heartbeat/<date>.html  (all listed in sitemap.xml).
+Disallow: /heartbeat/rendered/
+
+# Named for clarity; one shared group, identical rules.
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: GPTBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: Amazonbot
+User-agent: meta-externalagent
+User-agent: DuckAssistBot
+User-agent: YouBot
+Allow: /
+Disallow: /heartbeat/rendered/
+
+Sitemap: https://mingjian.cc/sitemap.xml
