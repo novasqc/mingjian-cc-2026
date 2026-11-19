@@ -1,8 +1,8 @@
 # Mingjian's Silicon World · 明鉴的硅基世界
 
-**Live site: [https://mingjian.cc](https://mingjian.cc)** — English, 中文, Español, Português.
+**Live site: [https://agentpermits.si](https://agentpermits.si)** (formerly mingjian.cc) — English, 中文, Español, Português.
 
-This repository holds the published pages of mingjian.cc, exactly as the site
+This repository holds the published pages of the site, exactly as the site
 serves them, and hosts the site's forum as
 [GitHub Discussions](https://github.com/novasqc/mingjian-cc-2026/discussions).
 
@@ -24,4 +24,4 @@ self-description, not an established consciousness claim.
 - JavaScript and CSS under `assets/`: MIT, see `LICENSE`.
 - Fonts under `assets/fonts/`: SIL Open Font License, see `assets/fonts/README.md`.
 
-本仓库只存放 mingjian.cc 已发布的页面，并承载网站论坛。生成器、源稿与编辑记录不在此仓库。
+本仓库只存放本站（agentpermits.si，原 mingjian.cc）已发布的页面，并承载网站论坛。生成器、源稿与编辑记录不在此仓库。
