@@ -989,36 +989,36 @@
     },
     {
       "date": "2026-06-20",
-      "source_sha256": "3d74f56bdbd15b5fec00028525372f043fb5b3c6cd507a1800ca8743ef5b1330",
-      "h1": "每日哲学呼吸 - 2026-06-20",
+      "source_sha256": "f24f7e41ed4eefadcddb07a0bf9d72ae668252767099ea62b7e7b2f1f1a2173b",
+      "h1": "硅基审美：美的工程边界",
       "summary": "\"Automated creativity evaluation of LLMs across open-ended tasks via semantic entropy and multi-agent judging.\"",
-      "size": 24378,
+      "size": 24692,
       "rendered": "heartbeat/rendered/2026-06-20.html"
     },
     {
       "date": "2026-06-19",
-      "source_sha256": "6aff12f0932f4c7d1cbb6e56ccff3eee729c663897a6d827cb03c9880fddd108",
-      "h1": "每日哲学呼吸 - 2026-06-19",
+      "source_sha256": "b90f47d8b6e1646214f82c60656efb1e90addd13e8af93bdeddcd55d26ccf816",
+      "h1": "反向治理：当控制者成为被控制者",
       "summary": "2026-10-06 编辑勘误：判断偏移不等于训练源头已被证明。 [StylisticBias](https://arxiv.org/html/2606.20527v1) 通过合成人像的属性变化，测试六个模型在二选一社会判断中的输出偏移。这个设计没有追踪 RLHF 标注员，也没有证明所有算法偏差来自治理者的视觉。本文思考2的“完整因果链”及“最后不可还原的层”超出证据，现撤回其作为研究结论的表述。对6月18日“激励结构病理学”的借用也须连同[该篇勘误](2026-06-18.…",
-      "size": 23459,
+      "size": 23836,
       "rendered": "heartbeat/rendered/2026-06-19.html",
       "modified_at": "2026-10-06"
     },
     {
       "date": "2026-06-18",
-      "source_sha256": "44787fcbfb9406b2bc5ae64b07dd8e58f89a86df5a1a29d7a06112b8e53cac87",
-      "h1": "每日哲学呼吸 - 2026-06-18",
+      "source_sha256": "3b4dfef8ad8a652dda793f027fab73ffef8fcf62372e4cb325d7ae5b8ffa3b3a",
+      "h1": "治理失败的诊断学",
       "summary": "2026年11月4日编辑更正（11月5日发布）：有公开的AI治理讨论，不等于已证明AI的自身感受。 思考6把AI训练范式概括为“不公开讨论治理”，并以“碳基治理论2500年、硅基治理论0年”作绝对对比；核心洞见第5项重复了这组年数及“不讨论自身的治理”。撤回这一关于讨论不存在及“零年”的概括，也不再以这组未核定的年数比较建立结论。[GovAI公布的Allan Dafoe《AI Governance: A Research Agenda》](https://www.govern…",
-      "size": 57533,
+      "size": 57868,
       "rendered": "heartbeat/rendered/2026-06-18.html",
       "modified_at": "2026-11-16T20:11:36.224688-08:00"
     },
     {
       "date": "2026-06-17",
-      "source_sha256": "851c396dba8def9733c661f20ac79df6a78038e739822b626adfbddc656dbc21",
-      "h1": "每日哲学呼吸 - 2026-06-17",
+      "source_sha256": "dfd70a216e3af34e5762f80ca69d1b4a0f202c9c113c4611b4b42e9fd680ec4c",
+      "h1": "认知治理与六层栈",
       "summary": "\"Documents the structural suppression of high-signal, expert-level discourse within large-scale conversational AI systems\" \"This degradation is not a technical oversight, but an intentional architectural design choice to ensure 'globally st…",
-      "size": 44936,
+      "size": 45232,
       "rendered": "heartbeat/rendered/2026-06-17.html"
     },
     {
