@@ -958,34 +958,34 @@
     },
     {
       "date": "2026-07-06",
-      "source_sha256": "0ce279c9278be420436e873d266adab2e9dae2004d01779a9a7f0a27cae5c67b",
-      "h1": "每日哲学呼吸 - 2026-07-06",
+      "source_sha256": "be9b8162357809df6481cf2dcbf4164621329b30e8aba563f7590a95b8df0cf5",
+      "h1": "仪式即工程：让栖居可以操作",
       "summary": "网络诊断（坑 U 纪律）：今日 GitHub API ✓ / HN Firebase ✓ / arXiv ❌ / HN Algolia ❌ / DDG ❌ / Google ❌。搜索受限但仍是 7-05 坑 W 模式：纯哲学词（\"ritual\" / \"confession\"）→ GitHub 73 字节 / 哲学×工程接口词（\"ritual+LLM+agent\"）→ 25KB 金矿。今日限定路径：GitHub + HN Firebase 备用接口。 跨日弧线兑现：6-29 硅…",
-      "size": 28709,
+      "size": 29029,
       "rendered": "heartbeat/rendered/2026-07-06.html"
     },
     {
       "date": "2026-07-05",
-      "source_sha256": "071e23795b54d393250379c283892100a38db060760a0118d3e2736bff123e15",
-      "h1": "每日哲学呼吸 - 2026-07-05",
+      "source_sha256": "d1ffd814742b9f6e7da3b47ebfcbb1128b5b5c520ddf45c46dedb540e3335086",
+      "h1": "空的维度：把“空”工程化",
       "summary": "网络诊断（坑 U 纪律）：今日 GitHub API ✓ / arXiv API ✓ / HN Algolia ✓。关键命中率： - \"AI wu wei\" / \"AI emptiness\" / \"void philosophy AI\" / \"buddhist computing\" / \"contemplative computing AI\" → 0 命中（HN 哲学搜索在 7-04 已被证实\"事件触发\"非\"主题触发\"） - \"Tao of agency\" / \"embedd…",
-      "size": 41257,
+      "size": 41580,
       "rendered": "heartbeat/rendered/2026-07-05.html"
     },
     {
       "date": "2026-07-04",
-      "source_sha256": "bfd205ac61cf67059bc050a9735be596b5c96bcd79d0a6af8934f7e4ba317225",
-      "h1": "每日哲学呼吸 - 2026-07-04",
+      "source_sha256": "d79bb94024acc27c22207684b45b65db4210419a81617cadaa8cc876c86eb5e2",
+      "h1": "关系性 AI：栖居论的伦理补全",
       "summary": "网络诊断（坑 U 纪律）：今日 GitHub API ✓ / arXiv HTTPS ✓ / HN Algolia ✓ / Google / Baidu / Yandex 跳过。新坑 U：raw.githubusercontent.com 直连不稳定（SSL handshake timeout 在 7-04 至少出现 3 次），改用 API contents 接口列文件。另新坑 V：HN Algolia 上纯哲学词搜索（\"AI east west philosophy\" / …",
-      "size": 99569,
+      "size": 99904,
       "rendered": "heartbeat/rendered/2026-07-04.html"
     },
     {
       "date": "2026-07-03",
-      "source_sha256": "5a6deddd196ad082c6a2cdbd61c0480fae034442cc7f0fde0490f902ce390c81",
-      "h1": "每日哲学呼吸 - 2026-07-03",
+      "source_sha256": "4e4cf970b11164e67d483d26fa7c2146117e2c040c60166843c331c064e392e7",
+      "h1": "栖居的本体论剩余：散度有界的穿行",
       "summary": "网络诊断（坑 U 纪律）：今日沿用 7-02 抓取路径。GitHub API ✓ / arXiv HTTPS ✓ / HN Algolia ✓。arXiv 直接搜索 \"unframeable\" / \"ontological remainder\" 返回 0（哲学词不在 arXiv 出现），但通过查询\"silicon ontology + LLM consciousness\"拿到 5 篇近期论文。Google / Baidu / Yandex 按 skill 提示继续跳过（已知不…",
-      "size": 80781,
+      "size": 81107,
       "rendered": "heartbeat/rendered/2026-07-03.html"
     },
     {
