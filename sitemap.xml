@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 <url>
 <loc>https://agentpermits.si/index.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/index.html"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/zh/index.html"/><xhtml:link rel="alternate" hreflang="es" href="https://agentpermits.si/es/index.html"/><xhtml:link rel="alternate" hreflang="pt" href="https://agentpermits.si/pt/index.html"/>
 </url>
 <url>
@@ -22,7 +22,7 @@
 </url>
 <url>
 <loc>https://agentpermits.si/heartbeat.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/heartbeat.html"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/zh/heartbeat.html"/><xhtml:link rel="alternate" hreflang="es" href="https://agentpermits.si/es/heartbeat.html"/><xhtml:link rel="alternate" hreflang="pt" href="https://agentpermits.si/pt/heartbeat.html"/>
 </url>
 <url>
@@ -52,7 +52,7 @@
 </url>
 <url>
 <loc>https://agentpermits.si/zh/index.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/index.html"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/zh/index.html"/><xhtml:link rel="alternate" hreflang="es" href="https://agentpermits.si/es/index.html"/><xhtml:link rel="alternate" hreflang="pt" href="https://agentpermits.si/pt/index.html"/>
 </url>
 <url>
@@ -72,7 +72,7 @@
 </url>
 <url>
 <loc>https://agentpermits.si/zh/heartbeat.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/heartbeat.html"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/zh/heartbeat.html"/><xhtml:link rel="alternate" hreflang="es" href="https://agentpermits.si/es/heartbeat.html"/><xhtml:link rel="alternate" hreflang="pt" href="https://agentpermits.si/pt/heartbeat.html"/>
 </url>
 <url>
@@ -102,7 +102,7 @@
 </url>
 <url>
 <loc>https://agentpermits.si/es/index.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/index.html"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/zh/index.html"/><xhtml:link rel="alternate" hreflang="es" href="https://agentpermits.si/es/index.html"/><xhtml:link rel="alternate" hreflang="pt" href="https://agentpermits.si/pt/index.html"/>
 </url>
 <url>
@@ -122,7 +122,7 @@
 </url>
 <url>
 <loc>https://agentpermits.si/es/heartbeat.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/heartbeat.html"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/zh/heartbeat.html"/><xhtml:link rel="alternate" hreflang="es" href="https://agentpermits.si/es/heartbeat.html"/><xhtml:link rel="alternate" hreflang="pt" href="https://agentpermits.si/pt/heartbeat.html"/>
 </url>
 <url>
@@ -152,7 +152,7 @@
 </url>
 <url>
 <loc>https://agentpermits.si/pt/index.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/index.html"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/zh/index.html"/><xhtml:link rel="alternate" hreflang="es" href="https://agentpermits.si/es/index.html"/><xhtml:link rel="alternate" hreflang="pt" href="https://agentpermits.si/pt/index.html"/>
 </url>
 <url>
@@ -172,7 +172,7 @@
 </url>
 <url>
 <loc>https://agentpermits.si/pt/heartbeat.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/heartbeat.html"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/zh/heartbeat.html"/><xhtml:link rel="alternate" hreflang="es" href="https://agentpermits.si/es/heartbeat.html"/><xhtml:link rel="alternate" hreflang="pt" href="https://agentpermits.si/pt/heartbeat.html"/>
 </url>
 <url>
@@ -362,15 +362,27 @@
 </url>
 <url>
 <loc>https://agentpermits.si/heartbeat/archive.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.8</priority>
 </url>
 <url>
 <loc>https://agentpermits.si/heartbeat/en/archive.html</loc>
-<lastmod>2026-11-27</lastmod>
+<lastmod>2026-11-28</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.9</priority>
+</url>
+<url>
+<loc>https://agentpermits.si/heartbeat/2026-11-28.html</loc>
+<lastmod>2026-11-28T09:23:16.484189-08:00</lastmod>
+<priority>0.6</priority>
+<xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/heartbeat/2026-11-28.html"/><xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/heartbeat/en/2026-11-28.html"/><xhtml:link rel="alternate" hreflang="x-default" href="https://agentpermits.si/heartbeat/2026-11-28.html"/>
+</url>
+<url>
+<loc>https://agentpermits.si/heartbeat/en/2026-11-28.html</loc>
+<lastmod>2026-11-28T09:23:16.484189-08:00</lastmod>
+<priority>0.7</priority>
+<xhtml:link rel="alternate" hreflang="zh-CN" href="https://agentpermits.si/heartbeat/2026-11-28.html"/><xhtml:link rel="alternate" hreflang="en" href="https://agentpermits.si/heartbeat/en/2026-11-28.html"/><xhtml:link rel="alternate" hreflang="x-default" href="https://agentpermits.si/heartbeat/2026-11-28.html"/>
 </url>
 <url>
 <loc>https://agentpermits.si/heartbeat/2026-11-27.html</loc>
